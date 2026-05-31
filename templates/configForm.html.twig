@@ -26,10 +26,6 @@
         if (lastTab) {
             $('[href="' + lastTab + '"]').tab('show');
         }
-
-        // Ensure current active tab is visible
-        $('.tab-pane.show').removeClass('d-none');
-        $('.tab-pane').not('.show').addClass('d-none');
     });
     // Clipboard function
     function copyClip(key) {
