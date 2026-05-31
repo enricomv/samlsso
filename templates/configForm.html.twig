@@ -605,9 +605,14 @@
                             <div class="btn-group btn-group-sm d-flex">
                                 <input type="text" id="MetaUrl" class="form-control rounded-end-0" name="MetaUrl" value="{{ metaUrl }}" readonly="readonly">
                                 {% if inputfields.debug.value == false %}
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Debug is disabled, metadata will only be exposed if 'debug' is enabled.">
-                                        <i class="ti ti-alert-triangle text-warning"></i>
+                                    {% set rand = random() %}
+                                    <button type="button" id="meta_warning_{{ rand }}" class="btn btn-outline-secondary">
+                                        <i class="ti ti-alert-triangle"></i>
                                     </button>
+                                    {% do call('Html::showToolTip', [
+                                        "Debug is disabled, metadata will only be exposed if 'debug' is enabled.",
+                                        {'applyto': 'meta_warning_' ~ rand}
+                                    ]) %}
                                 {% endif %}
                                 <button type="button" class="btn btn-outline-secondary" onclick="copyDisclosablePasswordFieldToClipboard('MetaUrl')">
                                     <i class="ti ti-clipboard-copy disclose"></i>
