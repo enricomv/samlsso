@@ -601,6 +601,9 @@
                         ) }}
 
                         <!-- Meta URL -->
+                        <style>
+                            [data-testid="form-field-MetaUrl"] .btn-group { flex-grow: 1; }
+                        </style>
                         {% set meta_helper %}
                             {% if inputfields.debug.value == false %}
                                 <span class="form-help ms-2 mb-0" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="Debug is 
