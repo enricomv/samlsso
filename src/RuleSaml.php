@@ -186,21 +186,21 @@ class RuleSaml extends Rule
 
             $criterias['country']['table']          = '';
             $criterias['country']['field']          = '';
-            $criterias['country']['name']           = __('Country', PLUGIN_NAME);
+            $criterias['country']['name']           = __('SAML Country', PLUGIN_NAME);
             $criterias['country']['linkfield']      = '';
             $criterias['country']['virtual']        = true;
             $criterias['country']['id']             = 'country';
 
             $criterias['city']['table']             = '';
             $criterias['city']['field']             = '';
-            $criterias['city']['name']              = __('City', PLUGIN_NAME);
+            $criterias['city']['name']              = __('SAML City', PLUGIN_NAME);
             $criterias['city']['linkfield']         = '';
             $criterias['city']['virtual']           = true;
             $criterias['city']['id']                = 'city';
 
             $criterias['street']['table']           = '';
             $criterias['street']['field']           = '';
-            $criterias['street']['name']            = __('Street', PLUGIN_NAME);
+            $criterias['street']['name']            = __('SAML Street', PLUGIN_NAME);
             $criterias['street']['linkfield']       = '';
             $criterias['street']['virtual']         = true;
             $criterias['street']['id']              = 'street';
