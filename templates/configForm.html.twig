@@ -601,26 +601,24 @@
                         ) }}
 
                         <!-- Meta URL -->
-                        <style>
-                            [data-testid="form-field-MetaUrl"] .btn-group { flex-grow: 1; }
-                        </style>
-                        {% set meta_helper %}
-                            {% if inputfields.debug.value == false %}
-                                <span class="form-help ms-2 mb-0" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="Debug is 
-                                disabled, metadata will only be exposed if 'debug' is enabled.">⚠️</span>
-                            {% endif %}
+                        {% set metaUrl %}
+                            <div class="btn-group btn-group-sm d-flex">
+                                <input type="text" id="MetaUrl" class="form-control rounded-end-0" name="MetaUrl" value="{{ metaUrl }}" readonly="readonly">
+                                {% if inputfields.debug.value == false %}
+                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Debug is disabled, metadata will only be exposed if 'debug' is enabled.">
+                                        <i class="ti ti-alert-triangle"></i>
+                                    </button>
+                                {% endif %}
+                                <button type="button" class="btn btn-outline-secondary" onclick="copyDisclosablePasswordFieldToClipboard('MetaUrl')">
+                                    <i class="ti ti-clipboard-copy disclose"></i>
+                                </button>
+                            </div>
                         {% endset %}
-                        {{ fields.textField(
+                        {{ fields.field(
                             'MetaUrl', 
                             metaUrl, 
                             'MetaUrl',
                             {
-                                'id': 'MetaUrl',
-                                'readonly':true,
-                                'is_copyable': true,
-                                'add_field_html': meta_helper,
-                                'inline_add_field_html': true,
-                                'center': true,
                                 helper: __('The location of the metadata provider for this service provider (GLPI). The meta location can be
                                             used by the identity provider to collect important information from this service provider like
                                             what public certificate to use for signing and encrypting the SamlResponse.'),
