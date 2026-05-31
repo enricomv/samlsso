@@ -219,7 +219,7 @@ class LoginState extends CommonDBTM
                         // Keep default fallback
                     }
                 }
-                $loginTime = strtotime($this->state[LoginState::LOGIN_DATETIME]);
+                $loginTime = strtotime($this->state[LoginState::LOGIN_DATETIME] . ' UTC');
                 if (time() - $loginTime > ($timeoutMinutes * 60)) {
                     $this->state[LoginState::PHASE] = LoginState::PHASE_TIMED_OUT;
                 }

@@ -150,8 +150,7 @@ namespace GlpiPlugin\Samlsso\Tests {
             $table = LoginState::getTable();
 
             // Set up mock DB response for loading by SAML request ID.
-            // Simulate a request created 20 minutes ago.
-            $staleTime = date('Y-m-d H:i:s', time() - 1200);
+            $staleTime = gmdate('Y-m-d H:i:s', time() - 1200);
 
             $db->setResponse($table, [
                 [
