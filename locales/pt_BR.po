@@ -4,6 +4,7 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 # Translators:
+# Eduardo Mozart de Oliveira, 2026
 # Eduardo Peres, 2025
 # Rodrigo Leite, 2025
 #
