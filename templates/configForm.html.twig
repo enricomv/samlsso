@@ -8,6 +8,14 @@
         $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             localStorage.setItem('lastTab', $(this).attr('href'));
         });
+        // Manage d-none class for tabpanels
+        $('a[data-bs-toggle="tab"]').on('show.bs.tab', function (e) {
+            $($(e.target).attr('href') || $(e.target).data('bs-target')).removeClass('d-none');
+        });
+        $('a[data-bs-toggle="tab"]').on('hide.bs.tab', function (e) {
+            $($(e.target).attr('href') || $(e.target).data('bs-target')).addClass('d-none');
+        });
+
         var lastTab = localStorage.getItem('lastTab');
         
         var urlParams = new URLSearchParams(window.location.search);
@@ -19,14 +27,9 @@
             $('[href="' + lastTab + '"]').tab('show');
         }
 
-        // Manage d-none class for tabpanels
+        // Ensure current active tab is visible
+        $('.tab-pane.show').removeClass('d-none');
         $('.tab-pane').not('.show').addClass('d-none');
-        $('a[data-bs-toggle="tab"]').on('show.bs.tab', function (e) {
-            $($(e.target).attr('href') || $(e.target).data('bs-target')).removeClass('d-none');
-        });
-        $('a[data-bs-toggle="tab"]').on('hide.bs.tab', function (e) {
-            $($(e.target).attr('href') || $(e.target).data('bs-target')).addClass('d-none');
-        });
     });
     // Clipboard function
     function copyClip(key) {
