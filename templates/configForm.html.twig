@@ -995,7 +995,13 @@
                                                     {% if logrow.phase == 1 %}
                                                         <span class="logging-badge logging-badge-phase-1" title="Phase 1: Initial visit">{{ __("Initial") }}</span>
                                                     {% elseif logrow.phase == 2 %}
-                                                        <span class="logging-badge logging-badge-phase-2" title="Phase 2: SAML IDP call expected back at ACS">{{ __("SAML ACS Expected") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-2" 
+                                                              data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                                                              data-bs-content="{{ __("The identity provider was contacted, but GLPI didn't receive a successful response back at the ACS endpoint.<br><br><b>Common Solutions:</b><br>&bull; Verify the <strong>Reply URL</strong> in IdP matches the plugin setting <code>AcsUrl</code> exactly.<br>&bull; If using a reverse proxy, ensure the plugin setting <code>REQUESTS PROXIED</code> is enabled to trust <strong>X-Forwarded-Proto</strong> headers.<br>&bull; Check if the user closed the browser during login.")|e('html_attr') }}" 
+                                                              title="{{ __('Phase 2: SAML ACS Expected') }}"
+                                                              style="cursor: help;">
+                                                            {{ __("SAML ACS Expected") }}
+                                                        </span>
                                                     {% elseif logrow.phase == 3 %}
                                                         <span class="logging-badge logging-badge-phase-3" title="Phase 3: Performed SAML IDP authentication">{{ __("SAML Authed") }}</span>
                                                     {% elseif logrow.phase == 4 %}
