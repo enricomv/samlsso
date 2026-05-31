@@ -118,6 +118,25 @@ function plugin_init_samlsso(): void                                            
     // Include additional composer PSR4 autoloader
     include_once(__DIR__ . '/vendor/autoload.php');                                              // NOSONAR - intentional include_once to load composer autoload;
 
+    // Backend block for local login when Enforced is enabled
+    $is_login_post = isset($_POST['login_name']) && isset($_POST['login_password']);
+    
+    // Check if bypass flag exists in the whitelisted plugin session namespace
+    $is_bypassed = !empty($_SESSION['glpi_plugins']['samlsso']['bypass']);
+
+    if ($is_login_post && !$is_bypassed) {
+        if (Config::getIsEnforced()) {
+            // Log the blocked login attempt to the plugin events log
+            Toolbox::logInFile(
+                PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS,
+                sprintf("SSO enforcement blocked local login attempt for user: %s\n", $_POST['login_name'])
+            );
+            // Nullify both username and password payloads to securely prevent native login
+            $_POST['login_name'] = null;
+            $_POST['login_password'] = null;
+        }
+    }
+
     // Do not show config buttons if plugin is not enabled.
     if ($plugin->isInstalled(PLUGIN_NAME) || $plugin->isActivated(PLUGIN_NAME)) {
 

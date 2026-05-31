@@ -832,4 +832,28 @@ class ConfigItem    //NOSONAR
             return true;
         }
     }
+
+    /**
+     * Validates and normalizes the request_timeout integer configuration option.
+     *
+     * @param  mixed $var  Raw input value
+     * @return array       Metadata and validation results
+     */
+    protected function request_timeout(mixed $var): array
+    {
+        $error = false;
+        if (!is_numeric($var) || (int)$var <= 0) {
+            $error = __('⭕ Request timeout must be a positive integer (minutes)', PLUGIN_NAME);
+        }
+
+        return [
+            ConfigItem::FORMEXPLAIN => __('The duration in minutes before an uncompleted SAML request is considered expired.', PLUGIN_NAME),
+            ConfigItem::FORMTITLE => __('REQUEST TIMEOUT (MINUTES)', PLUGIN_NAME),
+            ConfigItem::EVAL      => ($error) ? ConfigItem::INVALID : ConfigItem::VALID,
+            ConfigItem::VALUE     => ($error) ? '15' : (string)(int)$var,
+            ConfigItem::FIELD     => __function__,
+            ConfigItem::VALIDATOR => __method__,
+            ConfigItem::ERRORS    => ($error) ? $error : false,
+        ];
+    }
 }

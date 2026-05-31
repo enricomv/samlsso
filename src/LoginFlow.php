@@ -388,14 +388,22 @@ class LoginFlow extends CommonDBTM
     private function interceptBypass(): bool
     {
         global $CFG_GLPI;
-        if (
-            (isset($_GET[LoginFlow::SAMLBYPASS]) && $_GET[LoginFlow::SAMLBYPASS] == 1) ||
-            isset($_GET['noAuto'])
-        ) {
-            $this->state->addLoginFlowTrace(['bypassUsed' => true]);
-            $url = $CFG_GLPI['url_base'] . '/?' . LoginFlow::SAMLBYPASS . '=1&noAUTO=1';
-            header('Location:' . $url);
-            exit();
+
+        if (isset($_GET[LoginFlow::SAMLBYPASS]) && $_GET[LoginFlow::SAMLBYPASS] == 1) {
+            $_SESSION['glpi_plugins']['samlsso']['bypass'] = true;
+        }
+
+        $bypassRequested = (isset($_GET[LoginFlow::SAMLBYPASS]) && $_GET[LoginFlow::SAMLBYPASS] == 1);
+        $noAutoRequested = isset($_GET['noAuto']);
+        $noAutoUpperSet = isset($_GET['noAUTO']);
+
+        if ($bypassRequested || $noAutoRequested) {
+            if (!$bypassRequested || !$noAutoUpperSet) {
+                $this->state->addLoginFlowTrace(['bypassUsed' => true]);
+                $url = $CFG_GLPI['url_base'] . '/?' . LoginFlow::SAMLBYPASS . '=1&noAUTO=1';
+                header('Location:' . $url);
+                exit();
+            }
         }
         return false;
     }

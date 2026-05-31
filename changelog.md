@@ -1,5 +1,12 @@
 
 **V1.3.0**
+- Feature: Added configurable SAML request timeout fallback to automatically expire stale authentication states after a set duration (default 15 minutes) - by @eduardomozart
+- Security Fix: Addressed local login SSO enforcement bypass securely using server-side session variable checks instead of a spoofable Referer check - by @eduardomozart
+- Merged PR 114: Added country code 'ZZ' fallback tooltip and image display - by @eduardomozart
+- Merged PR 115: Replaced custom copy buttons with native is_copyable attribute - by @eduardomozart
+- Merged PR 116: Enforced access control checks with Session::checkRight and added user avatars - by @eduardomozart
+- Merged PR 117: Separated translation links and added PO/POT generator - by @eduardomozart
+- Merged PR 118: Added user fields matching support in rule criteria - by @eduardomozart
 - Implemented configurable SAML claim mapping for GLPI user fields with predefined presets (Entra ID, Okta, Keycloak) and observed claims tracking.
 - Refactored installation/uninstallation routines using a central class registry and single migration instance.
 - Hardened logout and Single Logout (SLO) confirmation rendering, local logout redirection paths, and auto-login loop prevention.

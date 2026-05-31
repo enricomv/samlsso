@@ -139,35 +139,35 @@ class RuleSaml extends Rule
 
             $criterias['name']['table']             = '';
             $criterias['name']['field']             = '';
-            $criterias['name']['name']              = __('Username');
+            $criterias['name']['name']              = __('Username', PLUGIN_NAME);
             $criterias['name']['linkfield']         = '';
             $criterias['name']['virtual']           = true;
             $criterias['name']['id']                = 'name';
 
             $criterias['realname']['table']         = '';
             $criterias['realname']['field']         = '';
-            $criterias['realname']['name']          = __('Surname');
+            $criterias['realname']['name']          = __('Surname', PLUGIN_NAME);
             $criterias['realname']['linkfield']     = '';
             $criterias['realname']['virtual']       = true;
             $criterias['realname']['id']            = 'realname';
 
             $criterias['firstname']['table']        = '';
             $criterias['firstname']['field']        = '';
-            $criterias['firstname']['name']         = __('First name');
+            $criterias['firstname']['name']         = __('First name', PLUGIN_NAME);
             $criterias['firstname']['linkfield']    = '';
             $criterias['firstname']['virtual']      = true;
             $criterias['firstname']['id']           = 'firstname';
 
             $criterias['mobile']['table']           = '';
             $criterias['mobile']['field']           = '';
-            $criterias['mobile']['name']            = __('Mobile phone');
+            $criterias['mobile']['name']            = __('Mobile phone', PLUGIN_NAME);
             $criterias['mobile']['linkfield']       = '';
             $criterias['mobile']['virtual']         = true;
             $criterias['mobile']['id']              = 'mobile';
 
             $criterias['phone']['table']            = '';
             $criterias['phone']['field']            = '';
-            $criterias['phone']['name']             = __('Phone');
+            $criterias['phone']['name']             = __('Phone', PLUGIN_NAME);
             $criterias['phone']['linkfield']        = '';
             $criterias['phone']['virtual']          = true;
             $criterias['phone']['id']               = 'phone';

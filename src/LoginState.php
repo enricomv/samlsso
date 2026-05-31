@@ -202,6 +202,29 @@ class LoginState extends CommonDBTM
             }
             $this->setClientIpAndCountry();
 
+            // Enforce a server-side timeout fallback for SAML requests awaiting response
+            if ($this->state[LoginState::PHASE] == LoginState::PHASE_SAML_ACS) {
+                $idpId = $this->state[LoginState::IDP_ID];
+                $timeoutMinutes = 15; // default fallback if config is missing
+                if ($idpId && (int)$idpId > 0) {
+                    try {
+                        $configEntity = new \GlpiPlugin\Samlsso\Config\ConfigEntity((int)$idpId);
+                        if ($configEntity->isValid()) {
+                            $configTimeout = $configEntity->getField(\GlpiPlugin\Samlsso\Config\ConfigEntity::REQUEST_TIMEOUT);
+                            if ($configTimeout !== false && is_numeric($configTimeout)) {
+                                $timeoutMinutes = (int)$configTimeout;
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        // Keep default fallback
+                    }
+                }
+                $loginTime = strtotime($this->state[LoginState::LOGIN_DATETIME]);
+                if (time() - $loginTime > ($timeoutMinutes * 60)) {
+                    $this->state[LoginState::PHASE] = LoginState::PHASE_TIMED_OUT;
+                }
+            }
+
 
 
             // We have a valid session, we have a samlInresponseTo but was a

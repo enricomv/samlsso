@@ -930,6 +930,25 @@
                         ) }}
                     </div>
 
+                    <!-- Request Expiry Timeout -->
+                    <div>
+                        {% set error_helper %}
+                            {% if inputfields.request_timeout.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.request_timeout.errors }}</div>
+                            {% endif %}
+                        {% endset %}
+                        {{ fields.textField(
+                            inputfields.request_timeout.field,
+                            inputfields.request_timeout.value,
+                            inputfields.request_timeout.formtitle,
+                            {
+                                'add_field_html': error_helper,
+                                'type': 'number',
+                                helper: inputfields.request_timeout.formexplain,
+                            }
+                        ) }}
+                    </div>
+
                     <!-- Strict mode -->
                     <div>
                         {% set error_helper %}

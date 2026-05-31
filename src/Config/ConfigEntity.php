@@ -104,6 +104,7 @@ class ConfigEntity extends ConfigItem
      *             properties and rules engine rerun on every successful login.
      */
     public const SYNC_ON_LOGIN = 'sync_on_login';
+    public const REQUEST_TIMEOUT = 'request_timeout';
     public const SECURITY_WANTMESSAGESSIGNED = 'security_wantmessagessigned';
     public const SECURITY_WANTASSERTIONSSIGNED = 'security_wantassertionssigned';
     public const SECURITY_WANTASSERTIONSENCRYPTED = 'security_wantassertionsencrypted';

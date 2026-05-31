@@ -461,6 +461,7 @@ class Config extends CommonDBTM
             `debug`                         tinyint NOT NULL DEFAULT '0',
             `user_jit`                      tinyint NOT NULL DEFAULT '0',
             `sync_on_login`                 tinyint NOT NULL DEFAULT '0',
+            `request_timeout`               int NOT NULL DEFAULT '15',
             `sp_certificate`                TEXT NOT NULL,
             `sp_private_key`                TEXT NOT NULL,
             `sp_nameid_format`              VARCHAR(128) NOT NULL,
@@ -508,6 +509,10 @@ class Config extends CommonDBTM
 
             if (!$DB->fieldExists($table, 'saml_xml_structure', false)) {
                 $migration->addField($table, 'saml_xml_structure', 'text', ['null' => true, 'after' => 'comment', 'update' => true]);
+            }
+
+            if (!$DB->fieldExists($table, 'request_timeout', false)) {
+                $migration->addField($table, 'request_timeout', 'int', ['null' => false, 'default' => '15', 'after' => 'sync_on_login', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'sync_on_login', false)) {

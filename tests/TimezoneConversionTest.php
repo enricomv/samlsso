@@ -138,6 +138,57 @@ namespace GlpiPlugin\Samlsso\Tests {
 
             echo "✅ Timezones: Twig templates format config metadata\n";
         }
+
+        /**
+         * Test that a stale SAML login state is automatically transitioned to PHASE_TIMED_OUT.
+         */
+        public function testLoginStateRequestTimeout(): void {
+            global $DB;
+            $db = new MockDB();
+            $DB = $db;
+
+            $table = LoginState::getTable();
+
+            // Set up mock DB response for loading by SAML request ID.
+            // Simulate a request created 20 minutes ago.
+            $staleTime = date('Y-m-d H:i:s', time() - 1200);
+
+            $db->setResponse($table, [
+                [
+                    LoginState::STATE_ID => 1,
+                    LoginState::IDP_ID => 2,
+                    LoginState::USER_NAME => 'test_user',
+                    LoginState::SESSION_ID => 'abcdef123456',
+                    LoginState::SESSION_NAME => 'sid',
+                    LoginState::GLPI_AUTHED => 0,
+                    LoginState::SAML_AUTHED => 0,
+                    LoginState::LOGIN_DATETIME => $staleTime,
+                    LoginState::LAST_ACTIVITY => $staleTime,
+                    LoginState::LOCATION => 'https://glpi.local/index.php',
+                    LoginState::ENFORCE_LOGOFF => 0,
+                    LoginState::SAML_REQUEST_ID => 'req_123',
+                    LoginState::SAML_RESPONSE_ID => '',
+                    LoginState::SAML_UNSOLICITED => 0,
+                    LoginState::LOGIN_FLOW_TRACE => serialize([]),
+                    LoginState::PHASE => LoginState::PHASE_SAML_ACS,
+                    LoginState::REDIRECT => '',
+                    LoginState::CLIENT_IP => '127.0.0.1',
+                    LoginState::CLIENT_COUNTRY => 'US',
+                ]
+            ]);
+
+            // Mock ConfigEntity request timeout field response
+            \GlpiPlugin\Samlsso\Config\MockConfigEntity::$mockFields[\GlpiPlugin\Samlsso\Config\MockConfigEntity::REQUEST_TIMEOUT] = 15;
+
+            // Instantiate LoginState using the SAML Request ID (InResponseTo)
+            $loginState = new LoginState('req_123');
+
+            if ($loginState->getPhase() !== LoginState::PHASE_TIMED_OUT) {
+                throw new \Exception("Request awaiting ACS that is older than the timeout limit did not transition to PHASE_TIMED_OUT. Got: " . $loginState->getPhase());
+            }
+
+            echo "✅ LoginState: request timeout fallback verification\n";
+        }
     }
 }
 
@@ -146,6 +197,7 @@ namespace {
     try {
         $test->testLoginStateLoggingTimezones();
         $test->testTwigTemplateFormatting();
+        $test->testLoginStateRequestTimeout();
         $test = null;
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";
