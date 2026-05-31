@@ -353,7 +353,12 @@ class User
     {
         $ruleCollection = new RuleSamlCollection();
         $matchInput = [
+            User::NAME           => $userFields[User::NAME] ?? false,
+            User::REALNAME       => $userFields[User::REALNAME] ?? false,
+            User::FIRSTNAME      => $userFields[User::FIRSTNAME] ?? false,
             User::EMAIL          => $userFields[User::EMAIL],
+            User::MOBILE         => $userFields[User::MOBILE] ?? false,
+            User::PHONE          => $userFields[User::PHONE] ?? false,
             User::SAMLGROUPS     => $userFields[User::SAMLGROUPS],
             User::SAMLJOBTITLE   => $userFields[User::SAMLJOBTITLE] ?? false,
             User::SAMLCOUNTRY    => $userFields[User::SAMLCOUNTRY] ?? false,

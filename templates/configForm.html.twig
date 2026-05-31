@@ -5,6 +5,10 @@
 <script>
     // Remember tab state
     $(function() {
+        if ($.fn.select2) {
+            $('#preset_selector').select2();
+        }
+        
         $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             localStorage.setItem('lastTab', $(this).attr('href'));
         });
@@ -56,7 +60,37 @@
             var targetType = (field === 'groups') ? 'rule_field' : 'user_field';
             addRow(targetType, field, preset[field], '', (field === 'email') ? 1 : 0);
         }
-        document.getElementById('preset_selector').value = '';
+        var $tableWrap = $('#claim_mapping_tbody').closest('.table-responsive');
+        if (!$tableWrap.length) $tableWrap = $('#claim_mapping_tbody').parent();
+        
+        var $overlay = $('<div class="preset-loading-overlay"><i class="fas fa-spinner fa-spin fa-3x"></i></div>');
+        $overlay.css({
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(255, 255, 255, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10
+        });
+        
+        if ($tableWrap.css('position') === 'static') {
+            $tableWrap.css('position', 'relative');
+        }
+        
+        $tableWrap.append($overlay);
+
+        setTimeout(function() {
+            $overlay.remove();
+            if ($.fn.select2) {
+                $('#preset_selector').val('').trigger('change.select2');
+            } else {
+                document.getElementById('preset_selector').value = '';
+            }
+        }, 500);
     }
 
     function updateGlpiFields(selectElem) {
@@ -1131,6 +1165,9 @@
                     .xml-attr { color: #6f42c1; }
                     .xml-val { color: #032f62; }
                     .xml-comment { color: #6a737d; font-style: italic; }
+                    #samlsso-mapping-tools-collapse .select2-container .select2-selection.select2-selection--single .select2-selection__rendered::before {
+                        display: inline !important;
+                    }
                 </style>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">

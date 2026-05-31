@@ -129,12 +129,83 @@ class RuleSaml extends Rule
 
         if (!count($criterias)) {
             $criterias['common']                    = __('Global criteria', PLUGIN_NAME);
+
             $criterias['_useremails']['table']      = '';
             $criterias['_useremails']['field']      = '';
             $criterias['_useremails']['name']       = _n('Email', 'Emails', 1);
             $criterias['_useremails']['linkfield']  = '';
             $criterias['_useremails']['virtual']    = true;
             $criterias['_useremails']['id']         = '_useremails';
+
+            $criterias['name']['table']             = '';
+            $criterias['name']['field']             = '';
+            $criterias['name']['name']              = __('Username');
+            $criterias['name']['linkfield']         = '';
+            $criterias['name']['virtual']           = true;
+            $criterias['name']['id']                = 'name';
+
+            $criterias['realname']['table']         = '';
+            $criterias['realname']['field']         = '';
+            $criterias['realname']['name']          = __('Surname');
+            $criterias['realname']['linkfield']     = '';
+            $criterias['realname']['virtual']       = true;
+            $criterias['realname']['id']            = 'realname';
+
+            $criterias['firstname']['table']        = '';
+            $criterias['firstname']['field']        = '';
+            $criterias['firstname']['name']         = __('First name');
+            $criterias['firstname']['linkfield']    = '';
+            $criterias['firstname']['virtual']      = true;
+            $criterias['firstname']['id']           = 'firstname';
+
+            $criterias['mobile']['table']           = '';
+            $criterias['mobile']['field']           = '';
+            $criterias['mobile']['name']            = __('Mobile phone');
+            $criterias['mobile']['linkfield']       = '';
+            $criterias['mobile']['virtual']         = true;
+            $criterias['mobile']['id']              = 'mobile';
+
+            $criterias['phone']['table']            = '';
+            $criterias['phone']['field']            = '';
+            $criterias['phone']['name']             = __('Phone');
+            $criterias['phone']['linkfield']        = '';
+            $criterias['phone']['virtual']          = true;
+            $criterias['phone']['id']               = 'phone';
+
+            $criterias['samlClaimedGroups']['table']      = '';
+            $criterias['samlClaimedGroups']['field']      = '';
+            $criterias['samlClaimedGroups']['name']       = __('SAML Groups', PLUGIN_NAME);
+            $criterias['samlClaimedGroups']['linkfield']  = '';
+            $criterias['samlClaimedGroups']['virtual']    = true;
+            $criterias['samlClaimedGroups']['id']         = 'samlClaimedGroups';
+
+            $criterias['samlClaimedJobTitle']['table']    = '';
+            $criterias['samlClaimedJobTitle']['field']    = '';
+            $criterias['samlClaimedJobTitle']['name']     = __('SAML Job Title', PLUGIN_NAME);
+            $criterias['samlClaimedJobTitle']['linkfield']= '';
+            $criterias['samlClaimedJobTitle']['virtual']  = true;
+            $criterias['samlClaimedJobTitle']['id']       = 'samlClaimedJobTitle';
+
+            $criterias['country']['table']          = '';
+            $criterias['country']['field']          = '';
+            $criterias['country']['name']           = __('SAML Country', PLUGIN_NAME);
+            $criterias['country']['linkfield']      = '';
+            $criterias['country']['virtual']        = true;
+            $criterias['country']['id']             = 'country';
+
+            $criterias['city']['table']             = '';
+            $criterias['city']['field']             = '';
+            $criterias['city']['name']              = __('SAML City', PLUGIN_NAME);
+            $criterias['city']['linkfield']         = '';
+            $criterias['city']['virtual']           = true;
+            $criterias['city']['id']                = 'city';
+
+            $criterias['street']['table']           = '';
+            $criterias['street']['field']           = '';
+            $criterias['street']['name']            = __('SAML Street', PLUGIN_NAME);
+            $criterias['street']['linkfield']       = '';
+            $criterias['street']['virtual']         = true;
+            $criterias['street']['id']              = 'street';
 
             global $DB;
             if (isset($DB) && method_exists($DB, 'tableExists') && $DB->tableExists(ClaimMap::getTable())) {
