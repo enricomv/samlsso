@@ -104,6 +104,7 @@ class RuleSaml extends Rule
      */
     public function invoke(): void
     {
+        Session::checkRight(self::$rightname, READ);
         $rulecollection = new RuleSamlCollection();
         include_once  GLPI_ROOT . "/front/rule.common.php";                                      // NOSONAR - Cant be included with USE.
     }
@@ -116,6 +117,7 @@ class RuleSaml extends Rule
      */
     public function invokeForm(): void
     {
+        Session::checkRight(self::$rightname, READ);
         $rulecollection = new RuleSamlCollection();
         include_once  GLPI_ROOT . "/front/rule.common.form.php";                                 // NOSONAR - Cant be included with USE.
     }

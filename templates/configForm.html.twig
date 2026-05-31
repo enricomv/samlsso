@@ -8,6 +8,14 @@
         $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             localStorage.setItem('lastTab', $(this).attr('href'));
         });
+        // Manage d-none class for tabpanels
+        $('a[data-bs-toggle="tab"]').on('show.bs.tab', function (e) {
+            $($(e.target).attr('href') || $(e.target).data('bs-target')).removeClass('d-none');
+        });
+        $('a[data-bs-toggle="tab"]').on('hide.bs.tab', function (e) {
+            $($(e.target).attr('href') || $(e.target).data('bs-target')).addClass('d-none');
+        });
+
         var lastTab = localStorage.getItem('lastTab');
         
         var urlParams = new URLSearchParams(window.location.search);
@@ -580,7 +588,7 @@
             </div>
 
             <!-- ################################################################################-->
-            <div class="tab-pane fade" id="provider" role="tabpanel" aria-labelledby="provider-tab">
+            <div class="tab-pane fade d-none" id="provider" role="tabpanel" aria-labelledby="provider-tab">
                 <div class="card-body">
 
                     <!-- Service provider details -->
@@ -727,7 +735,7 @@
 
             <!-- ################################################################################-->
             <!-- Identity provider details -->
-            <div class="tab-pane fade" id="idp" role="tabpanel" aria-labelledby="idp-tab">
+            <div class="tab-pane fade d-none" id="idp" role="tabpanel" aria-labelledby="idp-tab">
                 <div class="card-body">
                      <!-- idp_entity_id -->
                      <div>
@@ -868,7 +876,7 @@
 
             <!-- ################################################################################-->
             <!-- Security details -->
-            <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="idp-tab">
+            <div class="tab-pane fade d-none" id="security" role="tabpanel" aria-labelledby="idp-tab">
                 <div class="card-body">
                     <!-- enforce SSO -->
                     <div>
@@ -1331,7 +1339,7 @@
             </div>
             <!-- ################################################################################-->
             <!-- Logging details -->
-            <div class="tab-pane fade" id="logging" role="tabpanel" aria-labelledby="logging-tab">
+            <div class="tab-pane fade d-none" id="logging" role="tabpanel" aria-labelledby="logging-tab">
                 <style>
                     /* Styling for custom logging tab */
                     .logging-badge {
@@ -1499,9 +1507,13 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-2">
-                                                        <span class="avatar avatar-xs rounded-circle bg-blue-lt">
-                                                            {{ logrow.userName|slice(0, 2)|upper }}
-                                                        </span>
+                                                        {% if logrow.avatarUrl is not empty %}
+                                                            <span class="avatar avatar-xs rounded-circle" style="background-image: url({{ logrow.avatarUrl }})"></span>
+                                                        {% else %}
+                                                            <span class="avatar avatar-xs rounded-circle bg-blue-lt">
+                                                                {{ logrow.userName|slice(0, 2)|upper }}
+                                                            </span>
+                                                        {% endif %}
                                                         <div>
                                                             <div class="font-weight-medium">
                                                                 {{ logrow.userName }}
@@ -1511,7 +1523,7 @@
                                                                     </span>
                                                                 {% endif %}
                                                             </div>
-                                                            <div class="text-muted fs-8 font-monospace" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ logrow.sessionId }}">
+                                                            <div class="text-muted fs-8 font-monospace" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-bs-toggle="tooltip" title="Session ID: {{ logrow.sessionId }}">
                                                                 {{ logrow.sessionId }}
                                                             </div>
                                                         </div>
@@ -1535,7 +1547,13 @@
                                                     {% if logrow.phase == 1 %}
                                                         <span class="logging-badge logging-badge-phase-1" title="Phase 1: Initial visit">{{ __("Initial") }}</span>
                                                     {% elseif logrow.phase == 2 %}
-                                                        <span class="logging-badge logging-badge-phase-2" title="Phase 2: SAML IDP call expected back at ACS">{{ __("SAML ACS Expected") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-2" 
+                                                              data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                                                              data-bs-content="{{ __("The identity provider was contacted, but GLPI didn't receive a successful response back at the ACS endpoint.<br><br><b>Common Solutions:</b><br>&bull; Verify the <strong>Reply URL</strong> in IdP matches the plugin setting <code>AcsUrl</code> exactly.<br>&bull; If using a reverse proxy, ensure the plugin setting <code>REQUESTS PROXIED</code> is enabled to trust <strong>X-Forwarded-Proto</strong> headers.<br>&bull; Check if the user closed the browser during login.")|e('html_attr') }}" 
+                                                              title="{{ __('Phase 2: SAML ACS Expected') }}"
+                                                              style="cursor: help;">
+                                                            {{ __("SAML ACS Expected") }}
+                                                        </span>
                                                     {% elseif logrow.phase == 3 %}
                                                         <span class="logging-badge logging-badge-phase-3" title="Phase 3: Performed SAML IDP authentication">{{ __("SAML Authed") }}</span>
                                                     {% elseif logrow.phase == 4 %}

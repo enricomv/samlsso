@@ -688,6 +688,11 @@ class LoginState extends CommonDBTM
         $altUser = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : 'CLI';
         $remote = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $altUser;
         $this->state[LoginState::USER_NAME] = (!empty($_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR])) ? $_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR] : $remote;
+
+        // Populate GLPI User ID once authenticated
+        if (!empty($_SESSION['glpiID'])) {
+            $this->state[LoginState::USER_ID] = (int) $_SESSION['glpiID'];
+        }
     }
 
     /**
@@ -721,7 +726,19 @@ class LoginState extends CommonDBTM
 
             $offset = ($page - 1) * $limit;
             $query = [
+                'SELECT' => [
+                    LoginState::getTable() . '.*',
+                    'glpi_users.picture AS userPicture'
+                ],
                 'FROM' => LoginState::getTable(),
+                'LEFT JOIN' => [
+                    'glpi_users' => [
+                        'ON' => [
+                            LoginState::getTable() => 'userId',
+                            'glpi_users' => 'id'
+                        ]
+                    ]
+                ],
                 'WHERE' => $where,
                 'ORDER' => [LoginState::STATE_ID . ' DESC'],
                 'LIMIT' => $limit
@@ -837,6 +854,10 @@ class LoginState extends CommonDBTM
                     }
                 }
 
+                $row['avatarUrl'] = '';
+                if (!empty($row['userPicture']) && class_exists('\User') && method_exists('\User', 'getURLForPicture')) {
+                    $row['avatarUrl'] = \User::getURLForPicture($row['userPicture']);
+                }
                 $logging[$id] = $row;
             }
         }

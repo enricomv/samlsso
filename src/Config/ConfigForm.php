@@ -73,6 +73,7 @@ class ConfigForm    //NOSONAR complexity by design.
      */
     public function invoke(Request $request)
     {
+        Session::checkRight('config', READ);
         $action = (string) $request->get('action', '');
 
         // Handle bulk export (download) action - no page rendering needed
@@ -84,7 +85,6 @@ class ConfigForm    //NOSONAR complexity by design.
         if ($action === 'restore_all' && $request->isMethod('POST')) {
             return $this->restoreAllConfigs($request);
         }
-
         $this->displayUIHeader();
         $this->renderBackupRestoreCard();
         Search::show(Config::class);
@@ -444,24 +444,27 @@ HTML;
         // Add using template
         if( !$inputBag->has('update')     &&
             !$inputBag->has('delete')     ){                                // IF the update is empy load a given template for initial form.
-
+            Session::checkRight('config', READ);
             $this->displayUIHeader();
             return $this->showForm($id, $options);                  // Return the form
     
         // Add new item
         }elseif($inputBag->has('update')  &&                                // IF we received an update
                 $id == -1                 ){                                    // AND ID param is empty
+            Session::checkRight('config', UPDATE);
             $this->displayUIHeader();
             return $this->addSamlConfig($inputBag->getIterator());  // Call Create handler
 
         // Update an item
         }elseif($inputBag->has('update')  &&                                    // IF update is set
                 $id > 0                   ){                                    // AND $id is higher than 0
+            Session::checkRight('config', UPDATE);
             return $this->updateSamlConfig($inputBag->getIterator());
 
         // Delete an item
         }elseif($inputBag->has('delete')  &&                                    // IF get delete
                 $id > 0                   ){                                    // AND $id is higer then 0
+           Session::checkRight('config', UPDATE);
            return $this->deleteSamlConfig($inputBag->getIterator());
         }else{
             $this->displayUIHeader();

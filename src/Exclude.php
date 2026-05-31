@@ -119,16 +119,15 @@ class Exclude extends CommonDropdown
     {
         return 'fa-regular fa-eye-slash';
     }
-
     public function invoke()
     {
+        Session::checkRight('config', READ);
         Html::header(
             __('samlSSO Excludes', PLUGIN_NAME),
             SamlSsoController::EXCLUDE_ROUTE,
             SamlSsoController::EXCLUDE_PNAME,
             self::class
         );
-
         Search::show(Exclude::class);
         Html::footer();
     }
