@@ -966,12 +966,16 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-2">
-                                                        <span class="avatar avatar-xs rounded-circle bg-blue-lt">
-                                                            {{ logrow.userName|slice(0, 2)|upper }}
-                                                        </span>
+                                                        {% if logrow.avatarUrl is not empty %}
+                                                            <span class="avatar avatar-xs rounded-circle" style="background-image: url({{ logrow.avatarUrl }})"></span>
+                                                        {% else %}
+                                                            <span class="avatar avatar-xs rounded-circle bg-blue-lt">
+                                                                {{ logrow.userName|slice(0, 2)|upper }}
+                                                            </span>
+                                                        {% endif %}
                                                         <div>
                                                             <div class="font-weight-medium">{{ logrow.userName }}</div>
-                                                            <div class="text-muted fs-8 font-monospace" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ logrow.sessionId }}">
+                                                            <div class="text-muted fs-8 font-monospace" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-bs-toggle="tooltip" title="Session ID: {{ logrow.sessionId }}">
                                                                 {{ logrow.sessionId }}
                                                             </div>
                                                         </div>

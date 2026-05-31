@@ -672,7 +672,19 @@ class LoginState extends CommonDBTM
 
             $offset = ($page - 1) * $limit;
             $query = [
+                'SELECT' => [
+                    LoginState::getTable() . '.*',
+                    'glpi_users.picture AS userPicture'
+                ],
                 'FROM' => LoginState::getTable(),
+                'LEFT JOIN' => [
+                    'glpi_users' => [
+                        'ON' => [
+                            LoginState::getTable() => 'userId',
+                            'glpi_users' => 'id'
+                        ]
+                    ]
+                ],
                 'WHERE' => $where,
                 'ORDER' => [LoginState::STATE_ID . ' DESC'],
                 'LIMIT' => $limit
@@ -695,6 +707,12 @@ class LoginState extends CommonDBTM
                 }
 
                 $row[LoginState::LOGIN_FLOW_TRACE] = $trace;
+                
+                $row['avatarUrl'] = '';
+                if (!empty($row['userPicture']) && class_exists('\User') && method_exists('\User', 'getURLForPicture')) {
+                    $row['avatarUrl'] = \User::getURLForPicture($row['userPicture']);
+                }
+                
                 $logging[$id] = $row;
             }
         }
