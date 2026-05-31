@@ -209,6 +209,19 @@ class LoginFlow extends CommonDBTM
             return;
         }
 
+        // Do not process login flow if the user is already logged in, unless they are logging out
+        $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        if (!is_string($requestPath)) {
+            $requestPath = '';
+        }
+        $isLogout = (strpos($requestPath, 'front/logout') !== false) ||
+                    isset($_GET[self::SLOLOGOUT]) ||
+                    isset($_GET[self::LOCALLOGOUT]);
+
+        if (!$isLogout && Session::getLoginUserID() !== false) {
+            return;
+        }
+
 
         // Dont process anything if we are handling an ACS call.
         // Generating a state in this phase will taint it because we

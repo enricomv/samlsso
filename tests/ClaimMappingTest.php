@@ -697,6 +697,9 @@ XML;
             $this->db->insertedRows = [];
 
             // Simulate the restore logic inline (mirrors ConfigForm::restoreAllConfigs)
+            // To simulate an older backup format, remove the request_timeout field from the decoded config entry
+            unset($decoded['configurations'][0]['config']['request_timeout']);
+            unset($decoded['configurations'][1]['config']['request_timeout']);
             $data = $decoded;
 
             // Delete all existing (clean restore)
@@ -705,6 +708,7 @@ XML;
 
             $restoredCount = 0;
             $now = date('Y-m-d H:i:s');
+            $defaultTpl = \GlpiPlugin\Samlsso\Config\ConfigDefaultTpl::template();
 
             foreach ($data['configurations'] as $index => $entry) {
                 if (!isset($entry['config']) || !is_array($entry['config'])) {
@@ -722,6 +726,8 @@ XML;
                     }
                     if (array_key_exists($field, $cfgData)) {
                         $insertRow[$field] = $cfgData[$field];
+                    } elseif (array_key_exists($field, $defaultTpl)) {
+                        $insertRow[$field] = is_bool($defaultTpl[$field]) ? ($defaultTpl[$field] ? 1 : 0) : $defaultTpl[$field];
                     }
                 }
                 $DB->insert('glpi_plugin_samlsso_configs', $insertRow);

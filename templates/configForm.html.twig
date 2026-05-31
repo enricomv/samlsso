@@ -1654,16 +1654,10 @@
                                                 </td>
                                                 <td class="text-center text-nowrap">
                                                     {% if logrow.isUserActive == 1 and logrow.phase != 6 and logrow.phase != 8 %}
-                                                        <form action="{{ glpi_rootdoc }}" method="POST" style="display: inline-block;" onsubmit="return confirm('{{ __("Are you sure you want to disable this user and force logoff?") }}');">
-                                                            <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token }}">
-                                                            <input type="hidden" name="action" value="forcelogoff">
-                                                            <input type="hidden" name="state_id" value="{{ logrow.id }}">
-                                                            <input type="hidden" name="id" value="{{ inputfields.id.value }}">
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
-                                                                <i class="ti ti-user-off fs-4"></i>
-                                                                {{ __("Force Logoff & Disable") }}
-                                                            </button>
-                                                        </form>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1" onclick="samlssoForceLogoff({{ logrow.id }}, {{ inputfields.id.value }})">
+                                                            <i class="ti ti-user-off fs-4"></i>
+                                                            {{ __("Force Logoff & Disable") }}
+                                                        </button>
                                                     {% else %}
                                                         <span class="text-muted fs-7">-</span>
                                                     {% endif %}
@@ -1910,3 +1904,21 @@
     </div>
 </div>
 {{ close_form|raw }}
+
+<!-- Standalone form for Force Logoff & Disable to prevent nested form submissions -->
+<form id="samlsso-forcelogoff-form" action="{{ glpi_rootdoc }}" method="POST" style="display:none;">
+    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="forcelogoff">
+    <input type="hidden" name="state_id" id="samlsso-forcelogoff-state-id" value="">
+    <input type="hidden" name="id" id="samlsso-forcelogoff-config-id" value="">
+</form>
+
+<script>
+function samlssoForceLogoff(stateId, configId) {
+    if (confirm('{{ __("Are you sure you want to disable this user and force logoff?")|escape("js") }}')) {
+        document.getElementById('samlsso-forcelogoff-state-id').value = stateId;
+        document.getElementById('samlsso-forcelogoff-config-id').value = configId;
+        document.getElementById('samlsso-forcelogoff-form').submit();
+    }
+}
+</script>

@@ -413,10 +413,8 @@ class ConfigEntity extends ConfigItem
             ])));
 
             if ($otherActiveCount > 0) {
-                if (!empty($fields[configEntity::ENFORCE_SSO][configItem::VALUE])) {
-                    $fields[configEntity::ENFORCE_SSO][configItem::VALUE] = 0;
-                    $fields[configEntity::ENFORCE_SSO][configItem::ERRORS] = __('⚠️ IDPs cannot be enforced if more than one is present in the IDP list.', PLUGIN_NAME);
-                }
+                $fields[configEntity::ENFORCE_SSO][configItem::VALUE] = 0;
+                $fields[configEntity::ENFORCE_SSO][configItem::ERRORS] = __('⚠️ IDPs cannot be enforced if more than one is present in the IDP list.', PLUGIN_NAME);
             }
         }
 

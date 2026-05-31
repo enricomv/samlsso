@@ -348,14 +348,17 @@ HTML;
             }
 
             // Build insert row; only use known fields that are present in export
+            $defaultTpl = ConfigDefaultTpl::template();
             $insertRow = [ConfigEntity::IS_DELETED => 0, 'date_creation' => $now, 'date_mod' => $now];
             foreach ($exportFields as $field) {
                 if ($field === ConfigEntity::ID) {
                     $insertRow['id'] = $origId;
                     continue;
                 }
-                if (array_key_exists($field, $cfgData)) {
+                if (array_key_exists($field, $cfgData) && $cfgData[$field] !== null) {
                     $insertRow[$field] = $cfgData[$field];
+                } elseif (array_key_exists($field, $defaultTpl)) {
+                    $insertRow[$field] = is_bool($defaultTpl[$field]) ? ($defaultTpl[$field] ? 1 : 0) : $defaultTpl[$field];
                 }
             }
 

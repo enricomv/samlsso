@@ -1,5 +1,8 @@
 
 **V1.3.0**
+- Fix: Resolved a critical nested form structure conflict in the Twig template (`configForm.html.twig`) that incorrectly triggered `forcelogoff` actions when saving configuration updates.
+- Fix: Prevented SSO login/redirection flow interception on active administrator sessions by skipping `doAuth()` and local login blocks if `Session::getLoginUserID()` is active.
+- Fix: Ensured the multiple active IDPs warning message is always displayed on the Enforce SSO field in the configuration UI when more than one IDP is active.
 - Feature: Added configurable SAML request timeout fallback to automatically expire stale authentication states after a set duration (default 15 minutes) - by @eduardomozart
 - Security Fix: Addressed local login SSO enforcement bypass securely using server-side session variable checks instead of a spoofable Referer check - by @eduardomozart
 - Merged PR 114: Added country code 'ZZ' fallback tooltip and image display - by @eduardomozart

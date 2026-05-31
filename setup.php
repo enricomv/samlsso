@@ -124,7 +124,7 @@ function plugin_init_samlsso(): void                                            
     // Check if bypass flag exists in the whitelisted plugin session namespace
     $is_bypassed = !empty($_SESSION['glpi_plugins']['samlsso']['bypass']);
 
-    if ($is_login_post && !$is_bypassed) {
+    if ($is_login_post && !$is_bypassed && Session::getLoginUserID() === false) {
         if (Config::getIsEnforced()) {
             // Log the blocked login attempt to the plugin events log
             Toolbox::logInFile(

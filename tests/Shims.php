@@ -227,10 +227,19 @@ namespace {
              */
             public static function init($auth): void {}
 
+            public static $userId = false;
+
             /**
              * Mocks Session cleanOnLogout.
              */
             public static function cleanOnLogout(): void {}
+
+            /**
+             * Mocks Session getLoginUserID.
+             */
+            public static function getLoginUserID($force_human = true) {
+                return self::$userId;
+            }
         }
     }
 
