@@ -639,6 +639,11 @@ class LoginState extends CommonDBTM
         $altUser = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : 'CLI';
         $remote = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $altUser;
         $this->state[LoginState::USER_NAME] = (!empty($_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR])) ? $_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR] : $remote;
+
+        // Populate GLPI User ID once authenticated
+        if (!empty($_SESSION['glpiID'])) {
+            $this->state[LoginState::USER_ID] = (int) $_SESSION['glpiID'];
+        }
     }
 
     /**
