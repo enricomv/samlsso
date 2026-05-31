@@ -350,7 +350,7 @@ class ConfigItem    //NOSONAR
     protected function conf_icon(mixed $var): array                     //NOSONAR
     {
         return [
-            ConfigItem::FORMEXPLAIN => __('The FontAwesome (https://fontawesome.com/) icon to show on the button on the login page.', PLUGIN_NAME),
+            ConfigItem::FORMEXPLAIN => sprintf(__('The FontAwesome (%s) icon to show on the button on the login page.', PLUGIN_NAME), 'https://fontawesome.com/'),
             ConfigItem::FORMTITLE => __('LOGIN ICON', PLUGIN_NAME),
             ConfigItem::EVAL      => ConfigItem::VALID,
             ConfigItem::VALUE     => (string) $var,

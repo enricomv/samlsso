@@ -568,7 +568,7 @@ HTML;
             }
         }else{
             // Leave an error message and reload the form with provided values and errors
-            Session::addMessageAfterRedirect(__('Configuration invalid please correct all ⭕ errors first', PLUGIN_NAME));
+            Session::addMessageAfterRedirect(__('Configuration invalid, please correct all ⭕ errors first', PLUGIN_NAME));
             $this->displayUIHeader();
             return new Response($this->generateForm($configEntity));
         }

@@ -153,7 +153,7 @@ class Acs extends LoginFlow
             $this->assertSaml();
         } else {
             $this->printError(
-                __('The received idp response did not contain the required samlResponse POST body or idpId to authenticate the user, see: https://codeberg.org/QuinQuies/glpisaml/wiki/ACS.php for more information', PLUGIN_NAME),
+                sprintf(__('The received idp response did not contain the required samlResponse POST body or idpId to authenticate the user, see: %s for more information', PLUGIN_NAME), 'https://codeberg.org/QuinQuies/glpisaml/wiki/ACS.php'),
                 __('Samlsso->acs->init->NoSamlResponse', PLUGIN_NAME),
                 Acs::EXTENDED_HEADER .
                     Acs::SERVER_OBJ . var_export($_SERVER, true) . "\n\n" .
@@ -224,7 +224,7 @@ class Acs extends LoginFlow
             // All references to state removed when state doesnt exist yet.
             // Fix for: https://github.com/DonutsNL/samlsso/issues/104
             $this->printError(
-                __("Could not fetch loginState from database with error: <br><br>$e<br><br>See: https://codeberg.org/QuinQuies/glpisaml/wiki/LoginState.php for more information.", PLUGIN_NAME),
+                sprintf(__("Could not fetch loginState from database with error: <br><br>%s<br><br>See: %s for more information.", PLUGIN_NAME), $e, 'https://codeberg.org/QuinQuies/glpisaml/wiki/LoginState.php'),
                 __('Samlsso->acs->init->LoginState::construct', PLUGIN_NAME)
             );
         }
@@ -276,12 +276,12 @@ class Acs extends LoginFlow
             !$this->state->checkResponseIdUnique($currentResponseId)
         ) {
             $this->printError(
-                __("It looks like this samlResponse has already been used to authenticate a different user.
+                sprintf(__("It looks like this samlResponse has already been used to authenticate a different user.
                     Maybe an error occurred and you pressed F5 and accidently resend the samlResponse that is
                     already registered as processed. For security reasons we can not allow processed samlResponses
                     to be processed again. Please login again to generate a new samlResponse. Sorry for any inconvenience.
                     If the problem presists, then please contact your administrator.
-                    See: https://codeberg.org/QuinQuies/glpisaml/wiki/LoginState.php for more information", PLUGIN_NAME),
+                    See: %s for more information", PLUGIN_NAME), 'https://codeberg.org/QuinQuies/glpisaml/wiki/LoginState.php'),
                 __('Samlsso->acs->assertSaml->LoginState::checkResponseIdUnique', PLUGIN_NAME),
                 Acs::EXTENDED_HEADER .
                     "samlResponse with registered ID was replayed in acs.php. Possibly the user pressed F5 when encountering
@@ -317,10 +317,10 @@ class Acs extends LoginFlow
         if ($this->state->getPhase() != LoginState::PHASE_SAML_ACS) {
             // Generate error and log state and response into the errorlog.
             $this->printError(
-                __("GLPI did not expect an assertion from this Idp. The most likely reason is a race condition
+                sprintf(__("GLPI did not expect an assertion from this Idp. The most likely reason is a race condition
                     causing an inconsistant loginState in the database or software bug. Please login again via the
-                    GLPI-interface. Sorry for the inconvenience. See: https://github.com/DonutsNL/samlsso/wiki/Unsollicited-%E2%80%90-IdP-initiated-login-flows
-                    for more information", PLUGIN_NAME),
+                    GLPI-interface. Sorry for the inconvenience. See: %s
+                    for more information", PLUGIN_NAME), 'https://github.com/DonutsNL/samlsso/wiki/Unsollicited-%E2%80%90-IdP-initiated-login-flows'),
                 __('Samlsso->acs->assertSaml->PhaseMismatched', PLUGIN_NAME),
                 Acs::EXTENDED_HEADER .
                     __("Unexpected assertion triggered while session was in a different phase then expected (2). This error was triggered by external source
