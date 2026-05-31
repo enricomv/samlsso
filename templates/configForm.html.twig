@@ -18,6 +18,15 @@
         if (lastTab) {
             $('[href="' + lastTab + '"]').tab('show');
         }
+
+        // Manage d-none class for tabpanels
+        $('.tab-pane').not('.show').addClass('d-none');
+        $('a[data-bs-toggle="tab"]').on('show.bs.tab', function (e) {
+            $($(e.target).attr('href') || $(e.target).data('bs-target')).removeClass('d-none');
+        });
+        $('a[data-bs-toggle="tab"]').on('hide.bs.tab', function (e) {
+            $($(e.target).attr('href') || $(e.target).data('bs-target')).addClass('d-none');
+        });
     });
     // Clipboard function
     function copyClip(key) {
@@ -362,7 +371,7 @@
             </div>
 
             <!-- ################################################################################-->
-            <div class="tab-pane fade" id="provider" role="tabpanel" aria-labelledby="provider-tab">
+            <div class="tab-pane fade d-none" id="provider" role="tabpanel" aria-labelledby="provider-tab">
                 <div class="card-body">
 
                     <!-- Service provider details -->
@@ -510,7 +519,7 @@
 
             <!-- ################################################################################-->
             <!-- Identity provider details -->
-            <div class="tab-pane fade" id="idp" role="tabpanel" aria-labelledby="idp-tab">
+            <div class="tab-pane fade d-none" id="idp" role="tabpanel" aria-labelledby="idp-tab">
                 <div class="card-body">
                      <!-- idp_entity_id -->
                      <div>
@@ -651,7 +660,7 @@
 
             <!-- ################################################################################-->
             <!-- Security details -->
-            <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="idp-tab">
+            <div class="tab-pane fade d-none" id="security" role="tabpanel" aria-labelledby="idp-tab">
                 <div class="card-body">
                     <!-- enforce SSO -->
                     <div>
@@ -791,7 +800,7 @@
             </div>
             <!-- ################################################################################-->
             <!-- Logging details -->
-            <div class="tab-pane fade" id="logging" role="tabpanel" aria-labelledby="logging-tab">
+            <div class="tab-pane fade d-none" id="logging" role="tabpanel" aria-labelledby="logging-tab">
                 <style>
                     /* Styling for custom logging tab */
                     .logging-badge {
