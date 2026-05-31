@@ -73,7 +73,7 @@ class Meta
                 $samlSettings = new Settings($configEntity->getPhpSamlConfig());    // Get the samlConfig using the provided ID.
                 if ( !$metadata = $samlSettings->getSPMetadata() ) {                // Get the Serviceprovider metadata.
                     $metadata = self::STAG.                                         // Set error if something is wrong
-                                __("Error fetching spMetedata.",PLUGIN_NAME).
+                                __("Error fetching spMetadata.",PLUGIN_NAME).
                                 self::ETAG;
                 }
             }else{
