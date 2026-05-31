@@ -601,6 +601,12 @@
                         ) }}
 
                         <!-- Meta URL -->
+                        {% set meta_helper %}
+                            {% if inputfields.debug.value == false %}
+                                <span class="form-help ms-2" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="Debug is 
+                                disabled, metadata will only be exposed if 'debug' is enabled.">⚠️</span>
+                            {% endif %}
+                        {% endset %}
                         {{ fields.textField(
                             'MetaUrl', 
                             metaUrl, 
@@ -609,6 +615,7 @@
                                 'id': 'MetaUrl',
                                 'disabled':true,
                                 'is_copyable': true,
+                                'add_field_html': meta_helper,
                                 helper: __('The location of the metadata provider for this service provider (GLPI). The meta location can be
                                             used by the identity provider to collect important information from this service provider like
                                             what public certificate to use for signing and encrypting the SamlResponse.'),
