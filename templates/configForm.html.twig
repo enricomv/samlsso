@@ -605,8 +605,8 @@
                             <div class="btn-group btn-group-sm d-flex">
                                 <input type="text" id="MetaUrl" class="form-control rounded-end-0" name="MetaUrl" value="{{ metaUrl }}" readonly="readonly">
                                 {% if inputfields.debug.value == false %}
-                                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Debug is disabled, metadata will only be exposed if 'debug' is enabled.">
-                                        <i class="ti ti-alert-triangle"></i>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Debug is disabled, metadata will only be exposed if 'debug' is enabled.">
+                                        <i class="ti ti-alert-triangle text-warning"></i>
                                     </button>
                                 {% endif %}
                                 <button type="button" class="btn btn-outline-secondary" onclick="copyDisclosablePasswordFieldToClipboard('MetaUrl')">
