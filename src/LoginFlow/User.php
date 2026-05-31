@@ -356,14 +356,15 @@ class User
             User::NAME           => $userFields[User::NAME] ?? false,
             User::REALNAME       => $userFields[User::REALNAME] ?? false,
             User::FIRSTNAME      => $userFields[User::FIRSTNAME] ?? false,
-            User::EMAIL          => $userFields[User::EMAIL] ?? false,
+            User::EMAIL          => $userFields[User::EMAIL],
             User::MOBILE         => $userFields[User::MOBILE] ?? false,
             User::PHONE          => $userFields[User::PHONE] ?? false,
-            User::SAMLGROUPS     => $userFields[User::SAMLGROUPS] ?? false,
+            User::SAMLGROUPS     => $userFields[User::SAMLGROUPS],
             User::SAMLJOBTITLE   => $userFields[User::SAMLJOBTITLE] ?? false,
             User::SAMLCOUNTRY    => $userFields[User::SAMLCOUNTRY] ?? false,
             User::SAMLCITY       => $userFields[User::SAMLCITY] ?? false,
             User::SAMLSTREET     => $userFields[User::SAMLSTREET] ?? false,
+            'groups'             => $userFields[User::SAMLGROUPS],
         ];
 
         if (isset($userFields['_saml_rule_fields']) && is_array($userFields['_saml_rule_fields'])) {
