@@ -364,7 +364,6 @@ class User
             User::SAMLCOUNTRY    => $userFields[User::SAMLCOUNTRY] ?? false,
             User::SAMLCITY       => $userFields[User::SAMLCITY] ?? false,
             User::SAMLSTREET     => $userFields[User::SAMLSTREET] ?? false,
-            'groups'             => $userFields[User::SAMLGROUPS] ?? false,
         ];
 
         if (isset($userFields['_saml_rule_fields']) && is_array($userFields['_saml_rule_fields'])) {
