@@ -5,6 +5,10 @@
 <script>
     // Remember tab state
     $(function() {
+        if ($.fn.select2) {
+            $('#preset_selector').select2();
+        }
+        
         $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             localStorage.setItem('lastTab', $(this).attr('href'));
         });
@@ -56,7 +60,11 @@
             var targetType = (field === 'groups') ? 'rule_field' : 'user_field';
             addRow(targetType, field, preset[field], '', (field === 'email') ? 1 : 0);
         }
-        document.getElementById('preset_selector').value = '';
+        if ($.fn.select2) {
+            $('#preset_selector').val('').trigger('change.select2');
+        } else {
+            document.getElementById('preset_selector').value = '';
+        }
     }
 
     function updateGlpiFields(selectElem) {
