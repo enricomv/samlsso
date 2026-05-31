@@ -66,6 +66,7 @@ class LoginFlowForm    //NOSONAR complexity by design.
      */
     public function init(): void
     {
+        Session::checkRight('config', READ);
         Html::header(__('Identity providers'),
                      SamlSsoController::FLOWFORM_ROUTE,
                      SamlSsoController::FLOWFORM_PNAME,
@@ -83,6 +84,7 @@ class LoginFlowForm    //NOSONAR complexity by design.
      */
     public function updateSamlConfig(array $postData): string
     {
+        Session::checkRight('config', UPDATE);
         // Populate configEntity using post;
         $loginFlowEntity = new LoginFlowEntity(1, ['template' => 'post', 'postData' => $postData]);
         // Validate configEntity
@@ -120,6 +122,7 @@ class LoginFlowForm    //NOSONAR complexity by design.
      */
     public function showForm(int $id, array $options = []): string
     {
+        Session::checkRight('config', READ);
         if($id === -1 || $id > 0){
             // Generate form using a template
             return $this->generateForm(new LoginFlowEntity($id, $options));

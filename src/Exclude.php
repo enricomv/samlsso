@@ -121,6 +121,7 @@ class Exclude extends CommonDropdown
 
     public function invoke()
     {
+        Session::checkRight('config', READ);
         Html::header(__('samlSSO Excludes'),
         SamlSsoController::EXCLUDE_ROUTE,
         SamlSsoController::EXCLUDE_PNAME,

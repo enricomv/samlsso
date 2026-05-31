@@ -92,12 +92,14 @@ class RuleSaml extends Rule
 
     public function invoke()
     {
+        Session::checkRight(self::$rightname, READ);
         $rulecollection = new RuleSamlCollection();
         include_once  GLPI_ROOT . "/front/rule.common.php";                                      // NOSONAR - Cant be included with USE.
     }
 
     public function invokeForm()
     {
+        Session::checkRight(self::$rightname, READ);
         $rulecollection = new RuleSamlCollection();
         include_once  GLPI_ROOT . "/front/rule.common.form.php";                                 // NOSONAR - Cant be included with USE.
     }
