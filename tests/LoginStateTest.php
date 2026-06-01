@@ -45,10 +45,10 @@
 declare(strict_types=1);
 
 /**
- * TimezoneConversionTest.php
+ * LoginStateTest.php
  *
- * Validates that all displayed/logged database timestamps (which are UTC in DB)
- * are properly converted/formatted into localized timezones for presentation.
+ * Validates LoginState database interaction, raw timestamp conversion into 
+ * localized timezones for presentation, and state phase transitions (timeouts, session expiry).
  */
 
 namespace GlpiPlugin\Samlsso\Tests {
@@ -60,9 +60,9 @@ namespace GlpiPlugin\Samlsso\Tests {
     use GlpiPlugin\Samlsso\LoginState;
 
     /**
-     * TimezoneConversionTest class.
+     * LoginStateTest class.
      */
-    class TimezoneConversionTest {
+    class LoginStateTest {
 
         /**
          * Test that LoginState::getLoggingEntries correctly formats database raw UTC timestamps.
@@ -188,15 +188,75 @@ namespace GlpiPlugin\Samlsso\Tests {
 
             echo "✅ LoginState: request timeout fallback verification\n";
         }
+
+        /**
+         * Test that LoginState transitions PHASE_GLPI_AUTH to PHASE_INITIAL when
+         * the GLPI session has expired (negative path), but keeps PHASE_GLPI_AUTH
+         * when the session remains active (positive path).
+         */
+        public function testLoginStateSessionExpiry(): void {
+            global $DB;
+            $db = new MockDB();
+            $DB = $db;
+
+            $table = LoginState::getTable();
+
+            // Set up mock DB response for loading by current PHP session ID.
+            $now = gmdate('Y-m-d H:i:s');
+            $db->setResponse($table, [
+                [
+                    LoginState::STATE_ID => 1,
+                    LoginState::IDP_ID => 2,
+                    LoginState::USER_NAME => 'test_user',
+                    LoginState::SESSION_ID => session_id(),
+                    LoginState::SESSION_NAME => 'sid',
+                    LoginState::GLPI_AUTHED => 1,
+                    LoginState::SAML_AUTHED => 1,
+                    LoginState::LOGIN_DATETIME => $now,
+                    LoginState::LAST_ACTIVITY => $now,
+                    LoginState::LOCATION => 'https://glpi.local/index.php',
+                    LoginState::ENFORCE_LOGOFF => 0,
+                    LoginState::SAML_REQUEST_ID => '',
+                    LoginState::SAML_RESPONSE_ID => '',
+                    LoginState::SAML_UNSOLICITED => 0,
+                    LoginState::LOGIN_FLOW_TRACE => serialize([]),
+                    LoginState::PHASE => LoginState::PHASE_GLPI_AUTH,
+                    LoginState::REDIRECT => '',
+                    LoginState::CLIENT_IP => '127.0.0.1',
+                    LoginState::CLIENT_COUNTRY => 'US',
+                ]
+            ]);
+
+            // --- POSITIVE PATH: Session is active and authenticated in GLPI ---
+            $_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR] = 'test_user';
+            $_SESSION[LoginState::SESSION_VALID_ID_ACCESSOR] = session_id();
+
+            $loginStateActive = new LoginState();
+            if ($loginStateActive->getPhase() !== LoginState::PHASE_GLPI_AUTH) {
+                throw new \Exception("Active session incorrectly changed phase. Expected PHASE_GLPI_AUTH (4), got: " . $loginStateActive->getPhase());
+            }
+
+            // --- NEGATIVE PATH: Session is expired (empty $_SESSION) ---
+            unset($_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR]);
+            unset($_SESSION[LoginState::SESSION_VALID_ID_ACCESSOR]);
+
+            $loginStateExpired = new LoginState();
+            if ($loginStateExpired->getPhase() !== LoginState::PHASE_INITIAL) {
+                throw new \Exception("Expired session failed to transition phase. Expected PHASE_INITIAL (1), got: " . $loginStateExpired->getPhase());
+            }
+
+            echo "✅ LoginState: session expiration phase transition (positive & negative paths)\n";
+        }
     }
 }
 
 namespace {
-    $test = new GlpiPlugin\Samlsso\Tests\TimezoneConversionTest();
+    $test = new GlpiPlugin\Samlsso\Tests\LoginStateTest();
     try {
         $test->testLoginStateLoggingTimezones();
         $test->testTwigTemplateFormatting();
         $test->testLoginStateRequestTimeout();
+        $test->testLoginStateSessionExpiry();
         $test = null;
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";
