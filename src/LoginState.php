@@ -461,6 +461,9 @@ class LoginState extends CommonDBTM
             $this->state[LoginState::PHASE] = LoginState::PHASE_GLPI_AUTH;
         } else {
             $this->state[LoginState::GLPI_AUTHED] = false;
+            if ($this->state[LoginState::PHASE] === LoginState::PHASE_GLPI_AUTH) {
+                $this->state[LoginState::PHASE] = LoginState::PHASE_INITIAL;
+            }
         }
     }
 

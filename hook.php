@@ -211,6 +211,15 @@ function plugin_samlsso_install(): bool                                         
             $class::install($migration);
         }
     }
+
+    /**
+     * Proactively reset all GLPI caches (such as configurations, routing tables,
+     * templates, and database schemas) to prevent GLPI from serving stale data.
+     */
+    if (class_exists(\Glpi\Cache\CacheManager::class)) {
+        (new \Glpi\Cache\CacheManager())->resetAllCaches();
+    }
+
     return true;
 }
 

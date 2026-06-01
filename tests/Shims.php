@@ -44,15 +44,40 @@
 
 declare(strict_types=1);
 
-/**
- * Shims.php
- * 
- * Provides basic GLPI global shims required by both production code and tests.
- * This file declares functions, classes, and constants in the global namespace
- * to satisfy GLPI framework dependencies when running unit tests outside of GLPI.
- */
+namespace Glpi\Cache {
+    if (!class_exists('Glpi\Cache\CacheManager', false)) {
+        /**
+         * Shim class for GLPI core CacheManager to prevent errors in tests.
+         */
+        class CacheManager {
+            /**
+             * Static flag to track if resetAllCaches was invoked.
+             *
+             * @var bool
+             */
+            public static bool $wasResetCalled = false;
+
+            /**
+             * Reset all caches shim.
+             *
+             * @return bool
+             */
+            public function resetAllCaches(): bool {
+                self::$wasResetCalled = true;
+                return true;
+            }
+        }
+    }
+}
 
 namespace {
+    /**
+     * Shims.php
+     * 
+     * Provides basic GLPI global shims required by both production code and tests.
+     * This file declares functions, classes, and constants in the global namespace
+     * to satisfy GLPI framework dependencies when running unit tests outside of GLPI.
+     */
     /**
      * Bootstraps the Composer autoloader for vendor dependencies if present.
      */
@@ -90,6 +115,30 @@ namespace {
     }
     if (!defined('GLPI_PLUGINS_DIRECTORIES')) {
         define('GLPI_PLUGINS_DIRECTORIES', ['/var/www/glpi-dev_quinquies_nl/plugins']);
+    }
+
+    if (!defined('PLUGIN_SAMLSSO_CLASSES')) {
+        define('PLUGIN_SAMLSSO_CLASSES', [
+            'GlpiPlugin\\Samlsso\\Config',
+            'GlpiPlugin\\Samlsso\\Exclude',
+            'GlpiPlugin\\Samlsso\\LoginState',
+            'GlpiPlugin\\Samlsso\\ClaimMap',
+            'GlpiPlugin\\Samlsso\\ObservedClaim',
+            'GlpiPlugin\\Samlsso\\CronTask',
+        ]);
+    }
+
+    /**
+     * Shim for plugin_version_samlsso function to supply version details in tests.
+     *
+     * @return array
+     */
+    if (!function_exists('plugin_version_samlsso')) {
+        function plugin_version_samlsso(): array {
+            return [
+                'version' => PLUGIN_SAMLSSO_VERSION,
+            ];
+        }
     }
 
     /**

@@ -1,5 +1,7 @@
 
 **V1.3.0**
+- Feature: Added proactive GLPI cache reset during plugin installation/upgrade using CacheManager::resetAllCaches(). (Related issue https://github.com/DonutsNL/samlsso/issues/119)
+- Architecture: Added ADR 0014 documenting the design decision to clear GLPI cache during installation/upgrade. (Related issue https://github.com/DonutsNL/samlsso/issues/119)
 - Fix: Resolved a critical nested form structure conflict in the Twig template (`configForm.html.twig`) that incorrectly triggered `forcelogoff` actions when saving configuration updates.
 - Fix: Prevented SSO login/redirection flow interception on active administrator sessions by skipping `doAuth()` and local login blocks if `Session::getLoginUserID()` is active.
 - Fix: Ensured the multiple active IDPs warning message is always displayed on the Enforce SSO field in the configuration UI when more than one IDP is active.

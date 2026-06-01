@@ -245,6 +245,49 @@ namespace GlpiPlugin\Samlsso\Tests {
             }
             echo "✅ Validated primary and foreign key unsigned placeholders in all table SQL definitions.\n";
         }
+
+        /**
+         * Test that plugin_samlsso_install proactively resets the GLPI cache.
+         *
+         * @throws \Exception if the cache is not reset during installation.
+         */
+        public function testInstallResetsCache(): void {
+            $basePath = realpath(__DIR__ . '/..');
+            require_once $basePath . '/hook.php';
+
+            if (!function_exists('plugin_samlsso_install')) {
+                throw new \Exception("plugin_samlsso_install function not defined in hook.php");
+            }
+
+            /**
+             * Reset the static flag on the shimmed CacheManager to verify it gets toggled.
+             */
+            if (class_exists(\Glpi\Cache\CacheManager::class) && property_exists(\Glpi\Cache\CacheManager::class, 'wasResetCalled')) {
+                \Glpi\Cache\CacheManager::$wasResetCalled = false;
+            }
+
+            /**
+             * Call the install function.
+             */
+            $result = plugin_samlsso_install();
+
+            if (!$result) {
+                throw new \Exception("plugin_samlsso_install returned false");
+            }
+
+            /**
+             * Verify that resetAllCaches was indeed called.
+             */
+            if (class_exists(\Glpi\Cache\CacheManager::class) && property_exists(\Glpi\Cache\CacheManager::class, 'wasResetCalled')) {
+                if (!\Glpi\Cache\CacheManager::$wasResetCalled) {
+                    throw new \Exception("CacheManager::resetAllCaches() was not called during plugin_samlsso_install()");
+                }
+            } else {
+                throw new \Exception("Glpi\\Cache\\CacheManager shim not loaded correctly in test environment");
+            }
+
+            echo "✅ Validated cache reset: CacheManager::resetAllCaches() is called during installation.\n";
+        }
     }
 }
 
@@ -253,6 +296,7 @@ namespace {
     try {
         $test->testLifecycleClasses();
         $test->testPrimaryKeyAndForeignKeySigning();
+        $test->testInstallResetsCache();
         $test = null;
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";
