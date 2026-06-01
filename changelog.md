@@ -5,6 +5,7 @@
 - Fix: Resolved a critical nested form structure conflict in the Twig template (`configForm.html.twig`) that incorrectly triggered `forcelogoff` actions when saving configuration updates.
 - Fix: Prevented SSO login/redirection flow interception on active administrator sessions by skipping `doAuth()` and local login blocks if `Session::getLoginUserID()` is active.
 - Fix: Ensured the multiple active IDPs warning message is always displayed on the Enforce SSO field in the configuration UI when more than one IDP is active.
+- Fix: Reset database session phase to `PHASE_INITIAL` when GLPI session is expired, ensuring SSO enforcement redirects work correctly for returning users with lingering cookies. (Related issue https://github.com/DonutsNL/samlsso/issues/25)
 - Feature: Added configurable SAML request timeout fallback to automatically expire stale authentication states after a set duration (default 15 minutes) - by @eduardomozart
 - Security Fix: Addressed local login SSO enforcement bypass securely using server-side session variable checks instead of a spoofable Referer check - by @eduardomozart
 - Merged PR 114: Added country code 'ZZ' fallback tooltip and image display - by @eduardomozart
@@ -44,11 +45,6 @@
 - Architecture: Added ADR 0012 explaining the multi-IDP Enforce conflict resolution mechanism and the explicit design decision not to follow the GLPI standard redirect-based messages.
 - Feature: Added administrative action to forcefully log off and disable users directly from the active sessions log table.
 - Architecture: Added ADR 0013 documenting the design and security of the force logoff and disable user action.
-
-
-
-
-
 
 
 **V1.2.7**
