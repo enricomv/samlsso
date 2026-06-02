@@ -79,24 +79,29 @@
             }
         });
 
-        // Align native GLPI tooltips/warning icons on the security tab to use standard Bootstrap tooltips
+        // Convert Security tab floating warning popups/tooltips into full-width warning text blocks placed under the field rows
         $('[id$="_warning_icon"]').each(function() {
             var $icon = $(this);
-            // Try to pull tooltip text from GLPI tooltip data or inline title attribute
-            var tooltipText = $icon.attr('data-bs-original-title') || $icon.attr('title') || '';
-            if (!tooltipText) {
-                // Fallback to fetch from sibling elements or data attributes
-                tooltipText = $icon.attr('data-bs-content') || '';
-            }
+            var $row = $icon.closest('.form-field.row');
+            var tooltipText = $icon.attr('data-bs-original-title') || $icon.attr('title') || $icon.attr('data-bs-content') || '';
             
-            if (tooltipText && typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                // Clean icon element from native tooltip hooks
-                $icon.removeAttr('data-bs-toggle').removeAttr('data-bs-html');
-                $icon.attr('title', tooltipText.replace('⚠️', '').trim());
-                new bootstrap.Tooltip(this, {
-                    title: tooltipText.replace('⚠️', '').trim(),
-                    placement: 'top'
+            if (tooltipText && $row.length) {
+                // Remove the warning icon from next to the label to clean up the field header
+                $icon.remove();
+                
+                // Create a clean warning banner element
+                var cleanText = tooltipText.replace('⚠️', '').trim();
+                var $warnTextDiv = $('<div class="form-text mt-2 p-2 rounded"></div>');
+                $warnTextDiv.css({
+                    'color': 'rgb(180, 120, 8)',
+                    'background-color': 'rgba(255, 193, 7, 0.05)',
+                    'border': '1px solid rgba(255, 193, 7, 0.2)',
+                    'width': '100%'
                 });
+                $warnTextDiv.html('⚠️ ' + cleanText);
+                
+                // Append the warning banner directly underneath the row to match General tab styles
+                $row.after($warnTextDiv);
             }
         });
     });
