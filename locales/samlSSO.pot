@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Chris Gralike
-# This file is distributed under the same license as the samlSSO package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: samlSSO 1.3.1\n"
-"Report-Msgid-Bugs-To: https://github.com/DonutsNL/samlSSO/issues\n"
-"POT-Creation-Date: 2026-06-02 09:43+0200\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 09:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1279,4 +1279,327 @@ msgstr ""
 
 #: src/Exclude.php:190
 msgid "To be excluded path"
+msgstr ""
+
+#: templates/loggedOut.html.twig:9
+msgid "Successfully Logged Out"
+msgstr ""
+
+#: templates/loggedOut.html.twig:12
+msgid ""
+"You have been successfully logged out of your session. You can now safely "
+"close this browser window/tab, or log in again using the button below."
+msgstr ""
+
+#: templates/loggedOut.html.twig:17
+msgid "Log in again"
+msgstr ""
+
+#: templates/errorScreen.html.twig:9
+msgid "The following error was reported"
+msgstr ""
+
+#: templates/configForm.html.twig:300
+msgid "General"
+msgstr ""
+
+#: templates/configForm.html.twig:311
+msgid "Transit"
+msgstr ""
+
+#: templates/configForm.html.twig:322
+msgid "Service provider"
+msgstr ""
+
+#: templates/configForm.html.twig:333
+msgid "Identity provider"
+msgstr ""
+
+#: templates/configForm.html.twig:344
+msgid "Security"
+msgstr ""
+
+#: templates/configForm.html.twig:355
+msgid "Claim Mapping"
+msgstr ""
+
+#: templates/configForm.html.twig:366
+msgid "Logging"
+msgstr ""
+
+#: templates/configForm.html.twig:382 templates/configForm.html.twig:404
+msgid ""
+"⚠️ Userdomain is configured. The login button will be hidden from the "
+"loginscreen. Clear the Userdomain to make the button visible again."
+msgstr ""
+
+#: templates/configForm.html.twig:425
+#, python-brace-format
+msgid ""
+"🔒 Userdomain is configured. Users can trigger a Saml Login by providing "
+"their {username}@{userdomain} in the glpi username field and pressing the "
+"login button. The password field is ignored and can be left blank. This is a "
+"more secure option that wont expose configured IDPs."
+msgstr ""
+
+#: templates/configForm.html.twig:548
+msgid ""
+"⚠️ Beware, misaligned proxy schemes might break the samlValidation in strict "
+"mode.<br>(<b>https</b>://external)=>(<b>http</b>://internal)"
+msgstr ""
+
+#: templates/configForm.html.twig:570
+msgid "⚠️ Strict is disabled, validate xml setting will not do anything."
+msgstr ""
+
+#: templates/configForm.html.twig:639
+msgid ""
+"You need to configure the Entity ID at the identity provider. This value is "
+"crosschecked by the identity provider to make sure the sign-in request is "
+"originating from the correct service provider."
+msgstr ""
+
+#: templates/configForm.html.twig:667
+msgid ""
+"The location of the metadata provider for this service provider (GLPI). The "
+"meta location can be used by the identity provider to collect important "
+"information from this service provider like what public certificate to use "
+"for signing and encrypting the SamlResponse."
+msgstr ""
+
+#: templates/configForm.html.twig:680
+msgid ""
+"The location of the Assertion Consumer Service (ACS) for this service "
+"provider (GLPI). This url is called by the identity provider after "
+"succesfull login."
+msgstr ""
+
+#: templates/configForm.html.twig:694
+msgid ""
+"The location where logout requests should be send back to from the Identity "
+"Provider."
+msgstr ""
+
+#: templates/configForm.html.twig:954
+msgid "⚠️ Your environment is at risk, make sure strict is enabled!"
+msgstr ""
+
+#: templates/configForm.html.twig:1188
+msgid "SAML Claim Mapping"
+msgstr ""
+
+#: templates/configForm.html.twig:1190
+msgid "Mapping Tools"
+msgstr ""
+
+#: templates/configForm.html.twig:1197
+msgid "Mapping Assistant"
+msgstr ""
+
+#: templates/configForm.html.twig:1199
+msgid ""
+"Map SAML response claim keys dynamically either directly to user profile "
+"fields or as JIT Rule criteria. Configure defaults and required verification "
+"checks."
+msgstr ""
+
+#: templates/configForm.html.twig:1206
+msgid "Apply Preset"
+msgstr ""
+
+#: templates/configForm.html.twig:1208
+msgid "Select Preset"
+msgstr ""
+
+#: templates/configForm.html.twig:1217
+msgid "View observed samlResponse XML"
+msgstr ""
+
+#: templates/configForm.html.twig:1226
+msgid "Sanitized SAML Response XML Structure"
+msgstr ""
+
+#: templates/configForm.html.twig:1230
+msgid ""
+"This shows the structure of the last received SAML Response. Cryptographic "
+"keys, signatures, digests, and PII text node values have been stripped."
+msgstr ""
+
+#: templates/configForm.html.twig:1234
+msgid ""
+"No SAML response has been recorded yet. Perform a successful login to "
+"populate this view."
+msgstr ""
+
+#: templates/configForm.html.twig:1252
+msgid "Claim Mapping Validation Errors"
+msgstr ""
+
+#: templates/configForm.html.twig:1265
+msgid "Target Type"
+msgstr ""
+
+#: templates/configForm.html.twig:1266
+msgid "GLPI Target Field"
+msgstr ""
+
+#: templates/configForm.html.twig:1267
+msgid "SAML Response Claim Key"
+msgstr ""
+
+#: templates/configForm.html.twig:1268
+msgid "Default Fallback Value"
+msgstr ""
+
+#: templates/configForm.html.twig:1269
+msgid "Required"
+msgstr ""
+
+#: templates/configForm.html.twig:1270
+msgid "Status"
+msgstr ""
+
+#: templates/configForm.html.twig:1284
+msgid "User Field"
+msgstr ""
+
+#: templates/configForm.html.twig:1285
+msgid "Rule Field"
+msgstr ""
+
+#: templates/configForm.html.twig:1332
+msgid "Observed"
+msgstr ""
+
+#: templates/configForm.html.twig:1334
+msgid "Unobserved"
+msgstr ""
+
+#: templates/configForm.html.twig:1337
+msgid "Unused in Rules"
+msgstr ""
+
+#: templates/configForm.html.twig:1344 templates/configForm.html.twig:1891
+msgid "Delete"
+msgstr ""
+
+#: templates/configForm.html.twig:1356
+msgid "Add Mapping"
+msgstr ""
+
+#: templates/configForm.html.twig:1494
+msgid "SAML SSO Authentication Logs"
+msgstr ""
+
+#: templates/configForm.html.twig:1497
+msgid ""
+"Track login phases, active sessions, assertion validations, and flow "
+"outcomes for troubleshooting."
+msgstr ""
+
+#: templates/configForm.html.twig:1517
+msgid "Search"
+msgstr ""
+
+#: templates/configForm.html.twig:1522
+#, python-format
+msgid "Total records found: %s"
+msgstr ""
+
+#: templates/configForm.html.twig:1531
+msgid "ID"
+msgstr ""
+
+#: templates/configForm.html.twig:1532
+msgid "IdP ID"
+msgstr ""
+
+#: templates/configForm.html.twig:1533
+msgid "Username"
+msgstr ""
+
+#: templates/configForm.html.twig:1534 templates/configForm.html.twig:1611
+msgid "GLPI Authed"
+msgstr ""
+
+#: templates/configForm.html.twig:1535 templates/configForm.html.twig:1609
+msgid "SAML Authed"
+msgstr ""
+
+#: templates/configForm.html.twig:1536
+msgid "Phase"
+msgstr ""
+
+#: templates/configForm.html.twig:1537
+msgid "Login Time"
+msgstr ""
+
+#: templates/configForm.html.twig:1538
+msgid "Last Click"
+msgstr ""
+
+#: templates/configForm.html.twig:1539
+msgid "Location"
+msgstr ""
+
+#: templates/configForm.html.twig:1540
+msgid "Trace"
+msgstr ""
+
+#: templates/configForm.html.twig:1541
+msgid "Actions"
+msgstr ""
+
+#: templates/configForm.html.twig:1549
+msgid "No logs match the criteria."
+msgstr ""
+
+#: templates/configForm.html.twig:1585 templates/configForm.html.twig:1592
+msgid "Yes"
+msgstr ""
+
+#: templates/configForm.html.twig:1587 templates/configForm.html.twig:1594
+msgid "No"
+msgstr ""
+
+#: templates/configForm.html.twig:1599
+msgid "Initial"
+msgstr ""
+
+#: templates/configForm.html.twig:1606
+msgid "SAML ACS Expected"
+msgstr ""
+
+#: templates/configForm.html.twig:1613
+msgid "Reserved"
+msgstr ""
+
+#: templates/configForm.html.twig:1615
+msgid "Forced Logoff"
+msgstr ""
+
+#: templates/configForm.html.twig:1617
+msgid "Timed Out"
+msgstr ""
+
+#: templates/configForm.html.twig:1619
+msgid "Logged Out"
+msgstr ""
+
+#: templates/configForm.html.twig:1654
+msgid "Force Logoff & Disable"
+msgstr ""
+
+#: templates/configForm.html.twig:1673
+msgid "Showing page %1$s of %2$s"
+msgstr ""
+
+#: templates/configForm.html.twig:1885
+msgid "Save"
+msgstr ""
+
+#: templates/configForm.html.twig:1896
+msgid ""
+"⚠️ Warning SP metadata exposed! - ROWID: %1$s | CREATED DATE: %2$s | LAST "
+"UPDATED: %3$s"
 msgstr ""

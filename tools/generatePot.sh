@@ -40,5 +40,11 @@ find . -type f -name "*.php" | xgettext -f - -o "locales/samlSSO.pot" -L PHP \
     --force-po \
     --keyword=__
 
+# 2. Extract strings from Twig templates using Python mode and join them to the POT file
+find templates -type f -name "*.twig" | xgettext -f - -j -o "locales/samlSSO.pot" -L Python \
+    --from-code=UTF-8 \
+    --keyword=__
+
 # Clean up temporary files
 rm -rf "${pathGLPIenUSpo}"
+
