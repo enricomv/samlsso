@@ -79,29 +79,35 @@
             }
         });
 
-        // Convert Security tab floating warning popups/tooltips into full-width warning text blocks placed under the field rows
+        // Convert Security tab warning icons/tooltips to match General tab question-mark tooltips
         $('[id$="_warning_icon"]').each(function() {
             var $icon = $(this);
             var $row = $icon.closest('.form-field.row');
             var tooltipText = $icon.attr('data-bs-original-title') || $icon.attr('title') || $icon.attr('data-bs-content') || '';
             
             if (tooltipText && $row.length) {
-                // Remove the warning icon from next to the label to clean up the field header
+                // Remove the native warning icon
                 $icon.remove();
                 
-                // Create a clean warning banner element
-                var cleanText = tooltipText.replace('⚠️', '').trim();
-                var $warnTextDiv = $('<div class="form-text mt-2 p-2 rounded"></div>');
-                $warnTextDiv.css({
-                    'color': 'rgb(180, 120, 8)',
-                    'background-color': 'rgba(255, 193, 7, 0.05)',
-                    'border': '1px solid rgba(255, 193, 7, 0.2)',
-                    'width': '100%'
-                });
-                $warnTextDiv.html('⚠️ ' + cleanText);
-                
-                // Append the warning banner directly underneath the row to match General tab styles
-                $row.after($warnTextDiv);
+                // Add warning question-mark indicator to the label to match General tab tooltips
+                var $label = $row.find('.col-form-label, label');
+                if ($label.length) {
+                    var cleanText = tooltipText.replace('⚠️', '').trim();
+                    var tooltipId = 'warning_tip_' + Math.random().toString(36).substr(2, 9);
+                    
+                    // Create standard question-mark trigger span matching General/Transit styles
+                    var $tipSpan = $('<span class="text-danger ms-1" style="cursor: pointer;"><i class="fas fa-exclamation-triangle"></i></span>');
+                    $tipSpan.attr('id', tooltipId);
+                    
+                    $label.append($tipSpan);
+                    
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                        new bootstrap.Tooltip($tipSpan[0], {
+                            title: cleanText,
+                            placement: 'top'
+                        });
+                    }
+                }
             }
         });
     });
