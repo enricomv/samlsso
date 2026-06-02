@@ -76,9 +76,16 @@ GitHub: https://github.com/DonutsNL/samlsso</en>
     </version>
 </versions>
 <langs>
+    <lang>de_DE</lang>
+    <lang>el_GR</lang>
     <lang>en_GB</lang>
+    <lang>es_AR</lang>
+    <lang>es_ES</lang>
     <lang>fr_FR</lang>
+    <lang>hi_IN</lang>
+    <lang>it_IT</lang>
     <lang>nl_NL</lang>
+    <lang>pt_BR</lang>
 </langs>
 <license>GPLv3+</license>
 <tags>

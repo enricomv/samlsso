@@ -1,132 +1,126 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Chris Gralike
+# English translations for samlSSO package.
+# Copyright (C) 2026 Chris Gralike
 # This file is distributed under the same license as the samlSSO package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Automatically generated, 2026.
 #
-# Translators:
-# Alan Ivés Lehoux, 2025
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: samlSSO 1.2.5\n"
+"Project-Id-Version: samlSSO 1.3.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DonutsNL/samlSSO/issues\n"
 "POT-Creation-Date: 2026-06-02 09:43+0200\n"
-"PO-Revision-Date: 2025-11-27 11:38+0000\n"
-"Last-Translator: Alan Ivés Lehoux, 2025\n"
-"Language-Team: Spanish (Argentina) (https://app.transifex.com/quinquies/"
-"teams/199875/es_AR/)\n"
-"Language: es_AR\n"
+"PO-Revision-Date: 2026-06-02 09:43+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
-"1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: hook.php:104
 msgid "samlSSO exclusions"
-msgstr "exclusiones de samlSSO"
+msgstr "samlSSO exclusions"
 
 #: hook.php:163
 msgid "🆗 Installing version:"
-msgstr "🆗 Instalando versión:"
+msgstr "🆗 Installing version:"
 
 #: hook.php:187
 msgid ""
 "⚠️ PHP memory_limit is less than 512M. This may cause crashes during SAML "
 "Login. See: "
 msgstr ""
+"⚠️ PHP memory_limit is less than 512M. This may cause crashes during SAML "
+"Login. See: "
 
 #: hook.php:198
 msgid "⚠️ OpenSSL not available, cant verify provided certificates"
-msgstr ""
-"⚠️ OpenSSL no está disponible, no se pueden verificar los certificados "
-"provistos"
+msgstr "⚠️ OpenSSL not available, cant verify provided certificates"
 
 #: hook.php:200
 msgid "🆗 OpenSSL found!"
-msgstr "🆗 ¡OpenSSL encontrado!"
+msgstr "🆗 OpenSSL found!"
 
 #: setup.php:246
 msgid "Installed "
-msgstr "Instalado "
+msgstr "Installed "
 
 #: src/RuleSaml.php:86
 msgid "JIT rules"
-msgstr "Reglas JIT"
+msgstr "JIT rules"
 
 #: src/RuleSaml.php:177
 msgid "SAML Groups"
-msgstr ""
+msgstr "SAML Groups"
 
 #: src/RuleSaml.php:184
 msgid "SAML Job Title"
-msgstr ""
+msgstr "SAML Job Title"
 
 #: src/RuleSaml.php:191
 msgid "SAML Country"
-msgstr ""
+msgstr "SAML Country"
 
 #: src/RuleSaml.php:198
 msgid "SAML City"
-msgstr ""
+msgstr "SAML City"
 
 #: src/RuleSaml.php:205
 msgid "SAML Street"
-msgstr ""
+msgstr "SAML Street"
 
 #: src/RuleSaml.php:226
 #, php-format
 msgid "SAML Claim: %s"
-msgstr ""
+msgstr "SAML Claim: %s"
 
 #: src/RuleSamlCollection.php:73 src/Config.php:151
 msgid "JIT import rules"
-msgstr "Reglas de importación JIT"
+msgstr "JIT import rules"
 
 #: src/CronTask.php:66
 msgid "Clean old SAML sessions"
-msgstr "Limpiar sesiones SAML antiguas"
+msgstr "Clean old SAML sessions"
 
 #: src/CronTask.php:67
 msgid "SAML sessions retention period (in days, 0 for infinite)"
-msgstr "Período de retención de sesiones SAML (en días, 0 para infinito)"
+msgstr "SAML sessions retention period (in days, 0 for infinite)"
 
 #: src/CronTask.php:69
 msgid "Update GeoIP offline database"
-msgstr ""
+msgstr "Update GeoIP offline database"
 
 #: src/Config/ConfigItem.php:101 src/LoginFlow/LoginFlowItem.php:97
 msgid "⭕ ID must be a positive numeric value!"
-msgstr "⭕ ¡La ID debe ser un valor numérico positivo!"
+msgstr "⭕ ID must be a positive numeric value!"
 
 #: src/Config/ConfigItem.php:105 src/LoginFlow/LoginFlowItem.php:101
 msgid "Unique identifier for this configuration"
-msgstr "Identificador único para esta configuración"
+msgstr "Unique identifier for this configuration"
 
 #: src/Config/ConfigItem.php:106 src/LoginFlow/LoginFlowItem.php:102
 msgid "CONFIG ID"
-msgstr "ID DE CONFIGURACIÓN"
+msgstr "CONFIG ID"
 
 #: src/Config/ConfigItem.php:120
 msgid ""
 "This name is shown with the login button on the login page. Try to keep this "
 "name short en to the point."
 msgstr ""
-"Este nombre se muestra junto al botón de inicio de sesión. Tratá de mantener "
-"el nombre breve y conciso."
+"This name is shown with the login button on the login page. Try to keep this "
+"name short en to the point."
 
 #: src/Config/ConfigItem.php:121
 msgid "FRIENDLY NAME"
-msgstr "NOMBRE AMIGABLE"
+msgstr "FRIENDLY NAME"
 
 #: src/Config/ConfigItem.php:126
 msgid "⭕ Name is a required field"
-msgstr "⭕ El nombre es un campo obligatorio"
+msgstr "⭕ Name is a required field"
 
 #: src/Config/ConfigItem.php:137
 msgid "USERDOMAIN"
-msgstr "DOMINIO DE USUARIO"
+msgstr "USERDOMAIN"
 
 #: src/Config/ConfigItem.php:142
 msgid "⭕ "
@@ -137,8 +131,8 @@ msgid ""
 "⭕ Provided certificate does not like look a valid (base64 encoded) "
 "certificate"
 msgstr ""
-"⭕ El certificado provisto no parece ser un certificado válido (codificado "
-"en base64)"
+"⭕ Provided certificate does not like look a valid (base64 encoded) "
+"certificate"
 
 #: src/Config/ConfigItem.php:164
 msgid ""
@@ -146,68 +140,65 @@ msgid ""
 "encrypt messages send by the service provider to the identity provider. "
 "Required for most of the security options"
 msgstr ""
-"El certificado x509 del proveedor de servicio codificado en base64. Se usa "
-"para firmar y cifrar los mensajes que el proveedor de servicio le envía al "
-"proveedor de identidad. Es obligatorio para la mayoría de las opciones de "
-"seguridad"
+"The base64 encoded x509 service provider certificate. Used to sign and "
+"encrypt messages send by the service provider to the identity provider. "
+"Required for most of the security options"
 
 #: src/Config/ConfigItem.php:165
 msgid "SP CERTIFICATE"
-msgstr "CERTIFICADO SP"
+msgstr "SP CERTIFICATE"
 
 #: src/Config/ConfigItem.php:182
 msgid ""
 "The base64 encoded x509 service providers private key. Should match the "
 "modulus of the provided X509 service provider certificate"
 msgstr ""
-"La clave privada del proveedor de servicio x509 codificada en base64. "
-"Debería coincidir con el módulo del certificado X509 del proveedor de "
-"servicio provisto"
+"The base64 encoded x509 service providers private key. Should match the "
+"modulus of the provided X509 service provider certificate"
 
 #: src/Config/ConfigItem.php:183
 msgid "SP PRIVATE KEY"
-msgstr "CLAVE PRIVADA SP"
+msgstr "SP PRIVATE KEY"
 
 #: src/Config/ConfigItem.php:196
 msgid ""
 "The Service Provider nameid format specifies the constraints on the name "
 "identifier to be used to represent the requested subject."
 msgstr ""
-"El formato nameid del Proveedor de Servicio especifica las restricciones en "
-"el identificador de nombre que se va a usar para representar al sujeto "
-"solicitado."
+"The Service Provider nameid format specifies the constraints on the name "
+"identifier to be used to represent the requested subject."
 
 #: src/Config/ConfigItem.php:197
 msgid "NAMEID FORMAT"
-msgstr "FORMATO NAMEID"
+msgstr "NAMEID FORMAT"
 
 #: src/Config/ConfigItem.php:202
 msgid "Service provider name id is a required field"
-msgstr "El name id del proveedor de servicio es un campo obligatorio"
+msgstr "Service provider name id is a required field"
 
 #: src/Config/ConfigItem.php:211
 msgid ""
 "Identifier of the IdP entity which is an URL provided by the SAML2 Identity "
 "Provider (IdP)"
 msgstr ""
-"Identificador de la entidad IdP, que es una URL provista por el Proveedor de "
-"Identidad SAML2 (IdP)"
+"Identifier of the IdP entity which is an URL provided by the SAML2 Identity "
+"Provider (IdP)"
 
 #: src/Config/ConfigItem.php:212
 msgid "ENTITY ID"
-msgstr "ID DE ENTIDAD"
+msgstr "ENTITY ID"
 
 #: src/Config/ConfigItem.php:217
 msgid "⭕ Identity provider entity id is a required field"
-msgstr "⭕ El ID de entidad del proveedor de identidad es un campo obligatorio"
+msgstr "⭕ Identity provider entity id is a required field"
 
 #: src/Config/ConfigItem.php:231
 msgid "⭕ The IdP SSO URL is a required field!<br>"
-msgstr "⭕ ¡La URL SSO del IdP es un campo obligatorio!<br>"
+msgstr "⭕ The IdP SSO URL is a required field!<br>"
 
 #: src/Config/ConfigItem.php:236
 msgid "⭕ Invalid IdP SSO URL, use: scheme://host.domain.tld/path/"
-msgstr "⭕ URL SSO del IdP inválida, usá: scheme://host.domain.tld/path/"
+msgstr "⭕ Invalid IdP SSO URL, use: scheme://host.domain.tld/path/"
 
 #: src/Config/ConfigItem.php:244
 msgid ""
@@ -215,17 +206,17 @@ msgid ""
 "Authentication Request Message will be sent. OneLogin PHPSAML only supports "
 "the 'HTTP-redirect' binding for this endpoint."
 msgstr ""
-"Endpoint del Servicio de Inicio de Sesión Único del IdP. Es la URL destino "
-"del IdP a donde se enviará el Mensaje de Solicitud de Autenticación. "
-"OneLogin PHPSAML solo soporta el binding 'HTTP-redirect' para este endpoint."
+"Single Sign On Service endpoint of the IdP. URL Target of the IdP where the "
+"Authentication Request Message will be sent. OneLogin PHPSAML only supports "
+"the 'HTTP-redirect' binding for this endpoint."
 
 #: src/Config/ConfigItem.php:245
 msgid "SSO URL"
-msgstr "URL SSO"
+msgstr "SSO URL"
 
 #: src/Config/ConfigItem.php:268
 msgid "⭕ Invalid Idp SLO URL, use: scheme://host.domain.tld/path/"
-msgstr "⭕ URL SLO del IdP inválida, usá: scheme://host.domain.tld/path/"
+msgstr "⭕ Invalid Idp SLO URL, use: scheme://host.domain.tld/path/"
 
 #: src/Config/ConfigItem.php:272
 msgid ""
@@ -233,18 +224,17 @@ msgid ""
 "Request will be sent.OneLogin PHPSAML only supports the 'HTTP-redirect' "
 "binding for this endpoint."
 msgstr ""
-"Endpoint del servicio de Cierre de Sesión Único del IdP. Es la URL de "
-"ubicación del IdP a donde se enviará la Solicitud SLO.OneLogin PHPSAML solo "
-"soporta el binding 'HTTP-redirect' para este endpoint."
+"Single Logout service endpoint of the IdP. URL Location of the IdP where SLO "
+"Request will be sent.OneLogin PHPSAML only supports the 'HTTP-redirect' "
+"binding for this endpoint."
 
 #: src/Config/ConfigItem.php:273
 msgid "SLO URL"
-msgstr "URL SLO"
+msgstr "SLO URL"
 
 #: src/Config/ConfigItem.php:294
 msgid "⭕ Valid Idp X509 certificate is required! (base64 encoded)"
-msgstr ""
-"⭕ ¡Se requiere un certificado X509 del Idp válido! (codificado en base64)"
+msgstr "⭕ Valid Idp X509 certificate is required! (base64 encoded)"
 
 #: src/Config/ConfigItem.php:299
 msgid ""
@@ -253,14 +243,14 @@ msgid ""
 "alter the Saml Config array located in ConfigEntity.php and provide the "
 "required configuration options"
 msgstr ""
-"El certificado x509 Público codificado en Base64 que usa el IdP. Podés usar "
-"la huella digital, pero no es recomendable. La huella digital requiere que "
-"alteres manualmente el array de Configuración Saml ubicado en ConfigEntity."
-"php y que proveas las opciones de configuración requeridas"
+"The Public Base64 encoded x509 certificate used by the IdP. Fingerprinting "
+"can be used, but is not recommended. Fingerprinting requires you to manually "
+"alter the Saml Config array located in ConfigEntity.php and provide the "
+"required configuration options"
 
 #: src/Config/ConfigItem.php:300
 msgid "X509 CERTIFICATE"
-msgstr "CERTIFICADO X509"
+msgstr "X509 CERTIFICATE"
 
 #: src/Config/ConfigItem.php:327
 msgid ""
@@ -269,99 +259,95 @@ msgid ""
 "AuthContext in the AuthNRequest. Or, select one or more options using the "
 "\"control+click\" combination."
 msgstr ""
-"La autenticación de contexto debe ser satisfecha por el IdP para permitir el "
-"inicio de sesión con Saml. Establecé en \"ninguno\" y OneLogin PHPSAML no va "
-"a enviar un AuthContext en el AuthNRequest. O, seleccioná una o más opciones "
-"usando la combinación de \"control+clic\"."
+"Authentication context needs to be satisfied by the IdP in order to allow "
+"Saml login. Set to \"none\" and OneLogin PHPSAML will not send an "
+"AuthContext in the AuthNRequest. Or, select one or more options using the "
+"\"control+click\" combination."
 
 #: src/Config/ConfigItem.php:328
 msgid "REQ AUTHN CONTEXT"
-msgstr "CONTEXTO AUTHN REQUERIDO"
+msgstr "REQ AUTHN CONTEXT"
 
 #: src/Config/ConfigItem.php:333
 msgid "⭕ Requested authN context is a required field"
-msgstr "⭕ El contexto authN solicitado es un campo obligatorio"
+msgstr "⭕ Requested authN context is a required field"
 
 #: src/Config/ConfigItem.php:340
 msgid "AUTHN Comparison attribute value"
-msgstr "Valor del atributo de Comparación AUTHN"
+msgstr "AUTHN Comparison attribute value"
 
 #: src/Config/ConfigItem.php:341
 msgid "AUTHN COMPARISON"
-msgstr "COMPARACIÓN DE AUTHN"
+msgstr "AUTHN COMPARISON"
 
 #: src/Config/ConfigItem.php:346
 msgid "⭕ Requested authN context comparison is a required field"
-msgstr ""
-"⭕ La comparación del contexto authN solicitado es un campo obligatorio"
+msgstr "⭕ Requested authN context comparison is a required field"
 
 #: src/Config/ConfigItem.php:353
-#, fuzzy, php-format
+#, php-format
 msgid "The FontAwesome (%s) icon to show on the button on the login page."
-msgstr ""
-"El ícono de FontAwesome (https://fontawesome.com/) para mostrar en el botón "
-"de la página de inicio de sesión."
+msgstr "The FontAwesome (%s) icon to show on the button on the login page."
 
 #: src/Config/ConfigItem.php:354
 msgid "LOGIN ICON"
-msgstr "ÍCONO DE INICIO DE SESIÓN"
+msgstr "LOGIN ICON"
 
 #: src/Config/ConfigItem.php:359
 msgid "⭕ Configuration icon is a required field"
-msgstr "⭕ El ícono de configuración es un campo obligatorio"
+msgstr "⭕ Configuration icon is a required field"
 
 #: src/Config/ConfigItem.php:366
 msgid "The comments"
-msgstr "Los comentarios"
+msgstr "The comments"
 
 #: src/Config/ConfigItem.php:367
 msgid "COMMENTS"
-msgstr "COMENTARIOS"
+msgstr "COMMENTS"
 
 #: src/Config/ConfigItem.php:379
 msgid "The anonymized SAML response XML structure"
-msgstr ""
+msgstr "The anonymized SAML response XML structure"
 
 #: src/Config/ConfigItem.php:380
 msgid "SAML Response XML Structure"
-msgstr ""
+msgstr "SAML Response XML Structure"
 
 #: src/Config/ConfigItem.php:393
 msgid "The date this configuration item was created"
-msgstr "La fecha en que se creó este elemento de configuración"
+msgstr "The date this configuration item was created"
 
 #: src/Config/ConfigItem.php:394
 msgid "CREATE DATE"
-msgstr "FECHA DE CREACIÓN"
+msgstr "CREATE DATE"
 
 #: src/Config/ConfigItem.php:408
 msgid "The date this config was modified"
-msgstr "La fecha en que se modificó esta configuración"
+msgstr "The date this config was modified"
 
 #: src/Config/ConfigItem.php:409
 msgid "MODIFICATION DATE"
-msgstr "FECHA DE MODIFICACIÓN"
+msgstr "MODIFICATION DATE"
 
 #: src/Config/ConfigItem.php:429
 msgid "Is this configuration marked as deleted by GLPI"
-msgstr "Está marcada esta configuración como eliminada por GLPI"
+msgstr "Is this configuration marked as deleted by GLPI"
 
 #: src/Config/ConfigItem.php:430
 msgid "IS DELETED"
-msgstr "ESTÁ ELIMINADA"
+msgstr "IS DELETED"
 
 #: src/Config/ConfigItem.php:442
 msgid ""
 "Indicates if this configuration activated. Disabled configurations cannot be "
 "used to login into GLPI and will NOT be shown on the login page."
 msgstr ""
-"Indica si esta configuración está activada. Las configuraciones desactivadas "
-"no se pueden usar para iniciar sesión en GLPI y NO se van a mostrar en la "
-"página de inicio de sesión."
+"Indicates if this configuration activated. Disabled configurations cannot be "
+"used to login into GLPI and will NOT be shown on the login page."
 
 #: src/Config/ConfigItem.php:443
 msgid "IS ACTIVE"
-msgstr "ESTÁ ACTIVA"
+msgstr "IS ACTIVE"
 
 #: src/Config/ConfigItem.php:455
 msgid ""
@@ -370,25 +356,23 @@ msgid ""
 "to authenticate using the configured SAML2 idps. This setting can be "
 "bypassed using a bypass URI parameter"
 msgstr ""
-"Si está activado, PHPSAML va a reemplazar la pantalla de inicio de sesión "
-"por defecto de GLPI por una versión que no tiene las opciones de inicio de "
-"sesión por defecto de GLPI y solo le permite al usuario autenticarse usando "
-"los idps de SAML2 configurados. Esta configuración se puede omitir usando un "
-"parámetro de URI de omisión"
+"If enabled PHPSAML will replace the default GLPI login screen with a version "
+"that does not have the default GLPI login options and only allows the user "
+"to authenticate using the configured SAML2 idps. This setting can be "
+"bypassed using a bypass URI parameter"
 
 #: src/Config/ConfigItem.php:456
 msgid "ENFORCED"
-msgstr "FORZADO"
+msgstr "ENFORCED"
 
 #: src/Config/ConfigItem.php:468
 msgid "Is GLPI positioned behind a proxy that alters the SAML response scheme?"
 msgstr ""
-"¿Está GLPI ubicado detrás de un proxy que altera el esquema de respuestas "
-"SAML?"
+"Is GLPI positioned behind a proxy that alters the SAML response scheme?"
 
 #: src/Config/ConfigItem.php:469
 msgid "REQUESTS PROXIED"
-msgstr "SOLICITUDES PROXIED"
+msgstr "REQUESTS PROXIED"
 
 #: src/Config/ConfigItem.php:481
 msgid ""
@@ -398,15 +382,15 @@ msgid ""
 "NameId, Conditions are validated too. Strongly advised in production "
 "environments."
 msgstr ""
-"Si está activado, el Toolkit PHPSAML de OneLogin va a rechazar los mensajes "
-"sin firmar o sin cifrar si espera que estén firmados o cifrados. También va "
-"a rechazar los mensajes si el estándar SAML no es estrictamente seguido: la "
-"validación se aplica también a Destino, NameId y Condiciones. Es fuertemente "
-"aconsejable en entorno de producción."
+"If enabled the OneLogin PHPSAML Toolkit will reject unsigned or unencrypted "
+"messages if it expects them to be signed or encrypted. Also it will reject "
+"the messages if the SAML standard is not strictly followed: Destination, "
+"NameId, Conditions are validated too. Strongly advised in production "
+"environments."
 
 #: src/Config/ConfigItem.php:482
 msgid "STRICT"
-msgstr "ESTRICTO"
+msgstr "STRICT"
 
 #: src/Config/ConfigItem.php:494
 msgid ""
@@ -414,9 +398,9 @@ msgid ""
 "messages. Be aware that not all message's might be captured by samlSSO and "
 "might therefor not become visible."
 msgstr ""
-"Si está activado, va a forzar a OneLogin PHPSAML a imprimir mensajes de "
-"estado y error. Tené en cuenta que es posible que samlSSO no capture todos "
-"los mensajes y, por lo tanto, puede que no sean visibles."
+"If enabled it will enforce OneLogin PHPSAML to print status and error "
+"messages. Be aware that not all message's might be captured by samlSSO and "
+"might therefor not become visible."
 
 #: src/Config/ConfigItem.php:507
 msgid ""
@@ -425,76 +409,86 @@ msgid ""
 "do not have a valid GLPI user will not be able to login into GLPI until a "
 "user is manually created."
 msgstr ""
-"Si está activado, samlSSO va a crear nuevos usuarios de GLPI sobre la marcha "
-"y les va a asignar las propiedades definidas en las reglas de asignación de "
-"samlSSO. Si está desactivado, los usuarios que no tienen un usuario de GLPI "
-"válido no van a poder iniciar sesión en GLPI hasta que un usuario sea creado "
-"manualmente."
+"If enabled samlSSO will create new GLPI users on the fly and assign the "
+"properties defined in the samlSSO assignment rules. If disables users that "
+"do not have a valid GLPI user will not be able to login into GLPI until a "
+"user is manually created."
 
 #: src/Config/ConfigItem.php:508
 msgid "JIT USER CREATION"
-msgstr "CREACIÓN DE USUARIOS JIT"
+msgstr "JIT USER CREATION"
 
 #: src/Config/ConfigItem.php:526
 msgid ""
 "If enabled, user fields mapped from SAML claims and assignment rules will be "
 "synchronized on every successful login."
 msgstr ""
+"If enabled, user fields mapped from SAML claims and assignment rules will be "
+"synchronized on every successful login."
 
 #: src/Config/ConfigItem.php:527
 msgid "SYNC ON LOGIN"
-msgstr ""
+msgstr "SYNC ON LOGIN"
 
 #: src/Config/ConfigItem.php:545
 msgid ""
 "If enabled, GLPI will require all SAML protocol messages received from the "
 "Identity Provider (IdP) to be cryptographically signed."
 msgstr ""
+"If enabled, GLPI will require all SAML protocol messages received from the "
+"Identity Provider (IdP) to be cryptographically signed."
 
 #: src/Config/ConfigItem.php:546
 msgid "REQUIRE SIGNED MESSAGES"
-msgstr ""
+msgstr "REQUIRE SIGNED MESSAGES"
 
 #: src/Config/ConfigItem.php:564
 msgid ""
 "If enabled, GLPI will require individual SAML assertions within the SAML "
 "message to be signed. If unsigned, assertions will be rejected."
 msgstr ""
+"If enabled, GLPI will require individual SAML assertions within the SAML "
+"message to be signed. If unsigned, assertions will be rejected."
 
 #: src/Config/ConfigItem.php:565
 msgid "REQUIRE SIGNED ASSERTIONS"
-msgstr ""
+msgstr "REQUIRE SIGNED ASSERTIONS"
 
 #: src/Config/ConfigItem.php:583
 msgid ""
 "If enabled, GLPI will expect the SAML assertions containing user claims to "
 "be encrypted. GLPI will decrypt them using the SP private key."
 msgstr ""
+"If enabled, GLPI will expect the SAML assertions containing user claims to "
+"be encrypted. GLPI will decrypt them using the SP private key."
 
 #: src/Config/ConfigItem.php:584
 msgid "REQUIRE ENCRYPTED ASSERTIONS"
-msgstr ""
+msgstr "REQUIRE ENCRYPTED ASSERTIONS"
 
 #: src/Config/ConfigItem.php:602
 msgid ""
 "If enabled, the SAML SP metadata XML generated by GLPI will be "
 "cryptographically signed using the Service Provider certificate."
 msgstr ""
+"If enabled, the SAML SP metadata XML generated by GLPI will be "
+"cryptographically signed using the Service Provider certificate."
 
 #: src/Config/ConfigItem.php:603
 msgid "SIGN SP METADATA"
-msgstr ""
+msgstr "SIGN SP METADATA"
 
 #: src/Config/ConfigItem.php:621
 msgid ""
 "If enabled, GLPI will strictly require a NameID element to be present in the "
 "SAML assertion payload."
 msgstr ""
+"If enabled, GLPI will strictly require a NameID element to be present in the "
+"SAML assertion payload."
 
 #: src/Config/ConfigItem.php:622
-#, fuzzy
 msgid "REQUIRE NAMEID"
-msgstr "CIFRAR NAMEID"
+msgstr "REQUIRE NAMEID"
 
 #: src/Config/ConfigItem.php:634
 msgid ""
@@ -503,14 +497,14 @@ msgid ""
 "key. This option will be toggled \"off\" automatically if no, or no valid SP "
 "certificate and key is provided."
 msgstr ""
-"Si está activado, el toolkit PHPSAML de OneLogin va a cifrar la <samlp:"
-"logoutRequest> enviada por este SP usando el certificado SP y la clave "
-"privada proporcionados. Esta opción se va a \"desactivar\" automáticamente "
-"si no se proporciona, o no es válido, ningún certificado y clave SP."
+"If enabled the OneLogin PHPSAML toolkit will encrypt the <samlp:"
+"logoutRequest> sent by this SP using the provided SP certificate and private "
+"key. This option will be toggled \"off\" automatically if no, or no valid SP "
+"certificate and key is provided."
 
 #: src/Config/ConfigItem.php:635
 msgid "ENCRYPT NAMEID"
-msgstr "CIFRAR NAMEID"
+msgstr "ENCRYPT NAMEID"
 
 #: src/Config/ConfigItem.php:647
 msgid ""
@@ -518,59 +512,57 @@ msgid ""
 "messages send by this SP. The IDP should consult the metadata to get the "
 "information required to validate the signatures."
 msgstr ""
-"Si está activado, el toolkit PHPSAML de OneLogin va a firmar los mensajes de "
-"<samlp:AuthnRequest> enviados por este SP. El IDP debe consultar los "
-"metadatos para obtener la información requerida para validar las firmas."
+"If enabled the OneLogin PHPSAML toolkit will sign the <samlp:AuthnRequest> "
+"messages send by this SP. The IDP should consult the metadata to get the "
+"information required to validate the signatures."
 
 #: src/Config/ConfigItem.php:648
 msgid "SIGN AUTHN REQUEST"
-msgstr "FIRMAR SOLICITUD AUTHN"
+msgstr "SIGN AUTHN REQUEST"
 
 #: src/Config/ConfigItem.php:660
 msgid ""
 "If enabled the OneLogin PHPSAML toolkit will sign the <samlp:logoutRequest> "
 "messages send by this SP."
 msgstr ""
-"Si está activado, el toolkit PHPSAML de OneLogin va a firmar los mensajes de "
-"<samlp:logoutRequest> enviados por este SP."
+"If enabled the OneLogin PHPSAML toolkit will sign the <samlp:logoutRequest> "
+"messages send by this SP."
 
 #: src/Config/ConfigItem.php:661
 msgid "SIGN LOGOUT REQUEST"
-msgstr "FIRMAR SOLICITUD DE CIERRE DE SESIÓN"
+msgstr "SIGN LOGOUT REQUEST"
 
 #: src/Config/ConfigItem.php:673
 msgid ""
 "If enabled the OneLogin PHPSAML toolkit will sign the <samlp:logoutResponse> "
 "messages send by this SP."
 msgstr ""
-"Si está activado, el toolkit PHPSAML de OneLogin va a firmar los mensajes de "
-"<samlp:logoutResponse> enviados por este SP."
+"If enabled the OneLogin PHPSAML toolkit will sign the <samlp:logoutResponse> "
+"messages send by this SP."
 
 #: src/Config/ConfigItem.php:674
 msgid "SIGN LOGOUT RESPONSE"
-msgstr "FIRMAR RESPUESTA DE CIERRE DE SESIÓN"
+msgstr "SIGN LOGOUT RESPONSE"
 
 #: src/Config/ConfigItem.php:686
 msgid ""
 "If enabled the authentication requests send to the IdP will be compressed by "
 "the SP."
 msgstr ""
-"Si está activado, las solicitudes de autenticación enviadas al IdP van a ser "
-"comprimidas por el SP."
+"If enabled the authentication requests send to the IdP will be compressed by "
+"the SP."
 
 #: src/Config/ConfigItem.php:687
 msgid "COMPRESS REQUESTS"
-msgstr "COMPRIMIR SOLICITUDES"
+msgstr "COMPRESS REQUESTS"
 
 #: src/Config/ConfigItem.php:699
 msgid "If enabled the SP expects responses send by the IdP to be compressed."
-msgstr ""
-"Si está activado, el SP espera que las respuestas enviadas por el IdP estén "
-"comprimidas."
+msgstr "If enabled the SP expects responses send by the IdP to be compressed."
 
 #: src/Config/ConfigItem.php:700
 msgid "COMPRESS RESPONSES"
-msgstr "COMPRIMIR RESPUESTAS"
+msgstr "COMPRESS RESPONSES"
 
 #: src/Config/ConfigItem.php:712
 msgid ""
@@ -579,26 +571,26 @@ msgid ""
 "                                                        \"strict\" security "
 "setting must be true."
 msgstr ""
-"Si está activado, el SP va a validar todos los XML recibidos. Para validar "
-"el XML\n"
-"                                                        la configuración de "
-"seguridad \"estricto\" debe ser verdadera."
+"If enabled the SP will validate all received XMLs. In order to validate the "
+"XML\n"
+"                                                        \"strict\" security "
+"setting must be true."
 
 #: src/Config/ConfigItem.php:714
 msgid "VALIDATE XML"
-msgstr "VALIDAR XML"
+msgstr "VALIDATE XML"
 
 #: src/Config/ConfigItem.php:726
 msgid ""
 "If enabled, SAMLResponses with an empty value at its Destination attribute "
 "will not be rejected for this fact."
 msgstr ""
-"Si está activado, las Respuestas SAML con un valor vacío en su atributo de "
-"Destino no van a ser rechazadas por este hecho."
+"If enabled, SAMLResponses with an empty value at its Destination attribute "
+"will not be rejected for this fact."
 
 #: src/Config/ConfigItem.php:727
 msgid "RELAX DEST VALIDATION"
-msgstr "FLEXIBILIZAR VALIDACIÓN DE DESTINO"
+msgstr "RELAX DEST VALIDATION"
 
 #: src/Config/ConfigItem.php:739
 msgid ""
@@ -606,221 +598,221 @@ msgid ""
 "default uses uppercase. Enable this setting for ADFS compatibility on "
 "signature verification"
 msgstr ""
-"ADFS Codifica los datos SAML en URL como minúsculas, y el toolkit PHPSAML de "
-"OneLogin usa mayúsculas por defecto. Activá esta configuración para la "
-"compatibilidad con ADFS en la verificación de firmas"
+"ADFS URL-Encodes SAML data as lowercase, and the OneLogin PHPSAML toolkit by "
+"default uses uppercase. Enable this setting for ADFS compatibility on "
+"signature verification"
 
 #: src/Config/ConfigItem.php:740
 msgid "LOWER CASE ENCODING"
-msgstr "CODIFICACIÓN EN MINÚSCULAS"
+msgstr "LOWER CASE ENCODING"
 
 #: src/Config/ConfigItem.php:800
 msgid ""
 "⚠️ Warning, do not use the 'withlove.from.donuts.nl' example certificates. "
 "They offer no additional protection."
 msgstr ""
-"⚠️ Advertencia, no uses los certificados de ejemplo 'withlove.from.donuts."
-"nl'. No ofrecen ninguna protección adicional."
+"⚠️ Warning, do not use the 'withlove.from.donuts.nl' example certificates. "
+"They offer no additional protection."
 
 #: src/Config/ConfigItem.php:810
 msgid ""
 "⭕ Certificate must be wrapped in valid BEGIN CERTIFICATE and END "
 "CERTIFICATE tags"
 msgstr ""
-"⭕ El certificado debe estar envuelto en etiquetas válidas de BEGIN "
-"CERTIFICATE y END CERTIFICATE"
+"⭕ Certificate must be wrapped in valid BEGIN CERTIFICATE and END "
+"CERTIFICATE tags"
 
 #: src/Config/ConfigItem.php:816
 msgid "⭕ Certificate should not contain \"carriage returns\" [<CR>]"
-msgstr "⭕ El certificado no debe contener \"retornos de carro\" [<CR>]"
+msgstr "⭕ Certificate should not contain \"carriage returns\" [<CR>]"
 
 #: src/Config/ConfigItem.php:820
 msgid "⭕ No valid X509 certificate found"
-msgstr "⭕ No se encontró ningún certificado X509 válido"
+msgstr "⭕ No valid X509 certificate found"
 
 #: src/Config/ConfigItem.php:823
 msgid "⚠️ OpenSSL is not available, GLPI cant validate your certificate"
-msgstr "⚠️ OpenSSL no está disponible; GLPI no puede validar tu certificado"
+msgstr "⚠️ OpenSSL is not available, GLPI cant validate your certificate"
 
 #: src/Config/ConfigItem.php:846
-#, fuzzy
 msgid "⭕ Request timeout must be a positive integer (minutes)"
-msgstr "⭕ ¡La ID debe ser un valor numérico positivo!"
+msgstr "⭕ Request timeout must be a positive integer (minutes)"
 
 #: src/Config/ConfigItem.php:850
 msgid ""
 "The duration in minutes before an uncompleted SAML request is considered "
 "expired."
 msgstr ""
+"The duration in minutes before an uncompleted SAML request is considered "
+"expired."
 
 #: src/Config/ConfigItem.php:851
 msgid "REQUEST TIMEOUT (MINUTES)"
-msgstr ""
+msgstr "REQUEST TIMEOUT (MINUTES)"
 
 #: src/Config/ClaimMapEntity.php:310
 msgid "SAML Claim key cannot be empty for Username mapping."
-msgstr ""
+msgstr "SAML Claim key cannot be empty for Username mapping."
 
 #: src/Config/ClaimMapEntity.php:318
 msgid "SAML Claim key cannot be empty for Email mapping."
-msgstr ""
+msgstr "SAML Claim key cannot be empty for Email mapping."
 
 #: src/Config/ClaimMapEntity.php:357
 #, php-format
 msgid "Duplicate mapping for %s: %s"
-msgstr ""
+msgstr "Duplicate mapping for %s: %s"
 
 #: src/Config/ClaimMapEntity.php:373
 msgid "Username mapping is required and cannot be removed."
-msgstr ""
+msgstr "Username mapping is required and cannot be removed."
 
 #: src/Config/ClaimMapEntity.php:377
 msgid "Email mapping is required and cannot be removed."
-msgstr ""
+msgstr "Email mapping is required and cannot be removed."
 
 #: src/Config/ClaimMapEntity.php:480
 msgid "NameId attribute is missing in samlResponse"
-msgstr "El atributo NameId está faltando en la samlResponse"
+msgstr "NameId attribute is missing in samlResponse"
 
 #: src/Config/ClaimMapEntity.php:486
 msgid ""
 "Detected a default guest user in samlResponse, this is not supported by "
 "glpiSAML."
 msgstr ""
+"Detected a default guest user in samlResponse, this is not supported by "
+"glpiSAML."
 
 #: src/Config/ClaimMapEntity.php:531
 msgid ""
 "Warning: SAML NameId format was requested as email but observed value is not "
 "a valid email. Falling back to configured email field."
 msgstr ""
+"Warning: SAML NameId format was requested as email but observed value is not "
+"a valid email. Falling back to configured email field."
 
 #: src/Config/ClaimMapEntity.php:554
 msgid "invalid values where used to identify the user during auth"
-msgstr ""
+msgstr "invalid values where used to identify the user during auth"
 
 #: src/Config/ClaimMapEntity.php:616
 #, php-format
 msgid "Required user field \"%s\" is missing or invalid in SAML response"
-msgstr ""
+msgstr "Required user field \"%s\" is missing or invalid in SAML response"
 
 #: src/Config/ClaimMapEntity.php:658
 msgid "Required rule field \"groups\" is missing in SAML response"
-msgstr ""
+msgstr "Required rule field \"groups\" is missing in SAML response"
 
 #: src/Config/ClaimMapEntity.php:705
 #, php-format
 msgid "Required rule field \"%s\" is missing or invalid in SAML response"
-msgstr ""
+msgstr "Required rule field \"%s\" is missing or invalid in SAML response"
 
 #: src/Config/ConfigForm.php:255
 msgid "Restore failed: no valid backup file was uploaded."
-msgstr ""
+msgstr "Restore failed: no valid backup file was uploaded."
 
 #: src/Config/ConfigForm.php:261
 msgid "Restore failed: unable to read the uploaded file."
-msgstr ""
+msgstr "Restore failed: unable to read the uploaded file."
 
 #: src/Config/ConfigForm.php:298
 msgid "Restore failed: the backup file has an invalid or unrecognized format."
-msgstr ""
+msgstr "Restore failed: the backup file has an invalid or unrecognized format."
 
 #: src/Config/ConfigForm.php:338
 #, php-format
 msgid "Entry %d skipped: missing config block."
-msgstr ""
+msgstr "Entry %d skipped: missing config block."
 
 #: src/Config/ConfigForm.php:346
 #, php-format
 msgid "Entry %d skipped: missing or invalid id."
-msgstr ""
+msgstr "Entry %d skipped: missing or invalid id."
 
 #: src/Config/ConfigForm.php:367
 #, php-format
 msgid "Entry %d (%s) could not be inserted into database."
-msgstr ""
+msgstr "Entry %d (%s) could not be inserted into database."
 
 #: src/Config/ConfigForm.php:378
 #, php-format
 msgid "Config %s restored but claim mappings had validation errors."
-msgstr ""
+msgstr "Config %s restored but claim mappings had validation errors."
 
 #: src/Config/ConfigForm.php:387
 #, php-format
 msgid "Restore successful: %d IDP configuration(s) restored."
-msgstr ""
+msgstr "Restore successful: %d IDP configuration(s) restored."
 
 #: src/Config/ConfigForm.php:396
 msgid "Restore completed but no configurations were imported."
-msgstr ""
+msgstr "Restore completed but no configurations were imported."
 
 #: src/Config/ConfigForm.php:414
 msgid "You do not have permission to perform this action."
-msgstr ""
+msgstr "You do not have permission to perform this action."
 
 #: src/Config/ConfigForm.php:429
 msgid "User disabled and session forced logoff."
-msgstr ""
+msgstr "User disabled and session forced logoff."
 
 #: src/Config/ConfigForm.php:431
 msgid "Login state session not found."
-msgstr ""
+msgstr "Login state session not found."
 
 #: src/Config/ConfigForm.php:523
 msgid "Successfully added new samlSSO configuration."
-msgstr "Configuración de samlSSO agregada exitosamente."
+msgstr "Successfully added new samlSSO configuration."
 
 #: src/Config/ConfigForm.php:527
 msgid "Unable to add new samlSSO configuration, please review error logging"
-msgstr ""
-"No se pudo agregar la nueva configuración de samlSSO; por favor, revisá el "
-"registro de errores"
+msgstr "Unable to add new samlSSO configuration, please review error logging"
 
 #: src/Config/ConfigForm.php:532 src/Config/ConfigForm.php:577
 msgid "Configuration invalid, please correct all ⭕ errors first"
-msgstr ""
-"Configuración inválida; por favor, corregí primero todos los errores ⭕"
+msgstr "Configuration invalid, please correct all ⭕ errors first"
 
 #: src/Config/ConfigForm.php:568 src/LoginFlow/LoginFlowForm.php:107
 msgid "Configuration updated successfully"
-msgstr "Configuración actualizada exitosamente"
+msgstr "Configuration updated successfully"
 
 #: src/Config/ConfigForm.php:572 src/LoginFlow/LoginFlowForm.php:111
 msgid "Configuration update failed, check your update rights or error logging"
-msgstr ""
-"La actualización de la configuración falló; revisá tus permisos de "
-"actualización o el registro de errores"
+msgstr "Configuration update failed, check your update rights or error logging"
 
 #: src/Config/ConfigForm.php:597
 msgid "Configuration deleted successfully"
-msgstr "Configuración eliminada exitosamente"
+msgstr "Configuration deleted successfully"
 
 #: src/Config/ConfigForm.php:601
 msgid "Not allowed or error deleting SAML configuration!"
-msgstr "¡No está permitido o hubo un error al eliminar la configuración SAML!"
+msgstr "Not allowed or error deleting SAML configuration!"
 
 #: src/Config/ConfigForm.php:620 src/LoginFlow/LoginFlowForm.php:136
 msgid "Invalid request, redirecting back"
-msgstr "Solicitud inválida, redirigiendo de vuelta"
+msgstr "Invalid request, redirecting back"
 
 #: src/Config/ConfigForm.php:746
 msgid "This claim key has not been observed in any SAML responses yet."
-msgstr ""
+msgstr "This claim key has not been observed in any SAML responses yet."
 
 #: src/Config/ConfigForm.php:798 src/LoginFlow/LoginFlowForm.php:187
 msgid "Email Address"
-msgstr "Dirección de Correo Electrónico"
+msgstr "Email Address"
 
 #: src/Config/ConfigForm.php:799 src/LoginFlow/LoginFlowForm.php:188
 msgid "Transient"
-msgstr "Transitorio"
+msgstr "Transient"
 
 #: src/Config/ConfigForm.php:800 src/LoginFlow/LoginFlowForm.php:189
 msgid "Persistent"
-msgstr "Persistente"
+msgstr "Persistent"
 
 #: src/Config/ConfigForm.php:801 src/LoginFlow/LoginFlowForm.php:192
 msgid "PasswordProtectedTransport"
-msgstr "TransporteProtegidoConContraseña"
+msgstr "PasswordProtectedTransport"
 
 #: src/Config/ConfigForm.php:803 src/LoginFlow/LoginFlowForm.php:194
 msgid "X509"
@@ -828,63 +820,61 @@ msgstr "X509"
 
 #: src/Config/ConfigForm.php:804 src/LoginFlow/LoginFlowForm.php:195
 msgid "none"
-msgstr "ninguno"
+msgstr "none"
 
 #: src/Config/ConfigForm.php:805 src/LoginFlow/LoginFlowForm.php:198
 msgid "Exact"
-msgstr "Exacto"
+msgstr "Exact"
 
 #: src/Config/ConfigForm.php:808 src/LoginFlow/LoginFlowForm.php:201
 msgid "Better"
-msgstr "Mejor"
+msgstr "Better"
 
 #: src/Config/ConfigEntity.php:365
 msgid ""
 "⚠️ SP private key does not seem to match provided SP certificates modulus."
 msgstr ""
-"⚠️ La clave privada del SP no parece coincidir con el módulo de los "
-"certificados SP proporcionados."
+"⚠️ SP private key does not seem to match provided SP certificates modulus."
 
 #: src/Config/ConfigEntity.php:370
 msgid ""
 "⚠️ Will be defaulted to \"No\" because the provided SP certificate does not "
 "look valid!"
 msgstr ""
-"⚠️ ¡Se va a establecer \"No\" por defecto porque el certificado SP "
-"proporcionado no parece válido!"
+"⚠️ Will be defaulted to \"No\" because the provided SP certificate does not "
+"look valid!"
 
 #: src/Config/ConfigEntity.php:417
 msgid "⚠️ IDPs cannot be enforced if more than one is present in the IDP list."
-msgstr ""
+msgstr "⚠️ IDPs cannot be enforced if more than one is present in the IDP list."
 
 #: src/Config/ClaimMapItem.php:120
-#, fuzzy
 msgid "IDP configuration ID must be a positive integer"
-msgstr "⭕ ¡El ID del IDP debe ser un valor numérico positivo!"
+msgstr "IDP configuration ID must be a positive integer"
 
 #: src/Config/ClaimMapItem.php:140
 msgid "Invalid mapping target type"
-msgstr ""
+msgstr "Invalid mapping target type"
 
 #: src/Config/ClaimMapItem.php:162
 msgid "Invalid GLPI field selected for target type"
-msgstr ""
+msgstr "Invalid GLPI field selected for target type"
 
 #: src/Config/ClaimMapItem.php:182
 msgid "SAML Claim key cannot be empty"
-msgstr ""
+msgstr "SAML Claim key cannot be empty"
 
 #: src/Config/ClaimMapItem.php:184
 msgid "SAML Claim key cannot exceed 255 characters"
-msgstr ""
+msgstr "SAML Claim key cannot exceed 255 characters"
 
 #: src/Config/ClaimMapItem.php:204
 msgid "Default value must be a string"
-msgstr ""
+msgstr "Default value must be a string"
 
 #: src/Config/ClaimMapItem.php:206
 msgid "Default value cannot exceed 255 characters"
-msgstr ""
+msgstr "Default value cannot exceed 255 characters"
 
 #: src/LoginFlow.php:170
 msgid "samlFlow"
@@ -892,13 +882,12 @@ msgstr "samlFlow"
 
 #: src/LoginFlow.php:271
 msgid "You have been forcefully logged out by an administrator."
-msgstr ""
+msgstr "You have been forcefully logged out by an administrator."
 
 #: src/LoginFlow.php:503
 msgid "Could not update the loginState and therefor stopped the loginFlow for:"
 msgstr ""
-"No se pudo actualizar el loginState y, por lo tanto, se detuvo el loginFlow "
-"para:"
+"Could not update the loginState and therefor stopped the loginFlow for:"
 
 #: src/LoginFlow.php:612
 #, php-format
@@ -911,6 +900,13 @@ msgid ""
 "this Identity Provider.<br><br>If you want to leave GLPI, just close this "
 "browser tab."
 msgstr ""
+"You have been authenticated using the SAML2 identity provider: <b>%1$s</b>."
+"<br><br>Because SAML authentication is enforced, logging out of GLPI locally "
+"will automatically log you back in immediately.<br><br>To sign out "
+"completely, please select <b>'Log out everywhere'</b>. Note that this will "
+"also terminate your active sessions in all other applications connected to "
+"this Identity Provider.<br><br>If you want to leave GLPI, just close this "
+"browser tab."
 
 #: src/LoginFlow.php:617
 #, php-format
@@ -921,47 +917,51 @@ msgid ""
 "all other applications depending on it), or perform a local logout from GLPI "
 "only by pressing <b>'Continue GLPI logout'</b>."
 msgstr ""
+"You have been authenticated using the SAML2 identity provider: <b>%1$s</b>."
+"<br><br>You can log out permanently by also logging out with the IDP by "
+"pressing <b>'Log out everywhere'</b> (which terminates active sessions in "
+"all other applications depending on it), or perform a local logout from GLPI "
+"only by pressing <b>'Continue GLPI logout'</b>."
 
 #: src/LoginFlow.php:624
 msgid "🤔 How do you like to proceed?"
-msgstr ""
+msgstr "🤔 How do you like to proceed?"
 
 #: src/LoginFlow.php:627
-#, fuzzy
 msgid "Continue with local logout"
-msgstr "Continuar con el cierre de sesión de GLPI"
+msgstr "Continue with local logout"
 
 #: src/LoginFlow.php:629
 msgid "Close tab"
-msgstr ""
+msgstr "Close tab"
 
 #: src/LoginFlow.php:630
 msgid "Log out everywhere"
-msgstr "Cerrar sesión en todos lados"
+msgstr "Log out everywhere"
 
 #: src/LoginFlow.php:684
 msgid "Login with external provider"
-msgstr "Iniciar sesión con proveedor externo"
+msgstr "Login with external provider"
 
 #: src/LoginFlow.php:736 src/LoginFlow.php:796
 msgid "An internal error occurred. Please contact your GLPI administrator."
-msgstr ""
+msgstr "An internal error occurred. Please contact your GLPI administrator."
 
 #: src/LoginFlow.php:739
 msgid "⚠️ Sorry we are unable to log you in"
-msgstr "⚠️ Lo sentimos, no te podemos iniciar sesión"
+msgstr "⚠️ Sorry we are unable to log you in"
 
 #: src/LoginFlow.php:744 src/LoginFlow.php:803
 msgid "Return to GLPI"
-msgstr "Volver a GLPI"
+msgstr "Return to GLPI"
 
 #: src/LoginFlow.php:799
 msgid "⚠️ An error occurred"
-msgstr "⚠️ Ocurrió un error"
+msgstr "⚠️ An error occurred"
 
 #: src/LoginFlow.php:800
 msgid "We are sorry, something went wrong while processing your request!"
-msgstr ""
+msgstr "We are sorry, something went wrong while processing your request!"
 
 #: src/Config.php:125
 msgid "samlSSO"
@@ -969,55 +969,55 @@ msgstr "samlSSO"
 
 #: src/Config.php:149 src/Exclude.php:87
 msgid "Excluded paths"
-msgstr "Rutas excluídas"
+msgstr "Excluded paths"
 
 #: src/Config.php:184
 msgid "Idp entity ID"
-msgstr "ID de entidad Idp"
+msgstr "Idp entity ID"
 
 #: src/LoginFlow/Acs.php:140
 msgid "Unable to fetch idp configuration with id:"
-msgstr "No se pudo obtener la configuración del idp con id:"
+msgstr "Unable to fetch idp configuration with id:"
 
 #: src/LoginFlow/Acs.php:141
 msgid "Samlsso->acs->init->FetchConfig"
-msgstr ""
+msgstr "Samlsso->acs->init->FetchConfig"
 
 #: src/LoginFlow/Acs.php:156
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "The received idp response did not contain the required samlResponse POST "
 "body or idpId to authenticate the user, see: %s for more information"
 msgstr ""
-"La respuesta recibida del idp no contenía el cuerpo POST samlResponse o el "
-"idpId requeridos para autenticar al usuario. Consultá https://codeberg.org/"
-"QuinQuies/glpisaml/wiki/ACS.php para más información"
+"The received idp response did not contain the required samlResponse POST "
+"body or idpId to authenticate the user, see: %s for more information"
 
 #: src/LoginFlow/Acs.php:157
 msgid "Samlsso->acs->init->NoSamlResponse"
-msgstr ""
+msgstr "Samlsso->acs->init->NoSamlResponse"
 
 #: src/LoginFlow/Acs.php:179
 msgid "Samlsso->acs->init->phpsaml->Utils->setProxyVars"
-msgstr ""
+msgstr "Samlsso->acs->init->phpsaml->Utils->setProxyVars"
 
 #: src/LoginFlow/Acs.php:198
 msgid ""
 "PHP-SAML could not initialize the settings object using the configEntity."
 msgstr ""
+"PHP-SAML could not initialize the settings object using the configEntity."
 
 #: src/LoginFlow/Acs.php:199
 msgid "Samlsso->acs->init->phpsaml->initializeSettings"
-msgstr ""
+msgstr "Samlsso->acs->init->phpsaml->initializeSettings"
 
 #: src/LoginFlow/Acs.php:207
-#, fuzzy
 msgid "PHP-SAML library could not process samlResponse and reported the error:"
-msgstr "No se pudo procesar la samlResponse con el Error:"
+msgstr ""
+"PHP-SAML library could not process samlResponse and reported the error:"
 
 #: src/LoginFlow/Acs.php:208
 msgid "Samlsso->acs->init->phpsaml->initializeResponse"
-msgstr ""
+msgstr "Samlsso->acs->init->phpsaml->initializeResponse"
 
 #: src/LoginFlow/Acs.php:227
 #, php-format
@@ -1025,34 +1025,35 @@ msgid ""
 "Could not fetch loginState from database with error: <br><br>%s<br><br>See: "
 "%s for more information."
 msgstr ""
+"Could not fetch loginState from database with error: <br><br>%s<br><br>See: "
+"%s for more information."
 
 #: src/LoginFlow/Acs.php:228
 msgid "Samlsso->acs->init->LoginState::construct"
-msgstr ""
+msgstr "Samlsso->acs->init->LoginState::construct"
 
 #: src/LoginFlow/Acs.php:251
 msgid ""
 "Validation of the samlResponse document failed. Review the saml log for more "
 "details"
 msgstr ""
-"La validación del documento samlResponse falló. Revisá el registro saml para "
-"más detalles"
+"Validation of the samlResponse document failed. Review the saml log for more "
+"details"
 
 #: src/LoginFlow/Acs.php:252 src/LoginFlow/Acs.php:259
 msgid "Samlsso->acs->assertSaml->SamlResponse::isValid"
-msgstr ""
+msgstr "Samlsso->acs->assertSaml->SamlResponse::isValid"
 
 #: src/LoginFlow/Acs.php:258
-#, fuzzy
 msgid ""
 "Validation of the samlResponse document failed with a critical error. Review "
 "the saml log for more details"
 msgstr ""
-"La validación del documento samlResponse falló. Revisá el registro saml para "
-"más detalles"
+"Validation of the samlResponse document failed with a critical error. Review "
+"the saml log for more details"
 
 #: src/LoginFlow/Acs.php:279
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "It looks like this samlResponse has already been used to authenticate a "
 "different user.\n"
@@ -1066,38 +1067,36 @@ msgid ""
 "administrator.\n"
 "                    See: %s for more information"
 msgstr ""
-"Parece que esta samlResponse ya fue usada para autenticar a un usuario "
-"diferente.\n"
-"                                 Quizás ocurrió un error y apretaste F5, "
-"reenviando accidentalmente la samlResponse que ya\n"
-"                                 está registrada como procesada. Por razones "
-"de seguridad, no podemos permitir que las samlResponses procesadas\n"
-"                                 se procesen de nuevo. Por favor, iniciá "
-"sesión otra vez para generar una nueva samlResponse. Disculpá las "
-"molestias.\n"
-"                                 Si el problema persiste, por favor, "
-"contactá a tu administrador.\n"
-"                                 Consultá: https://codeberg.org/QuinQuies/"
-"glpisaml/wiki/LoginState.php para más información"
+"It looks like this samlResponse has already been used to authenticate a "
+"different user.\n"
+"                    Maybe an error occurred and you pressed F5 and "
+"accidently resend the samlResponse that is\n"
+"                    already registered as processed. For security reasons we "
+"can not allow processed samlResponses\n"
+"                    to be processed again. Please login again to generate a "
+"new samlResponse. Sorry for any inconvenience.\n"
+"                    If the problem presists, then please contact your "
+"administrator.\n"
+"                    See: %s for more information"
 
 #: src/LoginFlow/Acs.php:285
 msgid "Samlsso->acs->assertSaml->LoginState::checkResponseIdUnique"
-msgstr ""
+msgstr "Samlsso->acs->assertSaml->LoginState::checkResponseIdUnique"
 
 #: src/LoginFlow/Acs.php:306
 msgid ""
 "An error occured while trying to update the samlResponseId into the "
 "LoginState database. Review the saml log for more details"
 msgstr ""
-"Ocurrió un error al intentar actualizar el samlResponseId en la base de "
-"datos de LoginState. Revisá el registro saml para más detalles"
+"An error occured while trying to update the samlResponseId into the "
+"LoginState database. Review the saml log for more details"
 
 #: src/LoginFlow/Acs.php:307
 msgid "Samlsso->acs->assertSaml->LoginState::setSamlResponseId"
-msgstr ""
+msgstr "Samlsso->acs->assertSaml->LoginState::setSamlResponseId"
 
 #: src/LoginFlow/Acs.php:320
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "GLPI did not expect an assertion from this Idp. The most likely reason is a "
 "race condition\n"
@@ -1106,19 +1105,16 @@ msgid ""
 "                    GLPI-interface. Sorry for the inconvenience. See: %s\n"
 "                    for more information"
 msgstr ""
-"GLPI no esperaba una aserción de este Idp. La razón más probable es una "
-"condición de carrera\n"
-"                                  que causa un loginState inconsistente en "
-"la base de datos o un bug de software. Por favor, iniciá sesión de nuevo a "
-"través de\n"
-"                                  la interfaz de GLPI. Disculpá las "
-"molestias. Consultá: https://codeberg.org/QuinQuies/glpisaml/wiki/LoginState."
-"php\n"
-"                                  para más información"
+"GLPI did not expect an assertion from this Idp. The most likely reason is a "
+"race condition\n"
+"                    causing an inconsistant loginState in the database or "
+"software bug. Please login again via the\n"
+"                    GLPI-interface. Sorry for the inconvenience. See: %s\n"
+"                    for more information"
 
 #: src/LoginFlow/Acs.php:324
 msgid "Samlsso->acs->assertSaml->PhaseMismatched"
-msgstr ""
+msgstr "Samlsso->acs->assertSaml->PhaseMismatched"
 
 #: src/LoginFlow/Acs.php:338
 msgid ""
@@ -1126,119 +1122,113 @@ msgid ""
 "PHASE_SAML_AUTH  into the LoginState database.\n"
 "                                  Review the saml log for more details"
 msgstr ""
-"Ocurrió un error al intentar actualizar la fase de inicio de sesión a "
-"LoginState::PHASE_SAML_AUTH en la base de datos de LoginState.\n"
-"                                  Revisá el registro saml para más detalles"
+"An error occured while trying to update the login phase to LoginState::"
+"PHASE_SAML_AUTH  into the LoginState database.\n"
+"                                  Review the saml log for more details"
 
 #: src/LoginFlow/Acs.php:339
 msgid "LoginState"
-msgstr "Estado de Inicio de sesión"
+msgstr "LoginState"
 
 #: src/LoginFlow/LoginFlowItem.php:120
 msgid "⭕ IDP ID must be a positive numeric value!"
-msgstr "⭕ ¡El ID del IDP debe ser un valor numérico positivo!"
+msgstr "⭕ IDP ID must be a positive numeric value!"
 
 #: src/LoginFlow/LoginFlowItem.php:124
 msgid "What IDP ID should be enforced?"
-msgstr "¿Qué ID del IDP debería ser forzado?"
+msgstr "What IDP ID should be enforced?"
 
 #: src/LoginFlow/LoginFlowItem.php:125
 msgid "ENFORCED IDP ID"
-msgstr "ID DE IDP FORZADO"
+msgstr "ENFORCED IDP ID"
 
 #: src/LoginFlow/LoginFlowItem.php:144
 msgid "Debug enabled?"
-msgstr "¿Depuración activada?"
+msgstr "Debug enabled?"
 
 #: src/LoginFlow/LoginFlowItem.php:161
 msgid ""
 "Should SAML SSO be enforced. This option can be bypassed by the bypass var "
 "and value"
 msgstr ""
-"Debería forzarse el SSO de SAML. Esta opción se puede omitir con la variable "
-"y el valor de omisión"
+"Should SAML SSO be enforced. This option can be bypassed by the bypass var "
+"and value"
 
 #: src/LoginFlow/LoginFlowItem.php:162
 msgid "ENFORCE SSO"
-msgstr "FORZAR SSO"
+msgstr "ENFORCE SSO"
 
 #: src/LoginFlow/LoginFlowItem.php:178
 msgid "Try to match domain in username for IDP selection"
-msgstr ""
-"Intenta hacer coincidir el dominio en el nombre de usuario para la selección "
-"del IDP"
+msgstr "Try to match domain in username for IDP selection"
 
 #: src/LoginFlow/LoginFlowItem.php:179
 msgid "ENABLE DOMAIN BASED SSO"
-msgstr "ACTIVAR SSO BASADO EN DOMINIO"
+msgstr "ENABLE DOMAIN BASED SSO"
 
 #: src/LoginFlow/LoginFlowItem.php:195
 msgid "Allow the ?idpId=[val] URI to pre select IDP from URLs"
-msgstr "Permite que la URI ?idpId=[val] preseleccione el IDP desde las URL"
+msgstr "Allow the ?idpId=[val] URI to pre select IDP from URLs"
 
 #: src/LoginFlow/LoginFlowItem.php:196
 msgid "Enable getter login"
-msgstr "Activar getter de inicio de sesión"
+msgstr "Enable getter login"
 
 #: src/LoginFlow/LoginFlowItem.php:212
 msgid ""
 "Hide the default GLPI login options. This option can be bypassed using the "
 "bypass var and value."
 msgstr ""
-"Oculta las opciones de inicio de sesión por defecto de GLPI. Esta opción se "
-"puede omitir usando la variable y el valor de omisión."
+"Hide the default GLPI login options. This option can be bypassed using the "
+"bypass var and value."
 
 #: src/LoginFlow/LoginFlowItem.php:213
 msgid "HIDE GLPI LOGIN"
-msgstr "OCULTAR INICIO DE SESIÓN DE GLPI"
+msgstr "HIDE GLPI LOGIN"
 
 #: src/LoginFlow/LoginFlowItem.php:229
 msgid ""
 "Hides Saml Buttons. This option cannot be used together with the Hide GLPI "
 "login."
 msgstr ""
-"Oculta los Botones Saml. Esta opción no se puede usar junto con Ocultar "
-"inicio de sesión de GLPI."
+"Hides Saml Buttons. This option cannot be used together with the Hide GLPI "
+"login."
 
 #: src/LoginFlow/LoginFlowItem.php:230
 msgid "Hide Saml Buttons"
-msgstr "Ocultar Botones Saml"
+msgstr "Hide Saml Buttons"
 
 #: src/LoginFlow/LoginFlowItem.php:246
 msgid "Hide the GLPI password field. To be used with Enable Domain Login."
-msgstr ""
-"Oculta el campo de contraseña de GLPI. Para ser usado con Activar Inicio de "
-"sesión con Dominio."
+msgstr "Hide the GLPI password field. To be used with Enable Domain Login."
 
 #: src/LoginFlow/LoginFlowItem.php:247
 msgid "HIDE PASSWORD FIELD"
-msgstr "OCULTAR CAMPO DE CONTRASEÑA"
+msgstr "HIDE PASSWORD FIELD"
 
 #: src/LoginFlow/LoginFlowItem.php:263
 msgid "Forces samlSSO to (re)apply the rules on each succesfull auth."
-msgstr ""
-"Fuerza a samlSSO a (re)aplicar las reglas en cada autenticación exitosa."
+msgstr "Forces samlSSO to (re)apply the rules on each succesfull auth."
 
 #: src/LoginFlow/LoginFlowItem.php:264
 msgid "APPLY RULES ON AUTH"
-msgstr "APLICAR REGLAS EN AUTENTICACIÓN"
+msgstr "APPLY RULES ON AUTH"
 
 #: src/LoginFlow/Meta.php:76
-#, fuzzy
 msgid "Error fetching spMetadata."
-msgstr "Error al obtener los Metadatos del sp."
+msgstr "Error fetching spMetadata."
 
 #: src/LoginFlow/Meta.php:81
 msgid "Invalid id or metadata not exposed."
-msgstr "Id inválido o metadatos no expuestos."
+msgstr "Invalid id or metadata not exposed."
 
 #: src/LoginFlow/Meta.php:86
 msgid "Error fetching config."
-msgstr "Error al obtener la configuración."
+msgstr "Error fetching config."
 
 #: src/LoginFlow/User.php:170 src/LoginFlow/User.php:175
 msgid "User with GlpiUserid: "
-msgstr "Usuario con GlpiUserid: "
+msgstr "User with GlpiUserid: "
 
 #: src/LoginFlow/User.php:187
 msgid ""
@@ -1246,12 +1236,17 @@ msgid ""
 "account. Please contact your GLPI administrator to assign a profile to your "
 "account."
 msgstr ""
+"Your SSO login was successful but no GLPI profile was assigned to your "
+"account. Please contact your GLPI administrator to assign a profile to your "
+"account."
 
 #: src/LoginFlow/User.php:212
 msgid ""
 "Your SSO login was successful but the identity provider configuration is "
 "invalid or disabled."
 msgstr ""
+"Your SSO login was successful but the identity provider configuration is "
+"invalid or disabled."
 
 #: src/LoginFlow/User.php:221
 msgid ""
@@ -1264,17 +1259,16 @@ msgid ""
 "                                                request the administrator to "
 "create a GLPI user manually."
 msgstr ""
-"Tu inicio de sesión SSO fue exitoso, pero no hay una cuenta de usuario de "
-"GLPI coincidente y\n"
-"                                                fallamos al crear una "
-"dinámicamente usando la creación de usuarios Just In Time. Por favor,\n"
-"                                                solicitá a un administrador "
-"de GLPI que revise los registros y corrija el problema, o\n"
-"                                                pedile al administrador que "
-"cree un usuario de GLPI manualmente."
+"Your SSO login was successful but there is no matching GLPI user account "
+"and\n"
+"                                                we failed to create one "
+"dynamically using Just In Time user creation. Please\n"
+"                                                request a GLPI administrator "
+"to review the logs and correct the problem or\n"
+"                                                request the administrator to "
+"create a GLPI user manually."
 
 #: src/LoginFlow/User.php:234
-#, fuzzy
 msgid ""
 "Your SSO login was successful but no GLPI profile was assigned to your "
 "account and\n"
@@ -1285,315 +1279,175 @@ msgid ""
 "                                                    request the "
 "administrator to assign a GLPI profile manually."
 msgstr ""
-"Tu inicio de sesión SSO fue exitoso, pero no hay una cuenta de usuario de "
-"GLPI coincidente y\n"
-"                                                fallamos al crear una "
-"dinámicamente usando la creación de usuarios Just In Time. Por favor,\n"
-"                                                solicitá a un administrador "
-"de GLPI que revise los registros y corrija el problema, o\n"
-"                                                pedile al administrador que "
-"cree un usuario de GLPI manualmente."
+"Your SSO login was successful but no GLPI profile was assigned to your "
+"account and\n"
+"                                                    we failed to assign one "
+"dynamically using Just In Time user creation. Please\n"
+"                                                    request a GLPI "
+"administrator to review the logs and correct the problem or\n"
+"                                                    request the "
+"administrator to assign a GLPI profile manually."
 
 #: src/LoginFlow/User.php:242
 msgid ""
 "Critical error: samlSSO was unable to fetch newly created user from the "
 "database!"
 msgstr ""
-"Error crítico: ¡samlSSO no pudo obtener el usuario recién creado de la base "
-"de datos!"
+"Critical error: samlSSO was unable to fetch newly created user from the "
+"database!"
 
 #: src/LoginFlow/User.php:264
 msgid "JIT was called with params:"
-msgstr "Se llamó a JIT con los parámetros:"
+msgstr "JIT was called with params:"
 
 #: src/LoginFlow/User.php:333
 msgid "Created by phpSaml Just-In-Time user creation on:"
-msgstr "Creado por la creación de usuarios Just-In-Time de phpSaml el:"
+msgstr "Created by phpSaml Just-In-Time user creation on:"
 
 #: src/LoginFlow/User.php:491
 msgid "JIT group already assigned:"
-msgstr ""
+msgstr "JIT group already assigned:"
 
 #: src/LoginFlow/User.php:502
 msgid "JIT failed to assign groupID:"
-msgstr "JIT falló al asignar el ID de grupo:"
+msgstr "JIT failed to assign groupID:"
 
 #: src/LoginFlow/User.php:507
 msgid "JIT assigned groupID:"
-msgstr "JIT asignó el ID de grupo:"
+msgstr "JIT assigned groupID:"
 
 #: src/LoginFlow/User.php:514
 msgid "JIT found no groupId to add.\n"
-msgstr "JIT no encontró ningún Id de grupo para agregar.\n"
+msgstr "JIT found no groupId to add.\n"
 
 #: src/LoginFlow/User.php:538
 msgid "JIT found entity for profile assignment:"
-msgstr "JIT encontró la entidad para la asignación de perfiles:"
+msgstr "JIT found entity for profile assignment:"
 
 #: src/LoginFlow/User.php:540
 msgid ""
 "JIT didnt find a profile for entity assignment. Profile asignment might not "
 "work.\n"
 msgstr ""
-"JIT no encontró un perfil para la asignación de entidades. Es posible que la "
-"asignación de perfiles no funcione.\n"
+"JIT didnt find a profile for entity assignment. Profile asignment might not "
+"work.\n"
 
 #: src/LoginFlow/User.php:546
 msgid "JIT found to be assigned profile(s) to be recursive.\n"
-msgstr "JIT encontró que el/los perfil(es) a asignar es/son recursivo/s.\n"
+msgstr "JIT found to be assigned profile(s) to be recursive.\n"
 
 #: src/LoginFlow/User.php:548
 msgid "JIT didnt find to be assigned profile(s) to be recursive.\n"
-msgstr "JIT no encontró que el/los perfil(es) a asignar fuera/n recursivo/s.\n"
+msgstr "JIT didnt find to be assigned profile(s) to be recursive.\n"
 
 #: src/LoginFlow/User.php:565
-#, fuzzy
 msgid "JIT profile already assigned with config:"
-msgstr "JIT no pudo asignar el perfil con la configuración:"
+msgstr "JIT profile already assigned with config:"
 
 #: src/LoginFlow/User.php:571
 msgid "JIT was not able to assign profile with config:"
-msgstr "JIT no pudo asignar el perfil con la configuración:"
+msgstr "JIT was not able to assign profile with config:"
 
 #: src/LoginFlow/User.php:577
-#, fuzzy
 msgid "JIT remove all default profiles from newly created user:\n"
-msgstr ""
-"JIT elimina todos los perfiles existentes y por defecto del usuario recién "
-"creado:\n"
+msgstr "JIT remove all default profiles from newly created user:\n"
 
 #: src/LoginFlow/User.php:585
 msgid "Done\n"
-msgstr "Hecho\n"
+msgstr "Done\n"
 
 #: src/LoginFlow/User.php:587
 msgid "failed\n"
-msgstr "falló\n"
+msgstr "failed\n"
 
 #: src/LoginFlow/User.php:589
 msgid "JIT assigned profile with config:"
-msgstr "JIT asignó el perfil con la configuración:"
+msgstr "JIT assigned profile with config:"
 
 #: src/LoginFlow/User.php:622
 msgid "JIT found default groupID:"
-msgstr "JIT encontró el ID de grupo por defecto:"
+msgstr "JIT found default groupID:"
 
 #: src/LoginFlow/User.php:624
 msgid "Jit didnt find a default GroupID to assign, skipping\n"
-msgstr "Jit no encontró un ID de Grupo por defecto para asignar, se omite\n"
+msgstr "Jit didnt find a default GroupID to assign, skipping\n"
 
 #: src/LoginFlow/User.php:629
 msgid "JIT found default entityID:"
-msgstr "JIT encontró el ID de entidad por defecto:"
+msgstr "JIT found default entityID:"
 
 #: src/LoginFlow/User.php:631
 msgid "Jit didnt find a default EntityId to assign, skipping\n"
-msgstr "Jit no encontró un Id de Entidad por defecto para asignar, se omite\n"
+msgstr "Jit didnt find a default EntityId to assign, skipping\n"
 
 #: src/LoginFlow/User.php:636
 msgid "JIT found default profileID:"
-msgstr "JIT encontró el ID de perfil por defecto:"
+msgstr "JIT found default profileID:"
 
 #: src/LoginFlow/User.php:638
 msgid "Jit didnt find a default ProfileId to assign, skipping\n"
-msgstr "Jit no encontró un Id de Perfil por defecto para asignar, se omite\n"
+msgstr "Jit didnt find a default ProfileId to assign, skipping\n"
 
 #: src/LoginFlow/User.php:643
-#, fuzzy
 msgid "JIT found timezone:"
-msgstr "JIT encontró el ID de entidad por defecto:"
+msgstr "JIT found timezone:"
 
 #: src/LoginFlow/User.php:648
-#, fuzzy
 msgid "JIT found is_active:"
-msgstr "JIT encontró el ID de perfil por defecto:"
+msgstr "JIT found is_active:"
 
 #: src/LoginFlow/User.php:653
-#, fuzzy
 msgid "JIT found locations_id:"
-msgstr "JIT encontró el ID de entidad por defecto:"
+msgstr "JIT found locations_id:"
 
 #: src/LoginFlow/User.php:658
-#, fuzzy
 msgid "JIT found usercategories_id:"
-msgstr "JIT encontró el ID de perfil por defecto:"
+msgstr "JIT found usercategories_id:"
 
 #: src/LoginFlow/User.php:663
-#, fuzzy
 msgid "JIT found usertitles_id:"
-msgstr "JIT encontró el ID de entidad por defecto:"
+msgstr "JIT found usertitles_id:"
 
 #: src/LoginFlow/User.php:668
-#, fuzzy
 msgid "JIT found language:"
-msgstr "JIT encontró el ID de grupo por defecto:"
+msgstr "JIT found language:"
 
 #: src/LoginFlow/User.php:673
 msgid "Jit updated user defaults\n"
-msgstr "Jit actualizó los valores por defecto del usuario\n"
+msgstr "Jit updated user defaults\n"
 
 #: src/LoginFlow/User.php:675
 msgid "Jit didnt update user defaults\n"
-msgstr "Jit no actualizó los valores por defecto del usuario\n"
+msgstr "Jit didnt update user defaults\n"
 
 #: src/LoginFlow/LoginFlowForm.php:72
 msgid "Identity providers"
-msgstr "Proveedores de identidad"
+msgstr "Identity providers"
 
 #: src/LoginFlow/LoginFlowForm.php:116
 msgid "Configuration invalid please correct all ⭕ errors first"
-msgstr ""
-"Configuración inválida; por favor, corregí primero todos los errores ⭕"
+msgstr "Configuration invalid please correct all ⭕ errors first"
 
 #: src/Exclude.php:126
 msgid "samlSSO Excludes"
-msgstr "Exclusiones de samlSSO"
+msgstr "samlSSO Excludes"
 
 #: src/Exclude.php:148
 msgid "Agent contains"
-msgstr "Agente contiene"
+msgstr "Agent contains"
 
 #: src/Exclude.php:154
 msgid "Bypass SAML auth"
-msgstr "Omitir autenticación SAML"
+msgstr "Bypass SAML auth"
 
 #: src/Exclude.php:159
 msgid "Url contains path or file"
-msgstr "Url contiene ruta o archivo"
+msgstr "Url contains path or file"
 
 #: src/Exclude.php:181
 msgid "Client Agent performing the call"
-msgstr "Agente Cliente que realiza la llamada"
+msgstr "Client Agent performing the call"
 
 #: src/Exclude.php:190
 msgid "To be excluded path"
-msgstr "Ruta a excluir"
-
-#~ msgid "⚠️ Are you sure?"
-#~ msgstr "⚠️ ¿Estás seguro/a?"
-
-#~ msgid "Assert saml"
-#~ msgstr "Aserción saml"
-
-#~ msgid "phpSaml::Settings->init"
-#~ msgstr "phpSaml::Settings->init"
-
-#~ msgid "Saml::Response->init"
-#~ msgstr "Saml::Response->init"
-
-#~ msgid "Acs assertion"
-#~ msgstr "Aserción Acs"
-
-#~ msgid "samlResponse assertion"
-#~ msgstr "aserción de samlResponse"
-
-#~ msgid ""
-#~ "Your SSO login was successful but we where not able to fetch\n"
-#~ "                                            the loginState from the "
-#~ "database and could not continue to log\n"
-#~ "                                            you into GLPI."
-#~ msgstr ""
-#~ "Tu inicio de sesión SSO fue exitoso, pero no pudimos obtener\n"
-#~ "                                            el loginState de la base de "
-#~ "datos y no se pudo continuar con tu\n"
-#~ "                                            inicio de sesión en GLPI."
-
-#~ msgid ""
-#~ "Detected a default guest user in samlResponse, this is not supported<br>\n"
-#~ "                                      by glpiSAML. Please create a "
-#~ "dedicated account for this user owned by your\n"
-#~ "                                      tenant/identity provider.<br>\n"
-#~ "                                      Also see: https://learn.microsoft."
-#~ "com/en-us/azure/active-directory/develop/saml-claims-customization"
-#~ msgstr ""
-#~ "Se detectó un usuario invitado por defecto en la samlResponse; esto no es "
-#~ "compatible<br> \n"
-#~ "                                      con glpiSAML. Por favor, creá una "
-#~ "cuenta dedicada para este usuario que sea propiedad de tu\n"
-#~ "                                      inquilino/proveedor de identidad."
-#~ "<br> \n"
-#~ "                                      Consultá también: https://learn."
-#~ "microsoft.com/en-us/azure/active-directory/develop/saml-claims-"
-#~ "customization"
-
-#~ msgid ""
-#~ "SamlResponse should have at least 1 valid email address for GLPI  to "
-#~ "find\n"
-#~ "                                          the corresponding GLPI user or "
-#~ "create it (with JIT enabled). For this purpose make\n"
-#~ "                                          sure either the IDP provided "
-#~ "NameId property is populated with the email address format,\n"
-#~ "                                          or configure the IDP to add the "
-#~ "users email address in the samlResponse claims using\n"
-#~ "                                          the designated schema property "
-#~ "key:"
-#~ msgstr ""
-#~ "La SamlResponse debe tener al menos 1 dirección de correo electrónico "
-#~ "válida para que GLPI pueda encontrar\n"
-#~ "                                          al usuario de GLPI "
-#~ "correspondiente o crearlo (con JIT activado). Para este propósito, "
-#~ "asegurate\n"
-#~ "                                          de que la propiedad NameId "
-#~ "proporcionada por el IDP esté poblada con el formato de dirección de "
-#~ "correo electrónico,\n"
-#~ "                                          o configurá el IDP para agregar "
-#~ "la dirección de correo electrónico del usuario en los claims de la "
-#~ "samlResponse usando\n"
-#~ "                                          la clave de propiedad de "
-#~ "esquema designada:"
-
-#~ msgid ""
-#~ "Provided firstname or givenname exceeded 255 characters. This claim "
-#~ "should not be longer than 255 characters"
-#~ msgstr ""
-#~ "El firstname o givenname proporcionado excedió los 255 caracteres. Este "
-#~ "claim no debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided surname claim exceeded 255 characters. This claim should not be "
-#~ "longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de surname proporcionado excedió los 255 caracteres. Este claim "
-#~ "no debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided job title claim exceeded 255 characters. This claim should not "
-#~ "be longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de job title proporcionado excedió los 255 caracteres. Este "
-#~ "claim no debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided mobile phone number claim exceeded 255 characters. This claim "
-#~ "should not be longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de mobile phone number proporcionado excedió los 255 caracteres. "
-#~ "Este claim no debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided telephone phone number claim exceeded 255 characters. This claim "
-#~ "should not be longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de telephone phone number proporcionado excedió los 255 "
-#~ "caracteres. Este claim no debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided country claim exceeded 255 characters. This claim should not be "
-#~ "longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de country proporcionado excedió los 255 caracteres. Este claim "
-#~ "no debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided city claim exceeded 255 characters. This claim should not be "
-#~ "longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de city proporcionado excedió los 255 caracteres. Este claim no "
-#~ "debe ser mayor a 255 caracteres"
-
-#~ msgid ""
-#~ "Provided street address claim exceeded 255 characters. This claim should "
-#~ "not be longer than 255 characters"
-#~ msgstr ""
-#~ "El claim de street address proporcionado excedió los 255 caracteres. Este "
-#~ "claim no debe ser mayor a 255 caracteres"
+msgstr "To be excluded path"

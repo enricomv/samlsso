@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: samlSSO 1.2.5\n"
 "Report-Msgid-Bugs-To: https://github.com/DonutsNL/samlSSO/issues\n"
-"POT-Creation-Date: 2026-05-31 01:33-0300\n"
+"POT-Creation-Date: 2026-06-02 09:43+0200\n"
 "PO-Revision-Date: 2026-05-31 01:34-0300\n"
 "Last-Translator: Rodrigo Leite, 2025\n"
 "Language-Team: Portuguese (Brazil) (https://app.transifex.com/quinquies/"
@@ -51,351 +51,55 @@ msgstr ""
 msgid "🆗 OpenSSL found!"
 msgstr "🆗 OpenSSL encontrado!"
 
-#: setup.php:227
+#: setup.php:246
 msgid "Installed "
 msgstr "Instalado "
+
+#: src/RuleSaml.php:86
+msgid "JIT rules"
+msgstr "Regras JIT"
+
+#: src/RuleSaml.php:177
+msgid "SAML Groups"
+msgstr ""
+
+#: src/RuleSaml.php:184
+msgid "SAML Job Title"
+msgstr ""
+
+#: src/RuleSaml.php:191
+msgid "SAML Country"
+msgstr ""
+
+#: src/RuleSaml.php:198
+#, fuzzy
+msgid "SAML City"
+msgstr "Reivindicação SAML: %s"
+
+#: src/RuleSaml.php:205
+msgid "SAML Street"
+msgstr ""
+
+#: src/RuleSaml.php:226
+#, php-format
+msgid "SAML Claim: %s"
+msgstr "Reivindicação SAML: %s"
 
 #: src/RuleSamlCollection.php:73 src/Config.php:151
 msgid "JIT import rules"
 msgstr "Regras de Importação JIT"
 
-#: src/LoginFlow.php:170
-msgid "samlFlow"
-msgstr "fluxo saml"
-
-#: src/LoginFlow.php:258
-msgid "You have been forcefully logged out by an administrator."
-msgstr "Você foi desconectado forçadamente por um administrador."
-
-#: src/LoginFlow.php:482
-msgid "Could not update the loginState and therefor stopped the loginFlow for:"
-msgstr ""
-"Não foi possível atualizar o estado de login e, portanto, o fluxo de login "
-"foi interrompido para:"
-
-#: src/LoginFlow.php:591
-#, php-format
-msgid ""
-"You have been authenticated using the SAML2 identity provider: <b>%1$s</b>."
-"<br><br>Because SAML authentication is enforced, logging out of GLPI locally "
-"will automatically log you back in immediately.<br><br>To sign out "
-"completely, please select <b>'Log out everywhere'</b>. Note that this will "
-"also terminate your active sessions in all other applications connected to "
-"this Identity Provider.<br><br>If you want to leave GLPI, just close this "
-"browser tab."
-msgstr ""
-"Você foi autenticado usando o provedor de identidade SAML2: <b>%1$s</b>."
-"<br><br>Como a autenticação SAML é imposta, sair localmente do GLPI irá "
-"automaticamente fazer com que você faça login novamente imediatamente."
-"<br><br>Para sair completamente, selecione <b>'Sair de todos os lugares'</"
-"b>. Observe que isso também encerrará suas sessões ativas em todas as outras "
-"aplicações conectadas a este Provedor de Identidade.<br><br>Se você quiser "
-"sair do GLPI, basta fechar esta aba do navegador."
-
-#: src/LoginFlow.php:596
-#, php-format
-msgid ""
-"You have been authenticated using the SAML2 identity provider: <b>%1$s</b>."
-"<br><br>You can log out permanently by also logging out with the IDP by "
-"pressing <b>'Log out everywhere'</b> (which terminates active sessions in "
-"all other applications depending on it), or perform a local logout from GLPI "
-"only by pressing <b>'Continue GLPI logout'</b>."
-msgstr ""
-"Você foi autenticado usando o provedor de identidade SAML2: <b>%1$s</b>."
-"<br><br>Você pode sair permanentemente fazendo logout também com o IDP ao "
-"pressionar <b>'Sair de todos os lugares'</b> (o que encerra as sessões "
-"ativas em todas as outras aplicações dependendo dele), ou realizando um "
-"logout local do GLPI apenas ao pressionar <b>'Continuar logout do GLPI'</b>."
-
-#: src/LoginFlow.php:603
-msgid "🤔 How do you like to proceed?"
-msgstr "🤔 Como você gostaria de prosseguir?"
-
-#: src/LoginFlow.php:606
-msgid "Continue with local logout"
-msgstr "Continuar logoff no GLPI"
-
-#: src/LoginFlow.php:608
-msgid "Close tab"
-msgstr "Fechar aba"
-
-#: src/LoginFlow.php:609
-msgid "Log out everywhere"
-msgstr "Sair de todas as seções"
-
-#: src/LoginFlow.php:663
-msgid "Login with external provider"
-msgstr "Login com provedor externo"
-
-#: src/LoginFlow.php:715 src/LoginFlow.php:775
-msgid "An internal error occurred. Please contact your GLPI administrator."
-msgstr ""
-"Ocorreu um erro interno. Por favor, entre em contato com o administrador do "
-"seu GLPI."
-
-#: src/LoginFlow.php:718
-msgid "⚠️ Sorry we are unable to log you in"
-msgstr "⚠️ Desculpe, não conseguimos efetuar o seu login"
-
-#: src/LoginFlow.php:723 src/LoginFlow.php:782
-msgid "Return to GLPI"
-msgstr "Voltar para o GLPI"
-
-#: src/LoginFlow.php:778
-msgid "⚠️ An error occurred"
-msgstr "⚠️ Ocorreu um erro"
-
-#: src/LoginFlow.php:779
-msgid "We are sorry, something went wrong while processing your request!"
-msgstr "Estamos lamentando, algo deu errado ao processar sua solicitação!"
-
-#: src/Config/ClaimMapItem.php:120
-msgid "IDP configuration ID must be a positive integer"
-msgstr "⭕ O ID do IDP deve ser um valor numérico positivo"
-
-#: src/Config/ClaimMapItem.php:140
-msgid "Invalid mapping target type"
-msgstr "Tipo de alvo de mapeamento inválido"
-
-#: src/Config/ClaimMapItem.php:162
-msgid "Invalid GLPI field selected for target type"
-msgstr "Tipo de mapeamento GLPI de campo inválido"
-
-#: src/Config/ClaimMapItem.php:182
-msgid "SAML Claim key cannot be empty"
-msgstr "A chave de reivindicação SAML não pode estar vazia"
-
-#: src/Config/ClaimMapItem.php:184
-msgid "SAML Claim key cannot exceed 255 characters"
-msgstr "A chave de reivindicação SAML não pode exceder 255 caracteres"
-
-#: src/Config/ClaimMapItem.php:204
-msgid "Default value must be a string"
-msgstr "O valor padrão deve ser uma string"
-
-#: src/Config/ClaimMapItem.php:206
-msgid "Default value cannot exceed 255 characters"
-msgstr "O valor padrão não pode exceder 255 caracteres"
-
-#: src/Config/ClaimMapEntity.php:310
-msgid "SAML Claim key cannot be empty for Username mapping."
-msgstr ""
-"A chave de reivindicação SAML não pode estar vazia para o mapeamento de "
-"Username."
-
-#: src/Config/ClaimMapEntity.php:318
-msgid "SAML Claim key cannot be empty for Email mapping."
-msgstr ""
-"A chave de reivindicação SAML não pode estar vazia para o mapeamento de "
-"Email."
-
-#: src/Config/ClaimMapEntity.php:357
-#, php-format
-msgid "Duplicate mapping for %s: %s"
-msgstr "Mapeamento duplicado para %s: %s"
-
-#: src/Config/ClaimMapEntity.php:373
-msgid "Username mapping is required and cannot be removed."
-msgstr "O mapeamento de Username é obrigatório e não pode ser removido."
-
-#: src/Config/ClaimMapEntity.php:377
-msgid "Email mapping is required and cannot be removed."
-msgstr "O mapeamento de Email é obrigatório e não pode ser removido."
-
-#: src/Config/ClaimMapEntity.php:480
-msgid "NameId attribute is missing in samlResponse"
-msgstr "O atributo NameId foi perdido em samlResponse"
-
-#: src/Config/ClaimMapEntity.php:486
-msgid ""
-"Detected a default guest user in samlResponse, this is not supported by "
-"glpiSAML."
-msgstr ""
-"Detectado um usuário guest padrão na resposta saml, isso não é suportado "
-"pelo glpiSAML."
-
-#: src/Config/ClaimMapEntity.php:531
-msgid ""
-"Warning: SAML NameId format was requested as email but observed value is not "
-"a valid email. Falling back to configured email field."
-msgstr ""
-"Aviso: O formato de NameId SAML foi solicitado como email, mas o valor "
-"observado não é um email válido. Voltando para o campo de email configurado."
-
-#: src/Config/ClaimMapEntity.php:554
-msgid "invalid values where used to identify the user during auth"
-msgstr ""
-"valores inválidos foram usados para identificar o usuário durante o login"
-
-#: src/Config/ClaimMapEntity.php:616
-#, php-format
-msgid "Required user field \"%s\" is missing or invalid in SAML response"
-msgstr ""
-"O campo de usuário obrigatório \"%s\" está ausente ou inválido na resposta "
-"SAML"
-
-#: src/Config/ClaimMapEntity.php:658
-msgid "Required rule field \"groups\" is missing in SAML response"
-msgstr "O campo de regra obrigatório \"groups\" está ausente na resposta SAML"
-
-#: src/Config/ClaimMapEntity.php:705
-#, php-format
-msgid "Required rule field \"%s\" is missing or invalid in SAML response"
-msgstr ""
-"O campo de regra obrigatório \"%s\" está ausente ou inválido na resposta SAML"
-
-#: src/Config/ConfigEntity.php:364
-msgid ""
-"⚠️ SP private key does not seem to match provided SP certificates modulus."
-msgstr ""
-"⚠️ A chave privada do SP parece não corresponder ao módulo dos certificados "
-"SP fornecidos."
-
-#: src/Config/ConfigEntity.php:369
-msgid ""
-"⚠️ Will be defaulted to \"No\" because the provided SP certificate does not "
-"look valid!"
-msgstr ""
-"⚠️ Será definido como \"Não\" por padrão, pois o certificado SP fornecido "
-"parece não ser válido!"
-
-#: src/Config/ConfigEntity.php:417
-msgid "⚠️ IDPs cannot be enforced if more than one is present in the IDP list."
-msgstr ""
-"⚠️ Os IDPs não podem ser impostos se mais de um estiver presente na lista de "
-"IDPs."
-
-#: src/Config/ConfigForm.php:255
-msgid "Restore failed: no valid backup file was uploaded."
-msgstr "Restauração falhou: nenhum arquivo de backup válido foi carregado."
-
-#: src/Config/ConfigForm.php:261
-msgid "Restore failed: unable to read the uploaded file."
-msgstr "Restauração falhou: não foi possível ler o arquivo carregado."
-
-#: src/Config/ConfigForm.php:298
-msgid "Restore failed: the backup file has an invalid or unrecognized format."
-msgstr ""
-"Restauração falhou: o arquivo de backup tem um formato inválido ou não "
-"reconhecido."
-
-#: src/Config/ConfigForm.php:338
-#, php-format
-msgid "Entry %d skipped: missing config block."
-msgstr "Entrada %d ignorada: bloco de configuração ausente."
-
-#: src/Config/ConfigForm.php:346
-#, php-format
-msgid "Entry %d skipped: missing or invalid id."
-msgstr "Entrada %d ignorada: ID ou inválido."
-
-#: src/Config/ConfigForm.php:364
-#, php-format
-msgid "Entry %d (%s) could not be inserted into database."
-msgstr "Entrada %d (%s) não pôde ser inserida no banco de dados."
-
-#: src/Config/ConfigForm.php:375
-#, php-format
-msgid "Config %s restored but claim mappings had validation errors."
-msgstr ""
-"Configuração %s restaurada, mas mapeamentos de reivindicações tiveram erros "
-"de validação."
-
-#: src/Config/ConfigForm.php:384
-#, php-format
-msgid "Restore successful: %d IDP configuration(s) restored."
-msgstr "Restauração bem-sucedida: %d configuração(s) IDP restaurada(s)."
-
-#: src/Config/ConfigForm.php:393
-msgid "Restore completed but no configurations were imported."
-msgstr "Restauração concluída, mas nenhuma configuração foi importada."
-
-#: src/Config/ConfigForm.php:411
-msgid "You do not have permission to perform this action."
-msgstr "Você não tem permissão para executar esta ação."
-
-#: src/Config/ConfigForm.php:426
-msgid "User disabled and session forced logoff."
-msgstr "Usuário desabilitado e logout forçado da sessão."
-
-#: src/Config/ConfigForm.php:428
-msgid "Login state session not found."
-msgstr "Estado de login da sessão não encontrado."
-
-#: src/Config/ConfigForm.php:517
-msgid "Successfully added new samlSSO configuration."
-msgstr "Nova configuração do samlSSO adicionada com sucesso."
-
-#: src/Config/ConfigForm.php:521
-msgid "Unable to add new samlSSO configuration, please review error logging"
-msgstr ""
-"Não foi possível adicionar uma nova configuração do samlSSO. Por favor, "
-"verifique o log de erros"
-
-#: src/Config/ConfigForm.php:526 src/Config/ConfigForm.php:571
-msgid "Configuration invalid, please correct all ⭕ errors first"
-msgstr ""
-"Configuração inválida, por favor corrija todos os erros marcados com ⭕ "
-"primeiro"
-
-#: src/Config/ConfigForm.php:562 src/LoginFlow/LoginFlowForm.php:105
-msgid "Configuration updated successfully"
-msgstr "Configuração atualizada com sucesso"
-
-#: src/Config/ConfigForm.php:566 src/LoginFlow/LoginFlowForm.php:109
-msgid "Configuration update failed, check your update rights or error logging"
-msgstr ""
-"A atualização da configuração falhou. Verifique suas permissões de "
-"atualização ou o log de erros"
-
-#: src/Config/ConfigForm.php:591
-msgid "Configuration deleted successfully"
-msgstr "Configuração apagada com sucesso"
-
-#: src/Config/ConfigForm.php:595
-msgid "Not allowed or error deleting SAML configuration!"
-msgstr "Não é permitido ou ocorreu um erro ao excluir a configuração SAML!"
-
-#: src/Config/ConfigForm.php:614 src/LoginFlow/LoginFlowForm.php:133
-msgid "Invalid request, redirecting back"
-msgstr "Solicitação inválida, redirecionando de volta"
-
-#: src/Config/ConfigForm.php:740
-msgid "This claim key has not been observed in any SAML responses yet."
-msgstr ""
-"Esta chave de reivindicação não foi observada em nenhuma resposta SAML."
-
-#: src/Config/ConfigForm.php:792 src/LoginFlow/LoginFlowForm.php:184
-msgid "Email Address"
-msgstr "Endereço de email"
-
-#: src/Config/ConfigForm.php:793 src/LoginFlow/LoginFlowForm.php:185
-msgid "Transient"
-msgstr "Transitório"
-
-#: src/Config/ConfigForm.php:794 src/LoginFlow/LoginFlowForm.php:186
-msgid "Persistent"
-msgstr "Persistente"
-
-#: src/Config/ConfigForm.php:795 src/LoginFlow/LoginFlowForm.php:189
-msgid "PasswordProtectedTransport"
-msgstr "Transporte protegido por senha"
-
-#: src/Config/ConfigForm.php:797 src/LoginFlow/LoginFlowForm.php:191
-msgid "X509"
-msgstr "X509"
-
-#: src/Config/ConfigForm.php:798 src/LoginFlow/LoginFlowForm.php:192
-msgid "none"
-msgstr "nenhum"
-
-#: src/Config/ConfigForm.php:799 src/LoginFlow/LoginFlowForm.php:195
-msgid "Exact"
-msgstr "Exato"
-
-#: src/Config/ConfigForm.php:802 src/LoginFlow/LoginFlowForm.php:198
-msgid "Better"
-msgstr "Melhor"
+#: src/CronTask.php:66
+msgid "Clean old SAML sessions"
+msgstr "Limpar seções SAML antigas"
+
+#: src/CronTask.php:67
+msgid "SAML sessions retention period (in days, 0 for infinite)"
+msgstr "Tempo de retenção das seções SAML (em dias, 0 para ininito)"
+
+#: src/CronTask.php:69
+msgid "Update GeoIP offline database"
+msgstr "Atualizar banco de dados GeoIP offline"
 
 #: src/Config/ConfigItem.php:101 src/LoginFlow/LoginFlowItem.php:97
 msgid "⭕ ID must be a positive numeric value!"
@@ -807,10 +511,10 @@ msgstr "REQUER NAMEID"
 
 #: src/Config/ConfigItem.php:634
 msgid ""
-"If enabled the OneLogin PHPSAML toolkit will encrypt the "
-"<samlp:logoutRequest> sent by this SP using the provided SP certificate and "
-"private key. This option will be toggled \"off\" automatically if no, or no "
-"valid SP certificate and key is provided."
+"If enabled the OneLogin PHPSAML toolkit will encrypt the <samlp:"
+"logoutRequest> sent by this SP using the provided SP certificate and private "
+"key. This option will be toggled \"off\" automatically if no, or no valid SP "
+"certificate and key is provided."
 msgstr ""
 "Se ativada, a ferramenta PHPSAML do OneLogin criptografará os dados enviados "
 "por este provedor de serviços usando o certificado e a chave privada "
@@ -949,6 +653,359 @@ msgid "⚠️ OpenSSL is not available, GLPI cant validate your certificate"
 msgstr ""
 "⚠️ OpenSSL não está disponível, o GLPI não consegue validar seu certificado"
 
+#: src/Config/ConfigItem.php:846
+#, fuzzy
+msgid "⭕ Request timeout must be a positive integer (minutes)"
+msgstr "⭕ O ID deve ser um valor numérico positivo!"
+
+#: src/Config/ConfigItem.php:850
+msgid ""
+"The duration in minutes before an uncompleted SAML request is considered "
+"expired."
+msgstr ""
+
+#: src/Config/ConfigItem.php:851
+msgid "REQUEST TIMEOUT (MINUTES)"
+msgstr ""
+
+#: src/Config/ClaimMapEntity.php:310
+msgid "SAML Claim key cannot be empty for Username mapping."
+msgstr ""
+"A chave de reivindicação SAML não pode estar vazia para o mapeamento de "
+"Username."
+
+#: src/Config/ClaimMapEntity.php:318
+msgid "SAML Claim key cannot be empty for Email mapping."
+msgstr ""
+"A chave de reivindicação SAML não pode estar vazia para o mapeamento de "
+"Email."
+
+#: src/Config/ClaimMapEntity.php:357
+#, php-format
+msgid "Duplicate mapping for %s: %s"
+msgstr "Mapeamento duplicado para %s: %s"
+
+#: src/Config/ClaimMapEntity.php:373
+msgid "Username mapping is required and cannot be removed."
+msgstr "O mapeamento de Username é obrigatório e não pode ser removido."
+
+#: src/Config/ClaimMapEntity.php:377
+msgid "Email mapping is required and cannot be removed."
+msgstr "O mapeamento de Email é obrigatório e não pode ser removido."
+
+#: src/Config/ClaimMapEntity.php:480
+msgid "NameId attribute is missing in samlResponse"
+msgstr "O atributo NameId foi perdido em samlResponse"
+
+#: src/Config/ClaimMapEntity.php:486
+msgid ""
+"Detected a default guest user in samlResponse, this is not supported by "
+"glpiSAML."
+msgstr ""
+"Detectado um usuário guest padrão na resposta saml, isso não é suportado "
+"pelo glpiSAML."
+
+#: src/Config/ClaimMapEntity.php:531
+msgid ""
+"Warning: SAML NameId format was requested as email but observed value is not "
+"a valid email. Falling back to configured email field."
+msgstr ""
+"Aviso: O formato de NameId SAML foi solicitado como email, mas o valor "
+"observado não é um email válido. Voltando para o campo de email configurado."
+
+#: src/Config/ClaimMapEntity.php:554
+msgid "invalid values where used to identify the user during auth"
+msgstr ""
+"valores inválidos foram usados para identificar o usuário durante o login"
+
+#: src/Config/ClaimMapEntity.php:616
+#, php-format
+msgid "Required user field \"%s\" is missing or invalid in SAML response"
+msgstr ""
+"O campo de usuário obrigatório \"%s\" está ausente ou inválido na resposta "
+"SAML"
+
+#: src/Config/ClaimMapEntity.php:658
+msgid "Required rule field \"groups\" is missing in SAML response"
+msgstr "O campo de regra obrigatório \"groups\" está ausente na resposta SAML"
+
+#: src/Config/ClaimMapEntity.php:705
+#, php-format
+msgid "Required rule field \"%s\" is missing or invalid in SAML response"
+msgstr ""
+"O campo de regra obrigatório \"%s\" está ausente ou inválido na resposta SAML"
+
+#: src/Config/ConfigForm.php:255
+msgid "Restore failed: no valid backup file was uploaded."
+msgstr "Restauração falhou: nenhum arquivo de backup válido foi carregado."
+
+#: src/Config/ConfigForm.php:261
+msgid "Restore failed: unable to read the uploaded file."
+msgstr "Restauração falhou: não foi possível ler o arquivo carregado."
+
+#: src/Config/ConfigForm.php:298
+msgid "Restore failed: the backup file has an invalid or unrecognized format."
+msgstr ""
+"Restauração falhou: o arquivo de backup tem um formato inválido ou não "
+"reconhecido."
+
+#: src/Config/ConfigForm.php:338
+#, php-format
+msgid "Entry %d skipped: missing config block."
+msgstr "Entrada %d ignorada: bloco de configuração ausente."
+
+#: src/Config/ConfigForm.php:346
+#, php-format
+msgid "Entry %d skipped: missing or invalid id."
+msgstr "Entrada %d ignorada: ID ou inválido."
+
+#: src/Config/ConfigForm.php:367
+#, php-format
+msgid "Entry %d (%s) could not be inserted into database."
+msgstr "Entrada %d (%s) não pôde ser inserida no banco de dados."
+
+#: src/Config/ConfigForm.php:378
+#, php-format
+msgid "Config %s restored but claim mappings had validation errors."
+msgstr ""
+"Configuração %s restaurada, mas mapeamentos de reivindicações tiveram erros "
+"de validação."
+
+#: src/Config/ConfigForm.php:387
+#, php-format
+msgid "Restore successful: %d IDP configuration(s) restored."
+msgstr "Restauração bem-sucedida: %d configuração(s) IDP restaurada(s)."
+
+#: src/Config/ConfigForm.php:396
+msgid "Restore completed but no configurations were imported."
+msgstr "Restauração concluída, mas nenhuma configuração foi importada."
+
+#: src/Config/ConfigForm.php:414
+msgid "You do not have permission to perform this action."
+msgstr "Você não tem permissão para executar esta ação."
+
+#: src/Config/ConfigForm.php:429
+msgid "User disabled and session forced logoff."
+msgstr "Usuário desabilitado e logout forçado da sessão."
+
+#: src/Config/ConfigForm.php:431
+msgid "Login state session not found."
+msgstr "Estado de login da sessão não encontrado."
+
+#: src/Config/ConfigForm.php:523
+msgid "Successfully added new samlSSO configuration."
+msgstr "Nova configuração do samlSSO adicionada com sucesso."
+
+#: src/Config/ConfigForm.php:527
+msgid "Unable to add new samlSSO configuration, please review error logging"
+msgstr ""
+"Não foi possível adicionar uma nova configuração do samlSSO. Por favor, "
+"verifique o log de erros"
+
+#: src/Config/ConfigForm.php:532 src/Config/ConfigForm.php:577
+msgid "Configuration invalid, please correct all ⭕ errors first"
+msgstr ""
+"Configuração inválida, por favor corrija todos os erros marcados com ⭕ "
+"primeiro"
+
+#: src/Config/ConfigForm.php:568 src/LoginFlow/LoginFlowForm.php:107
+msgid "Configuration updated successfully"
+msgstr "Configuração atualizada com sucesso"
+
+#: src/Config/ConfigForm.php:572 src/LoginFlow/LoginFlowForm.php:111
+msgid "Configuration update failed, check your update rights or error logging"
+msgstr ""
+"A atualização da configuração falhou. Verifique suas permissões de "
+"atualização ou o log de erros"
+
+#: src/Config/ConfigForm.php:597
+msgid "Configuration deleted successfully"
+msgstr "Configuração apagada com sucesso"
+
+#: src/Config/ConfigForm.php:601
+msgid "Not allowed or error deleting SAML configuration!"
+msgstr "Não é permitido ou ocorreu um erro ao excluir a configuração SAML!"
+
+#: src/Config/ConfigForm.php:620 src/LoginFlow/LoginFlowForm.php:136
+msgid "Invalid request, redirecting back"
+msgstr "Solicitação inválida, redirecionando de volta"
+
+#: src/Config/ConfigForm.php:746
+msgid "This claim key has not been observed in any SAML responses yet."
+msgstr ""
+"Esta chave de reivindicação não foi observada em nenhuma resposta SAML."
+
+#: src/Config/ConfigForm.php:798 src/LoginFlow/LoginFlowForm.php:187
+msgid "Email Address"
+msgstr "Endereço de email"
+
+#: src/Config/ConfigForm.php:799 src/LoginFlow/LoginFlowForm.php:188
+msgid "Transient"
+msgstr "Transitório"
+
+#: src/Config/ConfigForm.php:800 src/LoginFlow/LoginFlowForm.php:189
+msgid "Persistent"
+msgstr "Persistente"
+
+#: src/Config/ConfigForm.php:801 src/LoginFlow/LoginFlowForm.php:192
+msgid "PasswordProtectedTransport"
+msgstr "Transporte protegido por senha"
+
+#: src/Config/ConfigForm.php:803 src/LoginFlow/LoginFlowForm.php:194
+msgid "X509"
+msgstr "X509"
+
+#: src/Config/ConfigForm.php:804 src/LoginFlow/LoginFlowForm.php:195
+msgid "none"
+msgstr "nenhum"
+
+#: src/Config/ConfigForm.php:805 src/LoginFlow/LoginFlowForm.php:198
+msgid "Exact"
+msgstr "Exato"
+
+#: src/Config/ConfigForm.php:808 src/LoginFlow/LoginFlowForm.php:201
+msgid "Better"
+msgstr "Melhor"
+
+#: src/Config/ConfigEntity.php:365
+msgid ""
+"⚠️ SP private key does not seem to match provided SP certificates modulus."
+msgstr ""
+"⚠️ A chave privada do SP parece não corresponder ao módulo dos certificados "
+"SP fornecidos."
+
+#: src/Config/ConfigEntity.php:370
+msgid ""
+"⚠️ Will be defaulted to \"No\" because the provided SP certificate does not "
+"look valid!"
+msgstr ""
+"⚠️ Será definido como \"Não\" por padrão, pois o certificado SP fornecido "
+"parece não ser válido!"
+
+#: src/Config/ConfigEntity.php:417
+msgid "⚠️ IDPs cannot be enforced if more than one is present in the IDP list."
+msgstr ""
+"⚠️ Os IDPs não podem ser impostos se mais de um estiver presente na lista de "
+"IDPs."
+
+#: src/Config/ClaimMapItem.php:120
+msgid "IDP configuration ID must be a positive integer"
+msgstr "⭕ O ID do IDP deve ser um valor numérico positivo"
+
+#: src/Config/ClaimMapItem.php:140
+msgid "Invalid mapping target type"
+msgstr "Tipo de alvo de mapeamento inválido"
+
+#: src/Config/ClaimMapItem.php:162
+msgid "Invalid GLPI field selected for target type"
+msgstr "Tipo de mapeamento GLPI de campo inválido"
+
+#: src/Config/ClaimMapItem.php:182
+msgid "SAML Claim key cannot be empty"
+msgstr "A chave de reivindicação SAML não pode estar vazia"
+
+#: src/Config/ClaimMapItem.php:184
+msgid "SAML Claim key cannot exceed 255 characters"
+msgstr "A chave de reivindicação SAML não pode exceder 255 caracteres"
+
+#: src/Config/ClaimMapItem.php:204
+msgid "Default value must be a string"
+msgstr "O valor padrão deve ser uma string"
+
+#: src/Config/ClaimMapItem.php:206
+msgid "Default value cannot exceed 255 characters"
+msgstr "O valor padrão não pode exceder 255 caracteres"
+
+#: src/LoginFlow.php:170
+msgid "samlFlow"
+msgstr "fluxo saml"
+
+#: src/LoginFlow.php:271
+msgid "You have been forcefully logged out by an administrator."
+msgstr "Você foi desconectado forçadamente por um administrador."
+
+#: src/LoginFlow.php:503
+msgid "Could not update the loginState and therefor stopped the loginFlow for:"
+msgstr ""
+"Não foi possível atualizar o estado de login e, portanto, o fluxo de login "
+"foi interrompido para:"
+
+#: src/LoginFlow.php:612
+#, php-format
+msgid ""
+"You have been authenticated using the SAML2 identity provider: <b>%1$s</b>."
+"<br><br>Because SAML authentication is enforced, logging out of GLPI locally "
+"will automatically log you back in immediately.<br><br>To sign out "
+"completely, please select <b>'Log out everywhere'</b>. Note that this will "
+"also terminate your active sessions in all other applications connected to "
+"this Identity Provider.<br><br>If you want to leave GLPI, just close this "
+"browser tab."
+msgstr ""
+"Você foi autenticado usando o provedor de identidade SAML2: <b>%1$s</b>."
+"<br><br>Como a autenticação SAML é imposta, sair localmente do GLPI irá "
+"automaticamente fazer com que você faça login novamente imediatamente."
+"<br><br>Para sair completamente, selecione <b>'Sair de todos os lugares'</"
+"b>. Observe que isso também encerrará suas sessões ativas em todas as outras "
+"aplicações conectadas a este Provedor de Identidade.<br><br>Se você quiser "
+"sair do GLPI, basta fechar esta aba do navegador."
+
+#: src/LoginFlow.php:617
+#, php-format
+msgid ""
+"You have been authenticated using the SAML2 identity provider: <b>%1$s</b>."
+"<br><br>You can log out permanently by also logging out with the IDP by "
+"pressing <b>'Log out everywhere'</b> (which terminates active sessions in "
+"all other applications depending on it), or perform a local logout from GLPI "
+"only by pressing <b>'Continue GLPI logout'</b>."
+msgstr ""
+"Você foi autenticado usando o provedor de identidade SAML2: <b>%1$s</b>."
+"<br><br>Você pode sair permanentemente fazendo logout também com o IDP ao "
+"pressionar <b>'Sair de todos os lugares'</b> (o que encerra as sessões "
+"ativas em todas as outras aplicações dependendo dele), ou realizando um "
+"logout local do GLPI apenas ao pressionar <b>'Continuar logout do GLPI'</b>."
+
+#: src/LoginFlow.php:624
+msgid "🤔 How do you like to proceed?"
+msgstr "🤔 Como você gostaria de prosseguir?"
+
+#: src/LoginFlow.php:627
+msgid "Continue with local logout"
+msgstr "Continuar logoff no GLPI"
+
+#: src/LoginFlow.php:629
+msgid "Close tab"
+msgstr "Fechar aba"
+
+#: src/LoginFlow.php:630
+msgid "Log out everywhere"
+msgstr "Sair de todas as seções"
+
+#: src/LoginFlow.php:684
+msgid "Login with external provider"
+msgstr "Login com provedor externo"
+
+#: src/LoginFlow.php:736 src/LoginFlow.php:796
+msgid "An internal error occurred. Please contact your GLPI administrator."
+msgstr ""
+"Ocorreu um erro interno. Por favor, entre em contato com o administrador do "
+"seu GLPI."
+
+#: src/LoginFlow.php:739
+msgid "⚠️ Sorry we are unable to log you in"
+msgstr "⚠️ Desculpe, não conseguimos efetuar o seu login"
+
+#: src/LoginFlow.php:744 src/LoginFlow.php:803
+msgid "Return to GLPI"
+msgstr "Voltar para o GLPI"
+
+#: src/LoginFlow.php:799
+msgid "⚠️ An error occurred"
+msgstr "⚠️ Ocorreu um erro"
+
+#: src/LoginFlow.php:800
+msgid "We are sorry, something went wrong while processing your request!"
+msgstr "Estamos lamentando, algo deu errado ao processar sua solicitação!"
+
 #: src/Config.php:125
 msgid "samlSSO"
 msgstr "samlSSO"
@@ -960,220 +1017,6 @@ msgstr "Caminhos excluídos"
 #: src/Config.php:184
 msgid "Idp entity ID"
 msgstr "ID da entidade do IDP"
-
-#: src/CronTask.php:66
-msgid "Clean old SAML sessions"
-msgstr "Limpar seções SAML antigas"
-
-#: src/CronTask.php:67
-msgid "SAML sessions retention period (in days, 0 for infinite)"
-msgstr "Tempo de retenção das seções SAML (em dias, 0 para ininito)"
-
-#: src/CronTask.php:69
-msgid "Update GeoIP offline database"
-msgstr "Atualizar banco de dados GeoIP offline"
-
-#: src/LoginFlow/User.php:170 src/LoginFlow/User.php:175
-msgid "User with GlpiUserid: "
-msgstr "Usuário com GlpiUserid: "
-
-#: src/LoginFlow/User.php:187
-msgid ""
-"Your SSO login was successful but no GLPI profile was assigned to your "
-"account. Please contact your GLPI administrator to assign a profile to your "
-"account."
-msgstr ""
-"Seu login SSO foi bem-sucedido, mas nenhum perfil GLPI foi atribuído à sua "
-"conta. Por favor, entre em contato com o administrador do GLPI para atribuir "
-"um perfil à sua conta."
-
-#: src/LoginFlow/User.php:212
-msgid ""
-"Your SSO login was successful but the identity provider configuration is "
-"invalid or disabled."
-msgstr ""
-"Seu login SSO foi bem-sucedido, mas a configuração do provedor de identidade "
-"é inválida ou desabilitada."
-
-#: src/LoginFlow/User.php:221
-msgid ""
-"Your SSO login was successful but there is no matching GLPI user account "
-"and\n"
-"                                                we failed to create one "
-"dynamically using Just In Time user creation. Please\n"
-"                                                request a GLPI administrator "
-"to review the logs and correct the problem or\n"
-"                                                request the administrator to "
-"create a GLPI user manually."
-msgstr ""
-"Seu login SSO foi bem-sucedido, mas não há uma conta de usuário GLPI "
-"correspondente e não conseguimos criar uma dinamicamente usando a criação de "
-"usuário Just In Time. Solicite a um administrador do GLPI que revise os "
-"registros e corrija o problema ou solicite que o administrador crie um "
-"usuário GLPI manualmente."
-
-#: src/LoginFlow/User.php:234
-msgid ""
-"Your SSO login was successful but no GLPI profile was assigned to your "
-"account and\n"
-"                                                    we failed to assign one "
-"dynamically using Just In Time user creation. Please\n"
-"                                                    request a GLPI "
-"administrator to review the logs and correct the problem or\n"
-"                                                    request the "
-"administrator to assign a GLPI profile manually."
-msgstr ""
-"Seu login SSO foi bem-sucedido, mas não há uma conta de usuário GLPI "
-"correspondente e não conseguimos criar uma dinamicamente usando a criação de "
-"usuário Just In Time (JIT). Solicite a um administrador do GLPI que revise "
-"os logs e corrija o problema ou solicite que o administrador crie um usuário "
-"GLPI manualmente."
-
-#: src/LoginFlow/User.php:242
-msgid ""
-"Critical error: samlSSO was unable to fetch newly created user from the "
-"database!"
-msgstr ""
-"Erro crítico: o samlSSO não conseguiu recuperar o usuário recém-criado do "
-"banco de dados!"
-
-#: src/LoginFlow/User.php:264
-msgid "JIT was called with params:"
-msgstr "O JIT foi chamado com os seguintes parâmetros:"
-
-#: src/LoginFlow/User.php:333
-msgid "Created by phpSaml Just-In-Time user creation on:"
-msgstr "Criado por phpSaml Just-In-Time (JIT) usuário criado em:"
-
-#: src/LoginFlow/User.php:486
-msgid "JIT group already assigned:"
-msgstr "Grupo JIT já atribuído:"
-
-#: src/LoginFlow/User.php:497
-msgid "JIT failed to assign groupID:"
-msgstr "O JIT não conseguiu atribuir o groupID:"
-
-#: src/LoginFlow/User.php:502
-msgid "JIT assigned groupID:"
-msgstr "ID de grupo atribuído pelo JIT:"
-
-#: src/LoginFlow/User.php:509
-msgid "JIT found no groupId to add.\n"
-msgstr "O JIT não encontrou nenhum grupoId para adicionar.\n"
-
-#: src/LoginFlow/User.php:533
-msgid "JIT found entity for profile assignment:"
-msgstr "O sistema JIT encontrou a entidade para atribuição de perfil:"
-
-#: src/LoginFlow/User.php:535
-msgid ""
-"JIT didnt find a profile for entity assignment. Profile asignment might not "
-"work.\n"
-msgstr ""
-"O JIT não encontrou um perfil para atribuição de entidade. A atribuição de "
-"perfil pode não funcionar.\n"
-
-#: src/LoginFlow/User.php:541
-msgid "JIT found to be assigned profile(s) to be recursive.\n"
-msgstr "O JIT foi considerado como tendo atribuído perfil(s) recursivo(s).\n"
-
-#: src/LoginFlow/User.php:543
-msgid "JIT didnt find to be assigned profile(s) to be recursive.\n"
-msgstr "O JIT não encontrou perfis atribuídos que fossem recursivos.\n"
-
-#: src/LoginFlow/User.php:560
-msgid "JIT profile already assigned with config:"
-msgstr "Perfil JIT já atribuído com configuração:"
-
-#: src/LoginFlow/User.php:566
-msgid "JIT was not able to assign profile with config:"
-msgstr ""
-"O JIT não conseguiu atribuir um perfil com as configurações existentes:"
-
-#: src/LoginFlow/User.php:572
-msgid "JIT remove all default profiles from newly created user:\n"
-msgstr ""
-"JIT removeu todos os perfis existentes e padrão do usuário recém-criado:\n"
-
-#: src/LoginFlow/User.php:580
-msgid "Done\n"
-msgstr "Concluído\n"
-
-#: src/LoginFlow/User.php:582
-msgid "failed\n"
-msgstr "falhou\n"
-
-#: src/LoginFlow/User.php:584
-msgid "JIT assigned profile with config:"
-msgstr "Perfil atribuído pelas configurações do JIT:"
-
-#: src/LoginFlow/User.php:617
-msgid "JIT found default groupID:"
-msgstr "JIT encontrou o groupID padrão:"
-
-#: src/LoginFlow/User.php:619
-msgid "Jit didnt find a default GroupID to assign, skipping\n"
-msgstr "Jit não encontrou um GroupID padrão para atribuir, ignorando\n"
-
-#: src/LoginFlow/User.php:624
-msgid "JIT found default entityID:"
-msgstr "JIT encontrou a entityID padrão:"
-
-#: src/LoginFlow/User.php:626
-msgid "Jit didnt find a default EntityId to assign, skipping\n"
-msgstr "Jit não encontrou uma EntityId padrão para atribuir, ignorando\n"
-
-#: src/LoginFlow/User.php:631
-msgid "JIT found default profileID:"
-msgstr "JIT encontrou o profileID padrão:"
-
-#: src/LoginFlow/User.php:633
-msgid "Jit didnt find a default ProfileId to assign, skipping\n"
-msgstr "Jit não encontrou um ProfileId padrão para atribuir, ignorando\n"
-
-#: src/LoginFlow/User.php:638
-msgid "JIT found timezone:"
-msgstr "JIT encontrou o fuso horário:"
-
-#: src/LoginFlow/User.php:643
-msgid "JIT found is_active:"
-msgstr "JIT encontrou is_active:"
-
-#: src/LoginFlow/User.php:648
-msgid "JIT found locations_id:"
-msgstr "JIT encontrou o locations_id:"
-
-#: src/LoginFlow/User.php:653
-msgid "JIT found usercategories_id:"
-msgstr "JIT encontrou usercategories_id:"
-
-#: src/LoginFlow/User.php:658
-msgid "JIT found usertitles_id:"
-msgstr "JIT encontrou o usertitles_id:"
-
-#: src/LoginFlow/User.php:663
-msgid "JIT found language:"
-msgstr "JIT encontrou o idioma:"
-
-#: src/LoginFlow/User.php:668
-msgid "Jit updated user defaults\n"
-msgstr "Jit atualizou as configurações padrão do usuário\n"
-
-#: src/LoginFlow/User.php:670
-msgid "Jit didnt update user defaults\n"
-msgstr "Jit não atualizou as configurações padrão do usuário\n"
-
-#: src/LoginFlow/Meta.php:76
-msgid "Error fetching spMetadata."
-msgstr "Erro ao obter spMetadata."
-
-#: src/LoginFlow/Meta.php:81
-msgid "Invalid id or metadata not exposed."
-msgstr "ID do metadado inválido ou não exposto."
-
-#: src/LoginFlow/Meta.php:86
-msgid "Error fetching config."
-msgstr "Erro ao obter a configuração."
 
 #: src/LoginFlow/Acs.php:140
 msgid "Unable to fetch idp configuration with id:"
@@ -1319,25 +1162,17 @@ msgstr "Samlsso->acs->assertSaml->PhaseMismatched"
 
 #: src/LoginFlow/Acs.php:338
 msgid ""
-"An error occured while trying to update the login phase to "
-"LoginState::PHASE_SAML_AUTH  into the LoginState database.\n"
+"An error occured while trying to update the login phase to LoginState::"
+"PHASE_SAML_AUTH  into the LoginState database.\n"
 "                                  Review the saml log for more details"
 msgstr ""
-"Ocorreu um erro ao tentar atualizar a fase de login para "
-"LoginState::PHASE_SAML_AUTH no banco de dados LoginState. \n"
+"Ocorreu um erro ao tentar atualizar a fase de login para LoginState::"
+"PHASE_SAML_AUTH no banco de dados LoginState. \n"
 "Consulte o log SAML para obter mais detalhes"
 
 #: src/LoginFlow/Acs.php:339
 msgid "LoginState"
 msgstr "Estado do login"
-
-#: src/LoginFlow/LoginFlowForm.php:71
-msgid "Identity providers"
-msgstr "Provedores de identidade"
-
-#: src/LoginFlow/LoginFlowForm.php:114
-msgid "Configuration invalid please correct all ⭕ errors first"
-msgstr "Configuração inválida. Corrija todos os erros ⭕ primeiro."
 
 #: src/LoginFlow/LoginFlowItem.php:120
 msgid "⭕ IDP ID must be a positive numeric value!"
@@ -1428,38 +1263,239 @@ msgstr ""
 msgid "APPLY RULES ON AUTH"
 msgstr "APLICAR REGRAS DE AUTORIZAÇÃO"
 
+#: src/LoginFlow/Meta.php:76
+msgid "Error fetching spMetadata."
+msgstr "Erro ao obter spMetadata."
+
+#: src/LoginFlow/Meta.php:81
+msgid "Invalid id or metadata not exposed."
+msgstr "ID do metadado inválido ou não exposto."
+
+#: src/LoginFlow/Meta.php:86
+msgid "Error fetching config."
+msgstr "Erro ao obter a configuração."
+
+#: src/LoginFlow/User.php:170 src/LoginFlow/User.php:175
+msgid "User with GlpiUserid: "
+msgstr "Usuário com GlpiUserid: "
+
+#: src/LoginFlow/User.php:187
+msgid ""
+"Your SSO login was successful but no GLPI profile was assigned to your "
+"account. Please contact your GLPI administrator to assign a profile to your "
+"account."
+msgstr ""
+"Seu login SSO foi bem-sucedido, mas nenhum perfil GLPI foi atribuído à sua "
+"conta. Por favor, entre em contato com o administrador do GLPI para atribuir "
+"um perfil à sua conta."
+
+#: src/LoginFlow/User.php:212
+msgid ""
+"Your SSO login was successful but the identity provider configuration is "
+"invalid or disabled."
+msgstr ""
+"Seu login SSO foi bem-sucedido, mas a configuração do provedor de identidade "
+"é inválida ou desabilitada."
+
+#: src/LoginFlow/User.php:221
+msgid ""
+"Your SSO login was successful but there is no matching GLPI user account "
+"and\n"
+"                                                we failed to create one "
+"dynamically using Just In Time user creation. Please\n"
+"                                                request a GLPI administrator "
+"to review the logs and correct the problem or\n"
+"                                                request the administrator to "
+"create a GLPI user manually."
+msgstr ""
+"Seu login SSO foi bem-sucedido, mas não há uma conta de usuário GLPI "
+"correspondente e não conseguimos criar uma dinamicamente usando a criação de "
+"usuário Just In Time. Solicite a um administrador do GLPI que revise os "
+"registros e corrija o problema ou solicite que o administrador crie um "
+"usuário GLPI manualmente."
+
+#: src/LoginFlow/User.php:234
+msgid ""
+"Your SSO login was successful but no GLPI profile was assigned to your "
+"account and\n"
+"                                                    we failed to assign one "
+"dynamically using Just In Time user creation. Please\n"
+"                                                    request a GLPI "
+"administrator to review the logs and correct the problem or\n"
+"                                                    request the "
+"administrator to assign a GLPI profile manually."
+msgstr ""
+"Seu login SSO foi bem-sucedido, mas não há uma conta de usuário GLPI "
+"correspondente e não conseguimos criar uma dinamicamente usando a criação de "
+"usuário Just In Time (JIT). Solicite a um administrador do GLPI que revise "
+"os logs e corrija o problema ou solicite que o administrador crie um usuário "
+"GLPI manualmente."
+
+#: src/LoginFlow/User.php:242
+msgid ""
+"Critical error: samlSSO was unable to fetch newly created user from the "
+"database!"
+msgstr ""
+"Erro crítico: o samlSSO não conseguiu recuperar o usuário recém-criado do "
+"banco de dados!"
+
+#: src/LoginFlow/User.php:264
+msgid "JIT was called with params:"
+msgstr "O JIT foi chamado com os seguintes parâmetros:"
+
+#: src/LoginFlow/User.php:333
+msgid "Created by phpSaml Just-In-Time user creation on:"
+msgstr "Criado por phpSaml Just-In-Time (JIT) usuário criado em:"
+
+#: src/LoginFlow/User.php:491
+msgid "JIT group already assigned:"
+msgstr "Grupo JIT já atribuído:"
+
+#: src/LoginFlow/User.php:502
+msgid "JIT failed to assign groupID:"
+msgstr "O JIT não conseguiu atribuir o groupID:"
+
+#: src/LoginFlow/User.php:507
+msgid "JIT assigned groupID:"
+msgstr "ID de grupo atribuído pelo JIT:"
+
+#: src/LoginFlow/User.php:514
+msgid "JIT found no groupId to add.\n"
+msgstr "O JIT não encontrou nenhum grupoId para adicionar.\n"
+
+#: src/LoginFlow/User.php:538
+msgid "JIT found entity for profile assignment:"
+msgstr "O sistema JIT encontrou a entidade para atribuição de perfil:"
+
+#: src/LoginFlow/User.php:540
+msgid ""
+"JIT didnt find a profile for entity assignment. Profile asignment might not "
+"work.\n"
+msgstr ""
+"O JIT não encontrou um perfil para atribuição de entidade. A atribuição de "
+"perfil pode não funcionar.\n"
+
+#: src/LoginFlow/User.php:546
+msgid "JIT found to be assigned profile(s) to be recursive.\n"
+msgstr "O JIT foi considerado como tendo atribuído perfil(s) recursivo(s).\n"
+
+#: src/LoginFlow/User.php:548
+msgid "JIT didnt find to be assigned profile(s) to be recursive.\n"
+msgstr "O JIT não encontrou perfis atribuídos que fossem recursivos.\n"
+
+#: src/LoginFlow/User.php:565
+msgid "JIT profile already assigned with config:"
+msgstr "Perfil JIT já atribuído com configuração:"
+
+#: src/LoginFlow/User.php:571
+msgid "JIT was not able to assign profile with config:"
+msgstr ""
+"O JIT não conseguiu atribuir um perfil com as configurações existentes:"
+
+#: src/LoginFlow/User.php:577
+msgid "JIT remove all default profiles from newly created user:\n"
+msgstr ""
+"JIT removeu todos os perfis existentes e padrão do usuário recém-criado:\n"
+
+#: src/LoginFlow/User.php:585
+msgid "Done\n"
+msgstr "Concluído\n"
+
+#: src/LoginFlow/User.php:587
+msgid "failed\n"
+msgstr "falhou\n"
+
+#: src/LoginFlow/User.php:589
+msgid "JIT assigned profile with config:"
+msgstr "Perfil atribuído pelas configurações do JIT:"
+
+#: src/LoginFlow/User.php:622
+msgid "JIT found default groupID:"
+msgstr "JIT encontrou o groupID padrão:"
+
+#: src/LoginFlow/User.php:624
+msgid "Jit didnt find a default GroupID to assign, skipping\n"
+msgstr "Jit não encontrou um GroupID padrão para atribuir, ignorando\n"
+
+#: src/LoginFlow/User.php:629
+msgid "JIT found default entityID:"
+msgstr "JIT encontrou a entityID padrão:"
+
+#: src/LoginFlow/User.php:631
+msgid "Jit didnt find a default EntityId to assign, skipping\n"
+msgstr "Jit não encontrou uma EntityId padrão para atribuir, ignorando\n"
+
+#: src/LoginFlow/User.php:636
+msgid "JIT found default profileID:"
+msgstr "JIT encontrou o profileID padrão:"
+
+#: src/LoginFlow/User.php:638
+msgid "Jit didnt find a default ProfileId to assign, skipping\n"
+msgstr "Jit não encontrou um ProfileId padrão para atribuir, ignorando\n"
+
+#: src/LoginFlow/User.php:643
+msgid "JIT found timezone:"
+msgstr "JIT encontrou o fuso horário:"
+
+#: src/LoginFlow/User.php:648
+msgid "JIT found is_active:"
+msgstr "JIT encontrou is_active:"
+
+#: src/LoginFlow/User.php:653
+msgid "JIT found locations_id:"
+msgstr "JIT encontrou o locations_id:"
+
+#: src/LoginFlow/User.php:658
+msgid "JIT found usercategories_id:"
+msgstr "JIT encontrou usercategories_id:"
+
+#: src/LoginFlow/User.php:663
+msgid "JIT found usertitles_id:"
+msgstr "JIT encontrou o usertitles_id:"
+
+#: src/LoginFlow/User.php:668
+msgid "JIT found language:"
+msgstr "JIT encontrou o idioma:"
+
+#: src/LoginFlow/User.php:673
+msgid "Jit updated user defaults\n"
+msgstr "Jit atualizou as configurações padrão do usuário\n"
+
+#: src/LoginFlow/User.php:675
+msgid "Jit didnt update user defaults\n"
+msgstr "Jit não atualizou as configurações padrão do usuário\n"
+
+#: src/LoginFlow/LoginFlowForm.php:72
+msgid "Identity providers"
+msgstr "Provedores de identidade"
+
+#: src/LoginFlow/LoginFlowForm.php:116
+msgid "Configuration invalid please correct all ⭕ errors first"
+msgstr "Configuração inválida. Corrija todos os erros ⭕ primeiro."
+
 #: src/Exclude.php:126
 msgid "samlSSO Excludes"
 msgstr "Exclusões samlSSO"
 
-#: src/Exclude.php:149
+#: src/Exclude.php:148
 msgid "Agent contains"
 msgstr "Agente contém"
 
-#: src/Exclude.php:155
+#: src/Exclude.php:154
 msgid "Bypass SAML auth"
 msgstr "Bypass da autenticação SAML"
 
-#: src/Exclude.php:160
+#: src/Exclude.php:159
 msgid "Url contains path or file"
 msgstr "Url contém caminho ou arquivo"
 
-#: src/Exclude.php:182
+#: src/Exclude.php:181
 msgid "Client Agent performing the call"
 msgstr "Agente do cliente realizando a chamada"
 
-#: src/Exclude.php:191
+#: src/Exclude.php:190
 msgid "To be excluded path"
 msgstr "Caminho a ser excluído"
-
-#: src/RuleSaml.php:86
-msgid "JIT rules"
-msgstr "Regras JIT"
-
-#: src/RuleSaml.php:153
-#, php-format
-msgid "SAML Claim: %s"
-msgstr "Reivindicação SAML: %s"
 
 #~ msgid "⚠️ Are you sure?"
 #~ msgstr "⚠️ Tem certeza?"
@@ -1493,9 +1529,8 @@ msgstr "Reivindicação SAML: %s"
 #~ "                                      by glpiSAML. Please create a "
 #~ "dedicated account for this user owned by your\n"
 #~ "                                      tenant/identity provider.<br>\n"
-#~ "                                      Also see: https://"
-#~ "learn.microsoft.com/en-us/azure/active-directory/develop/saml-claims-"
-#~ "customization"
+#~ "                                      Also see: https://learn.microsoft."
+#~ "com/en-us/azure/active-directory/develop/saml-claims-customization"
 #~ msgstr ""
 #~ "Foi detectado um usuário convidado padrão na resposta SAML. Isso não é "
 #~ "compatível com o glpiSAML. \n"
