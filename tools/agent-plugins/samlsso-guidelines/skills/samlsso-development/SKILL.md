@@ -24,6 +24,7 @@ You MUST follow these rules when performing any changes in this repository.
 ## 💻 Code Standards & Cleanliness
 - **DocBlocks**: Document every method and major logic block with detailed docblocks (description, `@param`, `@return`, `@throws`). Do not use inline comments (`//`); use DocBlocks instead.
 - **PSR Compliance**: Follow PSR-12 coding standards.
+- **Linting Enforcement**: All code must pass static analysis and linting (Intelephense, SonarLint) with all errors corrected prior to proposing code, creating a release, or submitting a pull request.
 - **No Closing PHP Tags**: PHP-only files must not end with a closing `?>` tag to avoid accidental whitespace emissions.
 - **Indentation & Spacing**: Use 4 spaces for indentation. Avoid extra empty lines, spaces, or tabs.
 - **Line Length**: Keep lines under 120 characters where possible.
@@ -32,7 +33,8 @@ You MUST follow these rules when performing any changes in this repository.
 - **No Raw Strings for Config/Claim Mapping Fields**: Never use raw string literals when referencing configuration keys or claim mapping fields (e.g. use `ClaimMapItem::FIELD_EMAIL` instead of `'email'`). All fields and keys must be defined as class constants.
 
 ## 🔒 Security & GLPI Architecture
-- **GLPI Core As-Is Rule**: Never modify or alter any class or method belonging to the GLPI core. Core files and methods must be considered "as-is" (even if they are insecure). Always notify the developer immediately if any core security issues are found.
+- **GLPI Core As-Is Rule**: Never modify or alter any class or method belonging to the GLPI core. Core files and methods must be considered "as-is". Always notify the developer immediately if any core security issues are found.
+- **Separation of Duties & No Core Feature Manipulation**: We do not intervene, modify, or manipulate core GLPI features that the plugin utilizes. Core operations must remain untouched to respect a strict separation of duties.
 - **Native GLPI Components**: Use native GLPI core components (e.g. `CommonDBTM`, `Session`, `Html`, `Toolbox`) where possible.
 - **Sanitization & Input Validation**: Never trust external input. Always use GLPI's `Sanitizer` or native filter functions.
 - **Access Control (Rights)**: Every entry point (e.g., in `front/` or `ajax/`) must explicitly verify that the user has the required rights (e.g. using `Session::checkLoginUser()`).
@@ -44,9 +46,9 @@ You MUST follow these rules when performing any changes in this repository.
 - **Never Use Sudo**: Never use `sudo` to bypass permission or security issues during development, testing, or operations (such as cache clearing). If a permission issue is encountered, ask the user/administrator to correct it instead of using elevated privileges.
 - **Never Clear Cache**: Never attempt to clear the GLPI cache yourself. If the cache needs to be cleared (e.g. after changing Twig templates or locales), ask the user to clear it.
 
-
-
 ## 🧪 Testing & Releases
+- **LoginFlow Test Coverage**: Every function included in the main `LoginFlow` class and its subclasses must be mapped to and covered by the automated test suite.
+- **No Core Mocking**: We do not implement shim or pseudo functions that mimic GLPI core behaviors. Test environments must bootstrap the actual GLPI framework to execute real core behaviors rather than stubbing them out.
 - **Add Tests**: When adding new functionality, you MUST add new tests to the `tests/` folder. Ensure they pass successfully before proposing any change.
 - **Running Tests**: Run the automated test runner from the root of the plugin directory:
   ```bash

@@ -24,6 +24,7 @@ This repository is maintained with an "AI-First" mindset. Whether you are a huma
 - **Developer-first coding**: Always propose changes to the developer. Dont automatically implement them. Only add code if the user explicitly asks you to. You are only allowed to assist the developer by analyzing, suggesting issues, solutions or optimizations to the developer that he can choose to implement or not with or without your help.
 - **Document every method and major logic block** with detailed docblocks explaining what the method does, what parameters it takes, what it returns, and what exceptions it throws. Also add comments to major logic blocks explaining why the code is there and what it does.
 - **PSR Compliance**: Follow PSR-12 coding standards.
+- **Linting Enforcement**: Static analysis and linting tools such as **Intelephense** and **SonarLint** must be executed against the codebase. All linting errors and warnings must be corrected and resolved before releasing code or submitting a pull request.
 - **Native GLPI Components**: Always use native GLPI core components (e.g., `CommonDBTM`, `Session`, `Html`, `Toolbox`) where possible for maximum compatibility.
 - **Sanitization**: Never trust external input. Always use GLPI's `Sanitizer` or native filter functions.
 - **Error Handling**: Do not use `die()`. Always use `Html::displayError()` or throw a PluginException.
@@ -40,6 +41,18 @@ This repository is maintained with an "AI-First" mindset. Whether you are a huma
 - **Add ADRs**: Take note of and provide the rationale, consequences, alternatives, pros, and cons of your changes in an ADR (Architecture Decision Record) in the [ ADRS folder.](ADRS/0001-authentication-system.md)
 - **Obfuscations**: Never allow obfuscations (e.g. minifications, magic strings, hashed strings, encoded payloads etc) in the code. If you detect one in the code downloaded from the repository report it to the maintainer and do not include it in the code you propose. Try to uncover the goal of the obfuscation and try to remove it and document this in an issue. The only exception is when obfuscation is used for security purposes and is documented as such in an ADR.
 - **Add Tests**: When adding new functionality, you **MUST** add new tests to the `tests` folder to verify the new functionality. Try to follow the style of the existing tests. If the tests fail, fix the tests and make sure they pass before proposing the change. Also try to improve the existing tests if applicable.
+
+### 5. Deployment & Proxy Configurations
+- **TLS Terminated Proxies**: When configuring GLPI behind TLS-terminating reverse proxies (such as Kubernetes Ingress, Traefik, or Nginx proxies), PHP does not natively recognize the secure HTTPS context. This results in ACS URL validation mismatches and GLPI `SessionCheckCookieListener` blocks (HTTP 400).
+- **Required Local Configuration**: Developers and administrators testing the proxy scenario must ensure `config/local_define.php` maps the proxy header to force HTTPS context detection:
+  ```php
+  define('GLPI_USE_SECURE_COOKIES', true);
+  if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+      $_SERVER['HTTPS'] = 'on';
+      $_SERVER['SERVER_PORT'] = 443;
+  }
+  ```
+- **Requests Proxied Configuration**: The plugin's "Requests Proxied" configuration setting must be enabled to activate proxy header processing in phpSAML (`Utils::setProxyVars(true)`).
 
 ## Architectural Integrity
 The core of this plugin is its **State Machine**. Any modifications to `LoginState.php`, `Acs.php`, or `LoginFlow.php` must be handled with extreme caution. The preservation of the authentication phases (1-8) is critical to the plugin's security posture.
