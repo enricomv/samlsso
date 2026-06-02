@@ -631,7 +631,7 @@
                         {{ fields.textField(
                             'EntityID', 
                             entityID, 
-                            'Entity ID',
+                            __('Entity ID', plugin),
                             {
                                 'id': 'EntityId',
                                 'readonly':true,
@@ -662,7 +662,7 @@
                         {{ fields.field(
                             'MetaUrl', 
                             metaUrl, 
-                            'MetaUrl',
+                            __('MetaUrl', plugin),
                             {
                                 helper: __('The location of the metadata provider for this service provider (GLPI). The meta location can be used by the identity provider to collect important information from this service provider like what public certificate to use for signing and encrypting the SamlResponse.', plugin),
                             }
@@ -672,7 +672,7 @@
                         {{ fields.textField(
                             'AcsUrl', 
                             acsUrl, 
-                            'AcsUrl',
+                            __('AcsUrl', plugin),
                             {
                                 'id': 'AcsUrl',
                                 'readonly':true,
@@ -686,7 +686,7 @@
                         {{ fields.textField(
                             'SloUrl', 
                              sloUrl, 
-                            'SloUrl',
+                            __('SloUrl', plugin),
                             {
                                 'id': 'SloUrl',
                                 'readonly':true,

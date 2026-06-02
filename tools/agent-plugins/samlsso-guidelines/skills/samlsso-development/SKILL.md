@@ -42,6 +42,8 @@ You MUST follow these rules when performing any changes in this repository.
 - **PluginContext**: Always use `PluginContext::get()` for global plugin configuration.
 - **ADRs**: Document the rationale, alternatives, pros, and cons of your changes in an ADR under `ADRS/`.
 - **Never Use Sudo**: Never use `sudo` to bypass permission or security issues during development, testing, or operations (such as cache clearing). If a permission issue is encountered, ask the user/administrator to correct it instead of using elevated privileges.
+- **Never Clear Cache**: Never attempt to clear the GLPI cache yourself. If the cache needs to be cleared (e.g. after changing Twig templates or locales), ask the user to clear it.
+
 
 
 ## 🧪 Testing & Releases

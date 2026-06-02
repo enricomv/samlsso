@@ -46,8 +46,7 @@ if [ -d "$GLPIPATH" ]; then
 	fi
 	
 	cd $GLPIPATH;
-	if [ -d './samlsso' ]; then 
-		zip -r ./samlsso/release/samlsso.zip ./samlsso -x "/samlsso/tools/*" "/locales/samlSSO.pot" "/samlsso/tests/*" "/samlsso/samlsso.xml" "/samlsso/.vscode/*" "/samlsso/.gitignore" "/samlsso/.github/*" "/samlsso/.git/*" "/samlsso/release/*" "/samlsso/composer.lock" "/samlsso/vendor/bin/*" "/samlsso/vendor/myclabs/*" "/samlsso/vendor/nikic/*" "/samlsso/vendor/phar-io/*" "/samlsso/vendor/phpunit/*" "/samlsso/vendor/sebastian/*" "/samlsso/vendor/theseer/*"
+		zip -r ./samlsso/release/samlsso.zip ./samlsso -x "/samlsso/tools/*" "/samlsso/locales/*.po" "/samlsso/locales/*.pot" "/samlsso/locales/*.po~" "/samlsso/locales/*.mo~" "/samlsso/tests/*" "/samlsso/samlsso.xml" "/samlsso/.vscode/*" "/samlsso/.gitignore" "/samlsso/.github/*" "/samlsso/.git/*" "/samlsso/release/*" "/samlsso/composer.lock" "/samlsso/vendor/bin/*" "/samlsso/vendor/myclabs/*" "/samlsso/vendor/nikic/*" "/samlsso/vendor/phar-io/*" "/samlsso/vendor/phpunit/*" "/samlsso/vendor/sebastian/*" "/samlsso/vendor/theseer/*"
 	else
 		echo "/samlsso not found at `pwd`";
 	fi

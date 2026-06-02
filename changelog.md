@@ -1,6 +1,8 @@
 
 **V1.3.1**
 - Wrapped all remaining hardcoded user-facing fields in Twig templates with i18n translation functions and formatted them for easy localization.
+- Fixed translation of Service Provider fields (Entity ID, MetaUrl, AcsUrl, SloUrl) in Twig configuration form templates.
+
 
 **V1.3.0**
 - Fix: Removed 'after' statements from database field migrations to prevent update/installation errors due to non-existent columns. (Related issue https://github.com/DonutsNL/samlsso/issues/119)
