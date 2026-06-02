@@ -34,7 +34,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.0
+ *  @version    1.3.1
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
@@ -508,35 +508,35 @@ class Config extends CommonDBTM
             $DB->doQuery($query) or die($DB->error());
 
             if (!$DB->fieldExists($table, 'saml_xml_structure', false)) {
-                $migration->addField($table, 'saml_xml_structure', 'text', ['null' => true, 'after' => 'comment', 'update' => true]);
+                $migration->addField($table, 'saml_xml_structure', 'text', ['null' => true, 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'request_timeout', false)) {
-                $migration->addField($table, 'request_timeout', 'int', ['null' => false, 'default' => '15', 'after' => 'sync_on_login', 'update' => true]);
+                $migration->addField($table, 'request_timeout', 'int', ['null' => false, 'default' => '15', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'sync_on_login', false)) {
-                $migration->addField($table, 'sync_on_login', 'tinyint', ['null' => false, 'default' => '0', 'after' => 'user_jit', 'update' => true]);
+                $migration->addField($table, 'sync_on_login', 'tinyint', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'security_wantmessagessigned', false)) {
-                $migration->addField($table, 'security_wantmessagessigned', 'tinyint', ['null' => false, 'default' => '0', 'after' => 'security_logoutresponsesigned', 'update' => true]);
+                $migration->addField($table, 'security_wantmessagessigned', 'tinyint', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'security_wantassertionssigned', false)) {
-                $migration->addField($table, 'security_wantassertionssigned', 'tinyint', ['null' => false, 'default' => '0', 'after' => 'security_wantmessagessigned', 'update' => true]);
+                $migration->addField($table, 'security_wantassertionssigned', 'tinyint', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'security_wantassertionsencrypted', false)) {
-                $migration->addField($table, 'security_wantassertionsencrypted', 'tinyint', ['null' => false, 'default' => '0', 'after' => 'security_wantassertionssigned', 'update' => true]);
+                $migration->addField($table, 'security_wantassertionsencrypted', 'tinyint', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'security_signmetadata', false)) {
-                $migration->addField($table, 'security_signmetadata', 'tinyint', ['null' => false, 'default' => '0', 'after' => 'security_wantassertionsencrypted', 'update' => true]);
+                $migration->addField($table, 'security_signmetadata', 'tinyint', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'security_wantnameid', false)) {
-                $migration->addField($table, 'security_wantnameid', 'tinyint', ['null' => false, 'default' => '0', 'after' => 'security_signmetadata', 'update' => true]);
+                $migration->addField($table, 'security_wantnameid', 'tinyint', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             Session::addMessageAfterRedirect("🆗 Updated: $table layout.");

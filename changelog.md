@@ -1,5 +1,9 @@
 
+**V1.3.1**
+- Wrapped all remaining hardcoded user-facing fields in Twig templates with i18n translation functions and formatted them for easy localization.
+
 **V1.3.0**
+- Fix: Removed 'after' statements from database field migrations to prevent update/installation errors due to non-existent columns. (Related issue https://github.com/DonutsNL/samlsso/issues/119)
 - Feature: Added proactive GLPI cache reset during plugin installation/upgrade using CacheManager::resetAllCaches(). (Related issue https://github.com/DonutsNL/samlsso/issues/119)
 - Architecture: Added ADR 0014 documenting the design decision to clear GLPI cache during installation/upgrade. (Related issue https://github.com/DonutsNL/samlsso/issues/119)
 - Fix: Resolved a critical nested form structure conflict in the Twig template (`configForm.html.twig`) that incorrectly triggered `forcelogoff` actions when saving configuration updates.

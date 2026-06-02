@@ -35,13 +35,13 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.0
+ *  @version    1.3.1
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
  *  @see        https://github.com/DonutsNL/samlSSO/readme.md
  *  @link       https://github.com/DonutsNL/samlSSO
- *  @since      1.3.0
+ *  @since      1.3.1
  * ------------------------------------------------------------------------
  **/
 
@@ -68,7 +68,7 @@ use Session;
  * Mappings are consumed by the JIT (Just-In-Time) user provisioning logic in
  * LoginFlow\User during the ACS assertion processing phase.
  *
- * @since  1.3.0
+ * @since  1.3.1
  * @see    ObservedClaim   Tracks claim keys seen in live SAML responses, giving
  *                         administrators candidate values to map here.
  * @see    LoginFlow\User  Reads and applies these mappings during JIT provisioning.
@@ -201,13 +201,13 @@ class ClaimMap extends CommonDBTM
             $migration->migrationOneTable($table);
 
             if (!$DB->fieldExists($table, 'target_type', false)) {
-                $migration->addField($table, 'target_type', 'VARCHAR(50)', ['value' => 'user_field', 'after' => 'configs_id', 'update' => true]);
+                $migration->addField($table, 'target_type', 'VARCHAR(50)', ['value' => 'user_field', 'update' => true]);
             }
             if (!$DB->fieldExists($table, 'default_value', false)) {
-                $migration->addField($table, 'default_value', 'VARCHAR(255)', ['value' => '', 'after' => 'saml_claim', 'update' => true]);
+                $migration->addField($table, 'default_value', 'VARCHAR(255)', ['value' => '', 'update' => true]);
             }
             if (!$DB->fieldExists($table, 'is_required', false)) {
-                $migration->addField($table, 'is_required', 'TINYINT', ['value' => '0', 'after' => 'default_value', 'update' => true]);
+                $migration->addField($table, 'is_required', 'TINYINT', ['value' => '0', 'update' => true]);
             }
 
             /**

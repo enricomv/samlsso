@@ -379,7 +379,7 @@
                                     <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.name.errors }}</div>
                                 {% endif %}
                                 {% if buttonsHiddenWarn == true %}
-                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visable again.</div>
+                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">{{ __('⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visible again.', plugin) }}</div>
                                 {% endif %}
                             {% endset %}
 
@@ -401,7 +401,7 @@
                                     <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.conf_icon.errors }}</div>
                                 {% endif %}
                                 {% if buttonsHiddenWarn == true %}
-                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visable again.</div>
+                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">{{ __('⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visible again.', plugin) }}</div>
                                 {% endif %}
                             {% endset %}
                             {{ fields.textField(
@@ -422,7 +422,7 @@
                                     <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.conf_domain.errors }}</div>
                                 {% endif %}
                                 {% if buttonsHiddenWarn == true %}
-                                    <div id="textHelper" class="form-text" style="color:rgb(3, 126, 26)">🔒 Userdomain is configured. Users can trigger a Saml Login by providing their {username}@{userdomain} in the glpi username field and pressing the login button. The password field is ignored and can be left blank. This is a more secure option that wont expose configured IDPs.
+                                    <div id="textHelper" class="form-text" style="color:rgb(3, 126, 26)">{{ __('🔒 Userdomain is configured. Users can trigger a Saml Login by providing their {username}@{userdomain} in the glpi username field and pressing the login button. The password field is ignored and can be left blank. This is a more secure option that wont expose configured IDPs.', plugin) }}
                                     </div>
                                 {% endif %}
                             {% endset %}
@@ -545,7 +545,7 @@
                                 {% endif %}
                                 {% if inputfields.proxied.value == true %}
                                     {% if inputfields.strict.value == true %}
-                                        <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">⚠️ Beware, misaligned proxy schemes might break the samlValidation in strict mode.<br>(<b>https</b>://external)=>(<b>http</b>://internal)</div>
+                                        <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ __('⚠️ Beware, misaligned proxy schemes might break the samlValidation in strict mode.<br>(<b>https</b>://external)=>(<b>http</b>://internal)', plugin)|raw }}</div>
                                     {% endif %}
                                 {% endif %}
                             {% endset %}
@@ -567,7 +567,7 @@
                                     <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.validate_xml.errors }}</div>
                                 {% endif %}
                                 {% if inputfields.strict.value == false %}
-                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">⚠️ Strict is disabled, validate xml setting will not do anything.</div>
+                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ __('⚠️ Strict is disabled, validate xml setting will not do anything.', plugin) }}</div>
                                 {% endif %}
                             {% endset %}
                             {{ fields.sliderField(
@@ -636,9 +636,7 @@
                                 'id': 'EntityId',
                                 'readonly':true,
                                 'is_copyable': true,
-                                helper: __('You need to configure the Entity ID at the identity provider. This value is
-                                            crosschecked by the identity provider to make sure the sign-in request is
-                                            originating from the correct service provider.'),
+                                helper: __('You need to configure the Entity ID at the identity provider. This value is crosschecked by the identity provider to make sure the sign-in request is originating from the correct service provider.', plugin),
                             }
                         ) }}
 
@@ -666,9 +664,7 @@
                             metaUrl, 
                             'MetaUrl',
                             {
-                                helper: __('The location of the metadata provider for this service provider (GLPI). The meta location can be
-                                            used by the identity provider to collect important information from this service provider like
-                                            what public certificate to use for signing and encrypting the SamlResponse.'),
+                                helper: __('The location of the metadata provider for this service provider (GLPI). The meta location can be used by the identity provider to collect important information from this service provider like what public certificate to use for signing and encrypting the SamlResponse.', plugin),
                             }
                         ) }}
                        
@@ -681,8 +677,7 @@
                                 'id': 'AcsUrl',
                                 'readonly':true,
                                 'is_copyable': true,
-                                helper: __('The location of the Assertion Consumer Service (ACS) for this service provider (GLPI). 
-                                            This url is called by the identity provider after succesfull login.'),
+                                helper: __('The location of the Assertion Consumer Service (ACS) for this service provider (GLPI). This url is called by the identity provider after succesfull login.', plugin),
                             }
                         ) }}
 
@@ -696,7 +691,7 @@
                                 'id': 'SloUrl',
                                 'readonly':true,
                                 'is_copyable': true,
-                                helper: __('The location where logout requests should be send back to from the Identity Provider.'),
+                                helper: __('The location where logout requests should be send back to from the Identity Provider.', plugin),
                             }
                         ) }}
                     </div>
@@ -956,7 +951,7 @@
                                 <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.strict.errors }}</div>
                             {% endif %}
                             {% if inputfields.strict.value == false %}
-                                        <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">⚠️ Your environment is at risk, make sure strict is enabled!</div>
+                                        <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ __('⚠️ Your environment is at risk, make sure strict is enabled!', plugin) }}</div>
                             {% endif %}
                         {% endset %}
                         {{ fields.sliderField(
@@ -1346,7 +1341,7 @@
                                         <td>
                                             {% if not is_system_required %}
                                                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteRow(this)">
-                                                    <i class="fas fa-trash"></i> {{ __('Delete') }}
+                                                    <i class="fas fa-trash"></i> {{ __('Delete', plugin) }}
                                                 </button>
                                             {% endif %}
                                         </td>
@@ -1496,10 +1491,10 @@
                         <div class="logging-header p-3 mb-2 rounded-3 border" style="background-color: var(--tb-light, #f8f9fa); border-color: var(--tb-border-color, #dee2e6);">
                             <h4 class="mb-2 text-primary d-flex align-items-center gap-2">
                                 <i class="ti ti-history"></i>
-                                {{ __("SAML SSO Authentication Logs") }}
+                                {{ __("SAML SSO Authentication Logs", plugin) }}
                             </h4>
                             <p class="mb-0 text-muted fs-7">
-                                {{ __("Track login phases, active sessions, assertion validations, and flow outcomes for troubleshooting.") }}
+                                {{ __("Track login phases, active sessions, assertion validations, and flow outcomes for troubleshooting.", plugin) }}
                             </p>
                         </div>
 
@@ -1511,7 +1506,7 @@
                                         <i class="ti ti-search text-muted"></i>
                                     </span>
                                     <input type="text" id="logging-search-input" class="form-control border-start-0" 
-                                           placeholder="{{ __('Search username, session ID, location, or ID...') }}" 
+                                           placeholder="{{ __('Search username, session ID, location, or ID...', plugin) }}" 
                                            value="{{ logging_search }}">
                                     {% if logging_search is not empty %}
                                         <button type="button" class="btn btn-outline-secondary border-start-0 border-end-0" onclick="clearLoggingSearch()">
@@ -1519,12 +1514,12 @@
                                         </button>
                                     {% endif %}
                                     <button type="button" class="btn btn-primary" onclick="performLoggingSearch()">
-                                        {{ __("Search") }}
+                                        {{ __("Search", plugin) }}
                                     </button>
                                 </div>
                             </div>
                             <div class="text-muted fs-7">
-                                {{ __("Total records found:") }} <strong>{{ logging_total_count }}</strong>
+                                {{ __('Total records found: %s', plugin)|format('<strong>' ~ logging_total_count ~ '</strong>')|raw }}
                             </div>
                         </div>
 
@@ -1533,17 +1528,17 @@
                             <table class="table table-hover align-middle mb-0 logging-table">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width: 70px;">{{ __("ID") }}</th>
-                                        <th style="width: 80px;">{{ __("IdP ID") }}</th>
-                                        <th>{{ __("Username") }}</th>
-                                        <th style="width: 110px;" class="text-center">{{ __("GLPI Authed") }}</th>
-                                        <th style="width: 110px;" class="text-center">{{ __("SAML Authed") }}</th>
-                                        <th>{{ __("Phase") }}</th>
-                                        <th>{{ __("Login Time") }}</th>
-                                        <th>{{ __("Last Click") }}</th>
-                                        <th style="width: 90px;" class="text-center">{{ __("Location") }}</th>
-                                        <th style="width: 90px;" class="text-center">{{ __("Trace") }}</th>
-                                        <th style="width: 160px;" class="text-center">{{ __("Actions") }}</th>
+                                        <th style="width: 70px;">{{ __("ID", plugin) }}</th>
+                                        <th style="width: 80px;">{{ __("IdP ID", plugin) }}</th>
+                                        <th>{{ __("Username", plugin) }}</th>
+                                        <th style="width: 110px;" class="text-center">{{ __("GLPI Authed", plugin) }}</th>
+                                        <th style="width: 110px;" class="text-center">{{ __("SAML Authed", plugin) }}</th>
+                                        <th>{{ __("Phase", plugin) }}</th>
+                                        <th>{{ __("Login Time", plugin) }}</th>
+                                        <th>{{ __("Last Click", plugin) }}</th>
+                                        <th style="width: 90px;" class="text-center">{{ __("Location", plugin) }}</th>
+                                        <th style="width: 90px;" class="text-center">{{ __("Trace", plugin) }}</th>
+                                        <th style="width: 160px;" class="text-center">{{ __("Actions", plugin) }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1551,7 +1546,7 @@
                                         <tr>
                                             <td colspan="11" class="text-center py-4 text-muted">
                                                 <i class="ti ti-database-x fs-1 d-block mb-2"></i>
-                                                {{ __("No logs match the criteria.") }}
+                                                {{ __("No logs match the criteria.", plugin) }}
                                             </td>
                                         </tr>
                                     {% else %}
@@ -1587,41 +1582,41 @@
                                                 </td>
                                                 <td class="text-center">
                                                     {% if logrow.glpiAuthed == 1 %}
-                                                        <span class="logging-badge logging-badge-success">{{ __("Yes") }}</span>
+                                                        <span class="logging-badge logging-badge-success">{{ __("Yes", plugin) }}</span>
                                                     {% else %}
-                                                        <span class="logging-badge logging-badge-danger">{{ __("No") }}</span>
+                                                        <span class="logging-badge logging-badge-danger">{{ __("No", plugin) }}</span>
                                                     {% endif %}
                                                 </td>
                                                 <td class="text-center">
                                                     {% if logrow.samlAuthed == 1 %}
-                                                        <span class="logging-badge logging-badge-success">{{ __("Yes") }}</span>
+                                                        <span class="logging-badge logging-badge-success">{{ __("Yes", plugin) }}</span>
                                                     {% else %}
-                                                        <span class="logging-badge logging-badge-danger">{{ __("No") }}</span>
+                                                        <span class="logging-badge logging-badge-danger">{{ __("No", plugin) }}</span>
                                                     {% endif %}
                                                 </td>
                                                 <td>
                                                     {% if logrow.phase == 1 %}
-                                                        <span class="logging-badge logging-badge-phase-1" title="Phase 1: Initial visit">{{ __("Initial") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-1" title="{{ __('Phase 1: Initial visit', plugin) }}">{{ __("Initial", plugin) }}</span>
                                                     {% elseif logrow.phase == 2 %}
                                                         <span class="logging-badge logging-badge-phase-2" 
                                                               data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
-                                                              data-bs-content="{{ __("The identity provider was contacted, but GLPI didn't receive a successful response back at the ACS endpoint.<br><br><b>Common Solutions:</b><br>&bull; Verify the <strong>Reply URL</strong> in IdP matches the plugin setting <code>AcsUrl</code> exactly.<br>&bull; If using a reverse proxy, ensure the plugin setting <code>REQUESTS PROXIED</code> is enabled to trust <strong>X-Forwarded-Proto</strong> headers.<br>&bull; Check if the user closed the browser during login.")|e('html_attr') }}" 
-                                                              title="{{ __('Phase 2: SAML ACS Expected') }}"
+                                                              data-bs-content="{{ __("The identity provider was contacted, but GLPI didn't receive a successful response back at the ACS endpoint.<br><br><b>Common Solutions:</b><br>&bull; Verify the <strong>Reply URL</strong> in IdP matches the plugin setting <code>AcsUrl</code> exactly.<br>&bull; If using a reverse proxy, ensure the plugin setting <code>REQUESTS PROXIED</code> is enabled to trust <strong>X-Forwarded-Proto</strong> headers.<br>&bull; Check if the user closed the browser during login.", plugin)|e('html_attr') }}" 
+                                                              title="{{ __('Phase 2: SAML ACS Expected', plugin) }}"
                                                               style="cursor: help;">
-                                                            {{ __("SAML ACS Expected") }}
+                                                            {{ __("SAML ACS Expected", plugin) }}
                                                         </span>
                                                     {% elseif logrow.phase == 3 %}
-                                                        <span class="logging-badge logging-badge-phase-3" title="Phase 3: Performed SAML IDP authentication">{{ __("SAML Authed") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-3" title="{{ __('Phase 3: Performed SAML IDP authentication', plugin) }}">{{ __("SAML Authed", plugin) }}</span>
                                                     {% elseif logrow.phase == 4 %}
-                                                        <span class="logging-badge logging-badge-phase-4" title="Phase 4: Performed GLPI session authentication">{{ __("GLPI Authed") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-4" title="{{ __('Phase 4: Performed GLPI session authentication', plugin) }}">{{ __("GLPI Authed", plugin) }}</span>
                                                     {% elseif logrow.phase == 5 %}
-                                                        <span class="logging-badge logging-badge-phase-5" title="Phase 5: File Exclude / Reserved">{{ __("Reserved") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-5" title="{{ __('Phase 5: File Exclude / Reserved', plugin) }}">{{ __("Reserved", plugin) }}</span>
                                                     {% elseif logrow.phase == 6 %}
-                                                        <span class="logging-badge logging-badge-phase-6" title="Phase 6: Session forced logged off">{{ __("Forced Logoff") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-6" title="{{ __('Phase 6: Session forced logged off', plugin) }}">{{ __("Forced Logoff", plugin) }}</span>
                                                     {% elseif logrow.phase == 7 %}
-                                                        <span class="logging-badge logging-badge-phase-7" title="Phase 7: Session Timed out">{{ __("Timed Out") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-7" title="{{ __('Phase 7: Session Timed out', plugin) }}">{{ __("Timed Out", plugin) }}</span>
                                                     {% elseif logrow.phase == 8 %}
-                                                        <span class="logging-badge logging-badge-phase-8" title="Phase 8: Session Logged Out">{{ __("Logged Out") }}</span>
+                                                        <span class="logging-badge logging-badge-phase-8" title="{{ __('Phase 8: Session Logged Out', plugin) }}">{{ __("Logged Out", plugin) }}</span>
                                                     {% else %}
                                                         <span class="logging-badge bg-light text-dark">{{ logrow.phase }}</span>
                                                     {% endif %}
@@ -1633,7 +1628,7 @@
                                                         <button type="button" class="btn btn-sm btn-ghost-secondary p-1 border-0" 
                                                                 data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
                                                                 data-bs-content="<pre class='p-2 mb-0 font-monospace text-wrap' style='max-height: 250px; overflow-y: auto; word-break: break-all;'>{{ logrow.location }}</pre>" 
-                                                                title="{{ __('Location URL') }}">
+                                                                title="{{ __('Location URL', plugin) }}">
                                                             <i class="ti ti-map-pin fs-4 text-info"></i>
                                                         </button>
                                                     {% else %}
@@ -1645,7 +1640,7 @@
                                                         <button type="button" class="btn btn-sm btn-ghost-secondary p-1 border-0" 
                                                                 data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
                                                                 data-bs-content="<pre class='p-2 mb-0 font-monospace text-wrap text-start' style='max-height: 350px; overflow-y: auto; white-space: pre-wrap; font-size: 0.8rem;'>{{ logrow.loginFlowTrace }}</pre>" 
-                                                                title="{{ __('Login Flow Trace') }}">
+                                                                title="{{ __('Login Flow Trace', plugin) }}">
                                                             <i class="ti ti-terminal-2 fs-4 text-warning"></i>
                                                         </button>
                                                     {% else %}
@@ -1656,7 +1651,7 @@
                                                     {% if logrow.isUserActive == 1 and logrow.phase != 6 and logrow.phase != 8 %}
                                                         <button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1" onclick="samlssoForceLogoff({{ logrow.id }}, {{ inputfields.id.value }})">
                                                             <i class="ti ti-user-off fs-4"></i>
-                                                            {{ __("Force Logoff & Disable") }}
+                                                            {{ __("Force Logoff & Disable", plugin) }}
                                                         </button>
                                                     {% else %}
                                                         <span class="text-muted fs-7">-</span>
@@ -1675,7 +1670,7 @@
                             {% set end_page = logging_page + 3 > logging_total_pages ? logging_total_pages : logging_page + 3 %}
                             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-2">
                                 <div class="text-muted fs-7">
-                                    {{ __("Showing page") }} <strong>{{ logging_page }}</strong> {{ __("of") }} <strong>{{ logging_total_pages }}</strong>
+                                    {{ __('Showing page %1$s of %2$s', plugin)|format('<strong>' ~ logging_page ~ '</strong>', '<strong>' ~ logging_total_pages ~ '</strong>')|raw }}
                                 </div>
                                 <nav aria-label="Logging pagination">
                                     <ul class="pagination pagination-sm mb-0">
@@ -1885,20 +1880,20 @@
     <div class="card itil-footer" style="margin-top:10px;">
         <div class="form-buttons col-lg d-flex ms-auto ms-lg-0 flex-row-reverse p-1 ">
             <div class="m-1">
-                <button class="btn btn-primary " type="submit" name="update" title="Save">
+                <button class="btn btn-primary " type="submit" name="update" title="{{ __('Save', plugin) }}">
                     <i class="far fa-save"></i>
-                    <span class="d-none d-xl-block">{{ __("Save") }}</span>
+                    <span class="d-none d-xl-block">{{ __("Save", plugin) }}</span>
                     </button>
             </div>
             <div class="m-1">
-                <button class="btn btn-ghost-danger" type="submit" name="delete" title="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Put in trashbin">
+                <button class="btn btn-ghost-danger" type="submit" name="delete" title="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="{{ __('Put in trashbin', plugin) }}">
                     <i class="ti ti-trash"></i>
-                    <span class="d-none d-xl-block">{{ __("Delete") }}</span>
+                    <span class="d-none d-xl-block">{{ __("Delete", plugin) }}</span>
                     </button>
             </div>
             {% if inputfields.debug.value == true %}
             <div class="m-1 align-middle text-muted pull-left pt-2">
-                ⚠️ Warning SP metadata exposed! - ROWID: {{ inputfields.id.value }} | CREATED DATE: {{ inputfields.date_creation.value|formatted_datetime }} | LAST UPDATED: {{ inputfields.date_mod.value|formatted_datetime }}
+                {{ __('⚠️ Warning SP metadata exposed! - ROWID: %1$s | CREATED DATE: %2$s | LAST UPDATED: %3$s', plugin)|format(inputfields.id.value, inputfields.date_creation.value|formatted_datetime, inputfields.date_mod.value|formatted_datetime) }}
             {% endif %}
         </div>
     </div>
@@ -1915,7 +1910,7 @@
 
 <script>
 function samlssoForceLogoff(stateId, configId) {
-    if (confirm('{{ __("Are you sure you want to disable this user and force logoff?")|escape("js") }}')) {
+    if (confirm('{{ __("Are you sure you want to disable this user and force logoff?", plugin)|escape("js") }}')) {
         document.getElementById('samlsso-forcelogoff-state-id').value = stateId;
         document.getElementById('samlsso-forcelogoff-config-id').value = configId;
         document.getElementById('samlsso-forcelogoff-form').submit();
