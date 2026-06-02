@@ -30,6 +30,75 @@
         if (lastTab) {
             $('[href="' + lastTab + '"]').tab('show');
         }
+
+        // Scan and highlight all fields containing errors across all tabs (only matching true red errors)
+        $('.form-text[style*="color:red"], .form-text[style*="color: red"]').each(function() {
+            var $errorText = $(this);
+            var $row = $errorText.closest('.form-field.row');
+            if ($row.length) {
+                // Apply red background styling class
+                $row.addClass('form-field-error-row');
+                
+                // Add warning icon next to the label if it's not already there
+                var $label = $row.find('.col-form-label, label');
+                if ($label.length && !$label.find('.fa-exclamation-triangle').length) {
+                    // Create unique ID for tooltip lookup
+                    var warningId = 'warning_tooltip_' + Math.random().toString(36).substr(2, 9);
+                    var errorMsg = $errorText.text().replace('⚠️', '').trim();
+                    
+                    var $warnSpan = $('<span class="text-danger ms-1" style="cursor: pointer;"><i class="fas fa-exclamation-triangle"></i></span>');
+                    $warnSpan.attr('id', warningId);
+                    $warnSpan.attr('title', errorMsg);
+                    
+                    $label.append($warnSpan);
+                    
+                    // Initialize standard bootstrap tooltip on the warning icon
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                        new bootstrap.Tooltip($warnSpan[0], {
+                            title: errorMsg,
+                            placement: 'top'
+                        });
+                    }
+                }
+            }
+        });
+
+        // Move informational warning elements (orange/green text) out of line to prevent vertical squishing
+        $('.form-text[style*="color:rgb(180, 120, 8)"], .form-text[style*="color:rgb(3, 126, 26)"], .form-text[style*="color:rgb(71, 180, 8)"], .form-text[style*="color:rgb(180, 140, 8)"]').each(function() {
+            var $infoText = $(this);
+            var $row = $infoText.closest('.form-field.row');
+            if ($row.length) {
+                // Give the row a warning-tint or info-tint style if desired
+                $infoText.addClass('mt-2 p-2 rounded').css({
+                    'background-color': 'rgba(255, 193, 7, 0.05)',
+                    'border': '1px solid rgba(255, 193, 7, 0.2)',
+                    'width': '100%'
+                });
+                // Move it underneath the row inputs (ensure it spans full width)
+                $row.after($infoText);
+            }
+        });
+
+        // Align native GLPI tooltips/warning icons on the security tab to use standard Bootstrap tooltips
+        $('[id$="_warning_icon"]').each(function() {
+            var $icon = $(this);
+            // Try to pull tooltip text from GLPI tooltip data or inline title attribute
+            var tooltipText = $icon.attr('data-bs-original-title') || $icon.attr('title') || '';
+            if (!tooltipText) {
+                // Fallback to fetch from sibling elements or data attributes
+                tooltipText = $icon.attr('data-bs-content') || '';
+            }
+            
+            if (tooltipText && typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                // Clean icon element from native tooltip hooks
+                $icon.removeAttr('data-bs-toggle').removeAttr('data-bs-html');
+                $icon.attr('title', tooltipText.replace('⚠️', '').trim());
+                new bootstrap.Tooltip(this, {
+                    title: tooltipText.replace('⚠️', '').trim(),
+                    placement: 'top'
+                });
+            }
+        });
     });
 
     // Get user id and username
@@ -372,13 +441,13 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    flex-wrap: nowrap;
+                    flex-wrap: wrap;
                     margin-bottom: 0.75rem !important;
                     width: 100%;
                 }
                 .glpisaml .col-form-label,
                 .glpisaml label {
-                    flex: 1 1 auto !important;
+                    flex: 1 1 50% !important;
                     width: auto !important;
                     max-width: none !important;
                     display: inline-flex !important;
@@ -391,12 +460,12 @@
                     word-break: break-word;
                 }
                 .glpisaml .form-field.row > div:not(.col-form-label) {
-                    flex: 0 0 auto !important;
+                    flex: 1 1 auto !important;
                     width: auto !important;
                     max-width: none !important;
                     display: flex;
                     align-items: center;
-                    justify-content: flex-end !important;
+                    justify-content: flex-start !important;
                 }
                 .glpisaml .form-field.row input[type="number"] {
                     max-width: 100px;
@@ -421,6 +490,14 @@
                 .glpisaml .card-header {
                     background-color: #f8f9fa !important;
                     border-bottom: 1px solid rgba(0,0,0,.125) !important;
+                }
+                /* Error row indicators */
+                .glpisaml .form-field-error-row {
+                    background-color: rgba(220, 53, 69, 0.05) !important;
+                    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+                    border-radius: 4px !important;
+                    padding: 0.375rem 0.75rem !important;
+                    transition: background-color 0.2s ease, border-color 0.2s ease;
                 }
             </style>
            <!-- ################################################################################-->
