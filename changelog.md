@@ -2,6 +2,8 @@
 **V1.3.1**
 - Wrapped all remaining hardcoded user-facing fields in Twig templates with i18n translation functions and formatted them for easy localization.
 - Fixed translation of Service Provider fields (Entity ID, MetaUrl, AcsUrl, SloUrl) in Twig configuration form templates.
+- Architecture: Added ADR 0015 documenting the design, implementation, and environment requirements for the translation automation tool.
+
 
 
 **V1.3.0**
