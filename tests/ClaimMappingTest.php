@@ -538,6 +538,7 @@ XML;
                     'comment'                         => 'Alpha test IDP',
                     'is_active'                       => 1,
                     'is_deleted'                      => 0,
+                    'inactivity_timeout'              => 0,
                 ],
                 [
                     'id'                              => 2,
@@ -570,6 +571,7 @@ XML;
                     'comment'                         => 'Beta test IDP',
                     'is_active'                       => 0,
                     'is_deleted'                      => 0,
+                    'inactivity_timeout'              => 0,
                 ],
             ]);
 
@@ -615,7 +617,7 @@ XML;
                 ConfigEntity::ENCRYPT_NAMEID, ConfigEntity::SIGN_AUTHN, ConfigEntity::SIGN_SLO_REQ,
                 ConfigEntity::SIGN_SLO_RES, ConfigEntity::COMPRESS_REQ, ConfigEntity::COMPRESS_RES,
                 ConfigEntity::XML_VALIDATION, ConfigEntity::DEST_VALIDATION, ConfigEntity::LOWERCASE_URL,
-                ConfigEntity::COMMENT, ConfigEntity::IS_ACTIVE,
+                ConfigEntity::COMMENT, ConfigEntity::IS_ACTIVE, ConfigEntity::INACTIVITY_TIMEOUT,
             ];
 
             global $DB;

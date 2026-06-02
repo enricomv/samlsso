@@ -856,4 +856,28 @@ class ConfigItem    //NOSONAR
             ConfigItem::ERRORS    => ($error) ? $error : false,
         ];
     }
+
+    /**
+     * Validates and normalizes the inactivity_timeout integer configuration option.
+     *
+     * @param  mixed $var  Raw input value
+     * @return array       Metadata and validation results
+     */
+    protected function inactivity_timeout(mixed $var): array
+    {
+        $error = false;
+        if (!is_numeric($var) || (int)$var < 0) {
+            $error = __('⭕ Inactivity timeout must be a non-negative integer (minutes)', PLUGIN_NAME);
+        }
+
+        return [
+            ConfigItem::FORMEXPLAIN => __('The duration in minutes of inactivity before a session is forcefully logged out (0 to disable).', PLUGIN_NAME),
+            ConfigItem::FORMTITLE => __('INACTIVITY TIMEOUT (MINUTES)', PLUGIN_NAME),
+            ConfigItem::EVAL      => ($error) ? ConfigItem::INVALID : ConfigItem::VALID,
+            ConfigItem::VALUE     => ($error) ? '0' : (string)(int)$var,
+            ConfigItem::FIELD     => __function__,
+            ConfigItem::VALIDATOR => __method__,
+            ConfigItem::ERRORS    => ($error) ? $error : false,
+        ];
+    }
 }

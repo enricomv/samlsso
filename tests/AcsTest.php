@@ -477,6 +477,7 @@ namespace GlpiPlugin\Samlsso\Tests {
             \GlpiPlugin\Samlsso\Loginstate::$lastInstance = $state;
             \GlpiPlugin\Samlsso\Loginstate::$mockPhases = [
                 Loginstate::PHASE_SAML_ACS,
+                Loginstate::PHASE_SAML_ACS,
                 Loginstate::PHASE_INITIAL
             ];
 

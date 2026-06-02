@@ -3,6 +3,11 @@
 - Wrapped all remaining hardcoded user-facing fields in Twig templates with i18n translation functions and formatted them for easy localization.
 - Fixed translation of Service Provider fields (Entity ID, MetaUrl, AcsUrl, SloUrl) in Twig configuration form templates.
 - Architecture: Added ADR 0015 documenting the design, implementation, and environment requirements for the translation automation tool.
+- UI: Added a translatable warning tooltip icon next to the "SYNC ON LOGIN" field explaining potential data leak incidents from IDP configuration mistakes. Also formatted the conditional warnings for "ENFORCED" and "STRICT" fields in the same clean hoverable style.
+- UI: Restructured the Security tab layout using Bootstrap columns to eliminate empty whitespace and grouped the settings logically into four categories: Enforcement & Sessions, User Provisioning, Inbound Security (IdP), and Outbound Security (SP).
+- UI: Restructured the General, Transit, SP, and IdP configuration tabs into consistent card-based logical subject groups with neat right-aligned inputs and responsive layouts.
+- Feature: Added inactivity timeout configuration setting allowing administrators to forcefully log out inactive user sessions after a specified duration (default is 0, which disables the inactivity check).
+- Feature: Implemented passive ACS request evaluation during user logins to automatically clean up and forcefully expire stale pending authentication states.
 
 
 

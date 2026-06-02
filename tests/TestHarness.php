@@ -1189,6 +1189,8 @@ namespace GlpiPlugin\Samlsso\Tests {
         public array $deletedRows = [];
         /** @var array Tracking inserted records. */
         public array $insertedRows = [];
+        /** @var array Tracking updated records. */
+        public array $updatedRows = [];
 
         /**
          * Configure a mock response structure for a given table name.
@@ -1380,6 +1382,24 @@ namespace GlpiPlugin\Samlsso\Tests {
             $this->insertedRows[] = [
                 'table' => $table,
                 'data'  => $data
+            ];
+            return true;
+        }
+
+        /**
+         * Intercept records update queries.
+         *
+         * @param string $table Table name.
+         * @param array  $data  Data to update.
+         * @param array  $where Filter parameters.
+         * @return bool Always returns true.
+         */
+        public function update(string $table, array $data, array $where): bool
+        {
+            $this->updatedRows[] = [
+                'table' => $table,
+                'data'  => $data,
+                'where' => $where
             ];
             return true;
         }

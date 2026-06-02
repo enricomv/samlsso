@@ -261,6 +261,13 @@ class Acs extends LoginFlow
             );
         }
 
+        if ($this->state->getPhase() == LoginState::PHASE_TIMED_OUT) {
+            $this->printError(
+                __("Your SAML authentication request timed out. Please try logging in again.", PLUGIN_NAME),
+                __('Samlsso->acs->assertSaml->Timeout', PLUGIN_NAME)
+            );
+        }
+
         // Prevent replay attacks, check if response_id is already used
         // The response_id is unique and should only be processed once.
         // This is checked by comparing the response_id from the incoming

@@ -273,6 +273,14 @@ class LoginFlow extends CommonDBTM
             exit;
         }
 
+        if ($this->state->getPhase() === LoginState::PHASE_TIMED_OUT) {
+            $this->state->setPhase(LoginState::PHASE_LOGOFF);
+            Session::cleanOnLogout();
+            Session::addMessageAfterRedirect(__('Your session has timed out due to inactivity.', PLUGIN_NAME), false, ERROR);
+            header('Location: ' . $CFG_GLPI['url_base'] . '/index.php?noAuto=1');
+            exit;
+        }
+
         if (isset($_GET[self::LOCALLOGOUT])) {
             $this->state->setPhase(LoginState::PHASE_LOGOFF);
             return;

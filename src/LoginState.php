@@ -141,6 +141,8 @@ class LoginState extends CommonDBTM
         // Get the globals we need
         global $DB;
 
+        self::expireStaleAcsRequests();
+
         // Use either the sessionId or the requestId (after redirect)
         // to find the correct session. As long as there isnt an redirect
         // performed to an external host the PHP session ID can be used to
@@ -236,6 +238,31 @@ class LoginState extends CommonDBTM
             } else {
                 // Set SAML unsolicited to 0
                 $this->state = array_merge($this->state, [LoginState::SAML_UNSOLICITED  => '0']);
+            }
+
+            // Check inactivity timeout for authenticated sessions
+            if ($this->state[LoginState::PHASE] == LoginState::PHASE_GLPI_AUTH) {
+                $idpId = $this->state[LoginState::IDP_ID];
+                $inactivityTimeout = 0; // default (disabled)
+                if ($idpId && (int)$idpId > 0) {
+                    try {
+                        $configEntity = new \GlpiPlugin\Samlsso\Config\ConfigEntity((int)$idpId);
+                        if ($configEntity->isValid()) {
+                            $configInactivity = $configEntity->getField(\GlpiPlugin\Samlsso\Config\ConfigEntity::INACTIVITY_TIMEOUT);
+                            if ($configInactivity !== false && is_numeric($configInactivity)) {
+                                $inactivityTimeout = (int)$configInactivity;
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        // Keep default fallback
+                    }
+                }
+                if ($inactivityTimeout > 0) {
+                    $lastActivityTime = strtotime($this->state[LoginState::LAST_ACTIVITY] . ' UTC');
+                    if (time() - $lastActivityTime > ($inactivityTimeout * 60)) {
+                        $this->state[LoginState::PHASE] = LoginState::PHASE_TIMED_OUT;
+                    }
+                }
             }
 
             // Update latest activity
@@ -735,6 +762,7 @@ class LoginState extends CommonDBTM
     public static function getLoggingEntries(int $idpId, string $search = '', int $page = 1, int $limit = 20): array
     {
         global $DB;
+        self::expireStaleAcsRequests();
         $logging = [];
         if (is_numeric($idpId)) {
             $where = [];
@@ -797,6 +825,7 @@ class LoginState extends CommonDBTM
                                 'JIT group assignment failed' => 'JIT Group Assignment Failed',
                                 'JIT profile assigned'        => 'JIT Profile Assigned',
                                 'JIT profile assignment failed'=> 'JIT Profile Assignment Failed',
+                                'staleTimeout'                => __('ACS Timeout', PLUGIN_NAME),
                             ];
                             $displayKey = $mainKeyTranslations[$key] ?? $key;
 
@@ -900,6 +929,7 @@ class LoginState extends CommonDBTM
     public static function getLoggingEntriesCount(int $idpId, string $search = ''): int
     {
         global $DB;
+        self::expireStaleAcsRequests();
         if (is_numeric($idpId)) {
             $where = [];
             if ($idpId > 0) {
@@ -1186,6 +1216,67 @@ class LoginState extends CommonDBTM
             $DB->doQuery($query) or die($DB->error());
             Session::addMessageAfterRedirect("🆗 Cleaned: $table.");
         } // We silently ignore errors. Most common cause for an error is if the field already exists.
+    }
+
+    /**
+     * Finds and expires stale ACS requests in the database.
+     * Evaluates all records in PHASE_SAML_ACS and transitions them to PHASE_TIMED_OUT if expired.
+     */
+    private static function expireStaleAcsRequests(): void
+    {
+        global $DB;
+
+        // Query all records currently in SAML_ACS phase (2)
+        $where = [
+            LoginState::PHASE => LoginState::PHASE_SAML_ACS
+        ];
+
+        $iterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]);
+        if ($iterator) {
+            foreach ($iterator as $sessionState) {
+                $idpId = $sessionState[LoginState::IDP_ID];
+                $timeoutMinutes = 15; // default fallback if config is missing
+                if ($idpId && (int)$idpId > 0) {
+                    try {
+                        $configEntity = new \GlpiPlugin\Samlsso\Config\ConfigEntity((int)$idpId);
+                        if ($configEntity->isValid()) {
+                            $configTimeout = $configEntity->getField(\GlpiPlugin\Samlsso\Config\ConfigEntity::REQUEST_TIMEOUT);
+                            if ($configTimeout !== false && is_numeric($configTimeout)) {
+                                $timeoutMinutes = (int)$configTimeout;
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        // Keep default fallback
+                    }
+                }
+
+                $loginTime = strtotime($sessionState[LoginState::LOGIN_DATETIME] . ' UTC');
+                if (time() - $loginTime > ($timeoutMinutes * 60)) {
+                    // Update trace
+                    $trace = [];
+                    if (!empty($sessionState[LoginState::LOGIN_FLOW_TRACE])) {
+                        $unserialized = unserialize($sessionState[LoginState::LOGIN_FLOW_TRACE]);
+                        if (is_array($unserialized)) {
+                            $trace = $unserialized;
+                        }
+                    }
+                    $trace['staleTimeout'] = __('Session was forcefully timed out by ACS evaluation.', PLUGIN_NAME);
+
+                    $updateData = [
+                        LoginState::STATE_ID          => $sessionState[LoginState::STATE_ID],
+                        LoginState::PHASE             => LoginState::PHASE_TIMED_OUT,
+                        LoginState::LOGIN_FLOW_TRACE  => serialize($trace)
+                    ];
+
+                    // Use DB update method to update without side effects of full object save
+                    $DB->update(
+                        LoginState::getTable(),
+                        $updateData,
+                        [LoginState::STATE_ID => $sessionState[LoginState::STATE_ID]]
+                    );
+                }
+            }
+        }
     }
 
     /**

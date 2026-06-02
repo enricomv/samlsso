@@ -207,7 +207,8 @@ s2DsGVGfjX/LlC5WK63pBfsK3tttiIWXaOmAz29C2279l/WrZFWHQyy0DOHBQYtb
                  ConfigEntity::SECURITY_WANTASSERTIONSENCRYPTED => false,
                  ConfigEntity::SECURITY_SIGNMETADATA => false,
                  ConfigEntity::SECURITY_WANTNAMEID => true,
-                 ConfigEntity::REQUEST_TIMEOUT => 15
+                 ConfigEntity::REQUEST_TIMEOUT => 15,
+                 ConfigEntity::INACTIVITY_TIMEOUT => 0
         ];
     }
 }

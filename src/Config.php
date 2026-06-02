@@ -462,6 +462,7 @@ class Config extends CommonDBTM
             `user_jit`                      tinyint NOT NULL DEFAULT '0',
             `sync_on_login`                 tinyint NOT NULL DEFAULT '0',
             `request_timeout`               int NOT NULL DEFAULT '15',
+            `inactivity_timeout`            int NOT NULL DEFAULT '0',
             `sp_certificate`                TEXT NOT NULL,
             `sp_private_key`                TEXT NOT NULL,
             `sp_nameid_format`              VARCHAR(128) NOT NULL,
@@ -513,6 +514,10 @@ class Config extends CommonDBTM
 
             if (!$DB->fieldExists($table, 'request_timeout', false)) {
                 $migration->addField($table, 'request_timeout', 'int', ['null' => false, 'default' => '15', 'update' => true]);
+            }
+
+            if (!$DB->fieldExists($table, 'inactivity_timeout', false)) {
+                $migration->addField($table, 'inactivity_timeout', 'int', ['null' => false, 'default' => '0', 'update' => true]);
             }
 
             if (!$DB->fieldExists($table, 'sync_on_login', false)) {
