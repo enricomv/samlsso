@@ -191,6 +191,7 @@ class LoginFlowEntity extends LoginFlowItem
     public function getFields(): array        //NOSONAR - Maybe reduce complexity reduce calls to validateConfigFields?;
     {
         global $DB;
+        $fields = [];
         // Fetch config item constants;
         $classConstants = LoginFlowEntity::getConstants();
         // Fetch database columns;
@@ -224,6 +225,7 @@ class LoginFlowEntity extends LoginFlowItem
      */
     public function getDBFields($ignoreFields = []): array
     {
+        $fields = [];
         foreach($this->getFields() as $key => $value){
             if(is_array($ignoreFields) && !in_array($key, $ignoreFields)){
                 $fields[$key] = $value[ConfigItem::VALUE];

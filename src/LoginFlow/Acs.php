@@ -137,7 +137,7 @@ class Acs extends LoginFlow
                 $this->configEntity = new ConfigEntity($this->idpId);
             } catch (Throwable $e) {
                 $this->printError(
-                    __("Unable to fetch idp configuration with id:" . $this->idpId . " from database", PLUGIN_NAME),
+                    sprintf(__("Unable to fetch idp configuration with id: %s from database", PLUGIN_NAME), $this->idpId),
                     __('Samlsso->acs->init->FetchConfig', PLUGIN_NAME)
                 );
             }

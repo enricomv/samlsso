@@ -166,13 +166,11 @@ class User
             /* User is found, check if we are allowed to use it. */
 
             /* Verify the found user is not deleted (in trashcan) */
-            if ($user->fields[User::DELETED]) {
-                LoginFlow::PrintFatalLoginError(__("User with GlpiUserid: " . $user->fields[User::USERID] . " is marked deleted but still exists in the GLPI database. Because of this we cannot log you in as this would violate GLPI its security policies. Please contact the GLPI administrator to restore the user with provided ID or purge the user to allow the Just in Time (JIT) user creation to create a new user with the idp provided claims.", PLUGIN_NAME));
-            }
+                LoginFlow::PrintFatalLoginError(sprintf(__("User with GlpiUserid: %s is marked deleted but still exists in the GLPI database. Because of this we cannot log you in as this would violate GLPI its security policies. Please contact the GLPI administrator to restore the user with provided ID or purge the user to allow the Just in Time (JIT) user creation to create a new user with the idp provided claims.", PLUGIN_NAME), $user->fields[User::USERID]));
 
             /* Verify the found user is not disabled by the admin; */
             if ($user->fields[User::ACTIVE] == 0) {
-                LoginFlow::PrintFatalLoginError(__("User with GlpiUserid: " . $user->fields[User::USERID] . " is disabled. Please contact your GLPI administrator and request him to reactivate your account.", PLUGIN_NAME));
+                LoginFlow::PrintFatalLoginError(sprintf(__("User with GlpiUserid: %s is disabled. Please contact your GLPI administrator and request him to reactivate your account.", PLUGIN_NAME), $user->fields[User::USERID]));
             }
 
             /* If synchronization on login is active, update the user fields mapped */
@@ -261,7 +259,7 @@ class User
     public function updateUserRights(array $params): void       /* NOSONAR - Complexity by design */
     {
         /* Log that we are applying JIT. */
-        Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT was called with params:' . var_export($params, true) . "\n\n" . "\n", true));
+        Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT was called with params:', PLUGIN_NAME) . ' ' . var_export($params, true) . "\n\n\n");
 
         $state = null;
         try {
@@ -511,7 +509,7 @@ class User
                 }
             }
         } else {
-            Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT found no groupId to add.' . "\n"));
+            Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT found no groupId to add.', PLUGIN_NAME) . "\n");
         }
     }
 
@@ -535,17 +533,17 @@ class User
             /* Do we need to set a profile for a specific entity? */
             if (isset($update[User::ENTITY_ID])) {
                 $rights[User::ENTITY_ID] = $update[User::ENTITY_ID];
-                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT found entity for profile assignment:' . $update[User::ENTITY_ID] . "\n"));
+                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT found entity for profile assignment:', PLUGIN_NAME) . ' ' . $update[User::ENTITY_ID] . "\n");
             } else {
-                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT didnt find a profile for entity assignment. Profile asignment might not work.' . "\n"));
+                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT didnt find a profile for entity assignment. Profile asignment might not work.', PLUGIN_NAME) . "\n");
             }
 
             /* Do we need to make the profile behave recursive? */
             if (isset($update[User::PROFILE_RECURSIVE])) {
                 $rights[User::PROFILE_RECURSIVE] = (isset($update[User::PROFILE_RECURSIVE])) ? '1' : '0';
-                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT found to be assigned profile(s) to be recursive.' . "\n"));
+                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT found to be assigned profile(s) to be recursive.', PLUGIN_NAME) . "\n");
             } else {
-                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT didnt find to be assigned profile(s) to be recursive.' . "\n"));
+                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT didnt find to be assigned profile(s) to be recursive.', PLUGIN_NAME) . "\n");
             }
 
 
@@ -562,19 +560,19 @@ class User
                 $profileCriteria[User::PROFILE_RECURSIVE] = $rights[User::PROFILE_RECURSIVE];
             }
             if (count($profileUser->find($profileCriteria)) > 0) {
-                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT profile already assigned with config:') . var_export($rights, true) . "\n\n" . "\n", true);
+                Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT profile already assigned with config:', PLUGIN_NAME) . ' ' . var_export($rights, true) . "\n\n\n", true);
                 if ($state && $state->getStateId() > 0) {
                     $state->addLoginFlowTrace(['JIT profile already assigned' => 'profileID:' . $rights[User::PROFILESID]]);
                 }
             } else {
                 if (!$profileUser->add($rights)) {
-                    Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT was not able to assign profile with config:') . var_export($rights, true) . "\n\n" . "\n", true);
+                    Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT was not able to assign profile with config:', PLUGIN_NAME) . ' ' . var_export($rights, true) . "\n\n\n", true);
                     if ($state && $state->getStateId() > 0) {
                         $state->addLoginFlowTrace(['JIT profile assignment failed' => 'profileID:' . $rights[User::PROFILESID]]);
                     }
                 } else {
                     /* Delete all default profile assignments */
-                    Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT remove all default profiles from newly created user:' . "\n"));
+                    Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT remove all default profiles from newly created user:', PLUGIN_NAME) . "\n");
                     $profileUser = new Profile_User();
                     if (($pid = $profileUser->getForUser($update[User::USERSID]))) {
                         foreach ($pid as $key => $data) {
@@ -582,11 +580,11 @@ class User
                                 $profileUser->delete(['id' => $key]);
                             }
                         }
-                        Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('Done' . "\n"));
+                        Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('Done', PLUGIN_NAME) . "\n");
                     } else {
-                        Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('failed' . "\n"));
+                        Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('failed', PLUGIN_NAME) . "\n");
                     }
-                    Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT assigned profile with config:') . var_export($rights, true) . "\n\n" . "\n", true);
+                    Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT assigned profile with config:', PLUGIN_NAME) . ' ' . var_export($rights, true) . "\n\n\n", true);
                     if ($state && $state->getStateId() > 0) {
                         $state->addLoginFlowTrace(['JIT profile assigned' => 'profileID:' . $rights[User::PROFILESID]]);
                     }

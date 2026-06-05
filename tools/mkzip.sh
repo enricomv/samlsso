@@ -48,7 +48,7 @@ if [ -d "$GLPIPATH" ]; then
 	cd $GLPIPATH;
 		zip -r ./samlsso/release/samlsso.zip ./samlsso -x "/samlsso/tools/*" "/samlsso/locales/*.po" "/samlsso/locales/*.pot" "/samlsso/locales/*.po~" "/samlsso/locales/*.mo~" "/samlsso/tests/*" "/samlsso/samlsso.xml" "/samlsso/.vscode/*" "/samlsso/.gitignore" "/samlsso/.github/*" "/samlsso/.git/*" "/samlsso/release/*" "/samlsso/composer.lock" "/samlsso/vendor/bin/*" "/samlsso/vendor/myclabs/*" "/samlsso/vendor/nikic/*" "/samlsso/vendor/phar-io/*" "/samlsso/vendor/phpunit/*" "/samlsso/vendor/sebastian/*" "/samlsso/vendor/theseer/*"
 	else
-		echo "/samlsso not found at `pwd`";
+		echo "/samlsso not found at $(pwd)";
 	fi
 else
 	echo "Directory $GLPIPATH doesnt exist!";

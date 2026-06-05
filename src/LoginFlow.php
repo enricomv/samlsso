@@ -56,6 +56,7 @@ use Plugin;
 use Session;
 use Toolbox;
 use Throwable;
+use Migration;
 use CommonDBTM;
 use OneLogin\Saml2\Auth as samlAuth;
 use OneLogin\Saml2\Response;
@@ -470,6 +471,10 @@ class LoginFlow extends CommonDBTM
     {
         global $CFG_GLPI;
 
+        $samlConfig = [];
+        $auth = null;
+        $ssoBuiltUrl = '';
+
         // Fetch the correct configEntity GLPI
         if (($configEntity = new ConfigEntity($this->state->getIdpId()))) { // Get the configEntity object using our stored ID
             $samlConfig = $configEntity->getPhpSamlConfig();      // Get the correctly formatted SamlConfig array
@@ -486,7 +491,7 @@ class LoginFlow extends CommonDBTM
             try {
                 $auth = new samlAuth($samlConfig);
             } catch (Throwable $e) {
-                $this->printError($e->getMessage(), 'Saml::Auth->init', var_export($auth->getErrors(), true));
+                $this->printError($e->getMessage(), 'Saml::Auth->init', var_export($samlConfig, true));
             }
 
             // Added version 1.2.0
@@ -507,15 +512,17 @@ class LoginFlow extends CommonDBTM
                 $this->printError($e->getMessage(), 'Saml::Auth->init', var_export($auth->getErrors(), true));
             }
 
-            // Register the requestId in the database and $_SESSION var;
-            $this->state->setRequestId($auth->getLastRequestID());
+            if ($auth !== null) {
+                // Register the requestId in the database and $_SESSION var;
+                $this->state->setRequestId($auth->getLastRequestID());
+            }
 
             // Update the current phase in database. The state is verified by the Acs
             // while handling the received SamlResponse. Any other state will force Acs
             // into an error state. This is to prevent unexpected (possibly replayed)
             // samlResponses from being processed. to prevent playback attacks.
             if (!$this->state->setPhase(LoginState::PHASE_SAML_ACS)) {
-                $this->printError(__('Could not update the loginState and therefor stopped the loginFlow for:' . $_POST[LoginFlow::POSTFIELD], PLUGIN_NAME));
+                $this->printError(sprintf(__('Could not update the loginState and therefor stopped the loginFlow for: %s', PLUGIN_NAME), $_POST[LoginFlow::POSTFIELD]));
             }
 
             // Perform redirect to Idp using HTTP-GET
@@ -540,6 +547,7 @@ class LoginFlow extends CommonDBTM
     protected function performGlpiLogin(Response $response, LoginState $state): void
     {
         global $CFG_GLPI;
+        $auth = null;
 
         // Push the state into this objects property just in case.
         $this->state = $state;
@@ -571,12 +579,12 @@ class LoginFlow extends CommonDBTM
         Session::destroy();                 // Clean existing session
         Session::start();                   // Create a new statefull one.
 
-        // Re populate Glpi session with the populated GlpiAuth object
-        // This tells GLPI a valid GLPI user was logged in.
-        Session::init($auth);
+        if ($auth !== null) {
+            Session::init($auth);
 
-        if (!empty($auth->getErrors())) {
-            LoginFlow::PrintFatalLoginError(implode("<br />", $auth->getErrors()));
+            if (!empty($auth->getErrors())) {
+                LoginFlow::PrintFatalLoginError(implode("<br />", $auth->getErrors()));
+            }
         }
 
         // Update the samlState table with the new sessionId.
@@ -855,7 +863,7 @@ class LoginFlow extends CommonDBTM
     {
         // reference global config;
         global $CFG_GLPI;
-        // get actual state;
+        $state = null;
         try {
             $state = new Loginstate();
         } catch (Throwable $e) {
@@ -864,7 +872,7 @@ class LoginFlow extends CommonDBTM
 
         // Restore stored redirect requests.
         // https://github.com/DonutsNL/samlsso/issues/2
-        $safeRedirect = $state->getSafeRedirect();
+        $safeRedirect = $state !== null ? $state->getSafeRedirect() : '';
         if (!empty($safeRedirect)) {
             $url = $CFG_GLPI['url_base'] . '?redirect=' . $safeRedirect;
         } else {
