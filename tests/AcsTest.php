@@ -118,6 +118,15 @@ namespace GlpiPlugin\Samlsso\LoginFlow {
                 'action' => $action,
                 'extended' => $extended
             ];
+            try {
+                $state = self::$activeState;
+                if ($state !== null && $state->getStateId() > 0) {
+                    $state->addLoginFlowTrace(['Error' => $errorMsg . ($extended ? " | Details: " . $extended : "")]);
+                    $state->setPhase(\GlpiPlugin\Samlsso\Loginstate::PHASE_ERROR);
+                }
+            } catch (\Throwable $t) {
+                // ignore
+            }
             throw new \Exception($errorMsg);
         }
     }
@@ -560,6 +569,47 @@ namespace GlpiPlugin\Samlsso\Tests {
             }
             echo "✅ ACS: Successful auth data path with redirection\n";
         }
+
+        /**
+         * Test that a validation failure sets the state phase to PHASE_ERROR (9).
+         */
+        public function testPhaseErrorTransitionOnFailure(): void {
+            $request = Request::create('/plugins/samlsso/front/acs.php', 'POST', [
+                'SAMLResponse' => 'MOCK_SAML_RESPONSE_ASSERTION',
+                'idpId' => 5
+            ]);
+            \OneLogin\Saml2\Response::$mockId = 'UNIQUE_RESPONSE_ID_999';
+            \OneLogin\Saml2\Response::$mockInResponseTo = 'REQ_ID_999';
+            \OneLogin\Saml2\Response::$mockValid = false;
+
+            $state = new Loginstate();
+            $state->setPhase(Loginstate::PHASE_SAML_ACS);
+            $state->setIdpId(5);
+            $state->setRequestId('REQ_ID_999');
+
+            \GlpiPlugin\Samlsso\Loginstate::$lastInstance = $state;
+
+            $acs = new TestableAcs();
+            TestableAcs::$lastError = [];
+            try {
+                $acs->init($request);
+                throw new \Exception("Acs should have thrown on invalid signature.");
+            } catch (\Exception $e) {
+                // Assert that the phase transitioned to PHASE_ERROR (9)
+                $activeState = \GlpiPlugin\Samlsso\LoginFlow::$activeState;
+                if ($activeState->getPhase() !== Loginstate::PHASE_ERROR) {
+                    throw new \Exception("State phase did not transition to PHASE_ERROR (9). Got: " . $activeState->getPhase());
+                }
+                
+                // Assert that the error trace log is populated
+                $safeState = $activeState->getSafeStateForLogging(true);
+                $trace = $safeState[Loginstate::LOGIN_FLOW_TRACE] ?? '';
+                if (empty($trace) || !str_contains($trace, 'Validation of the samlResponse document failed')) {
+                    throw new \Exception("Error log trace not populated correctly in LoginState. Got: " . var_export($trace, true));
+                }
+            }
+            echo "✅ ACS: phase transitions to PHASE_ERROR (9) and logs trace on failure\n";
+        }
     }
 }
 
@@ -599,6 +649,7 @@ namespace {
         $runTest('testSetSamlResponseIdThrows');
         $runTest('testPhaseMismatchAfterRegistration');
         $runTest('testSetPhaseThrows');
+        $runTest('testPhaseErrorTransitionOnFailure');
         $runTest('testSuccessfulAcsLogin');
         $test = null;
     } catch (\Exception $e) {

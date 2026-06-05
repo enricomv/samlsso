@@ -1,5 +1,12 @@
 
 **V1.3.1**
+- Fix: Applied raw filter to Twig error helper variables passed to form fields to prevent HTML auto-escaping, restoring warning/error popovers and yellow background highlighting.
+- Feature: Automatically disable and display warnings on inbound security fields when strict mode is disabled.
+- Architecture: Added ADR 0022 documenting the decision to auto-disable inbound security options when strict is off and use prefix-based dynamic styling for warnings.
+- Redesigned the configuration form fields layout to use a modern two-line strategy (Labels and tooltips on line 1, input controls on line 2), preventing squishing and making better use of the available space.
+- Implemented soft yellow/warning background styling (via `.form-field-warning-row` class) and borders for rows with active warnings.
+- Refactored warnings across all form fields (including those inside General, Transit, and Security tabs) to render elegantly as warning tooltips next to labels, hiding the original text messages.
+- Refactored monolithic configForm.html.twig into separate sub-templates for each tab panel inside templates/configForm/.
 - Wrapped all remaining hardcoded user-facing fields in Twig templates with i18n translation functions and formatted them for easy localization.
 - Fixed translation of Service Provider fields (Entity ID, MetaUrl, AcsUrl, SloUrl) in Twig configuration form templates.
 - Architecture: Added ADR 0015 documenting the design, implementation, and environment requirements for the translation automation tool.

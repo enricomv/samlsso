@@ -220,6 +220,7 @@ class Acs extends LoginFlow
         try {
             $inResponseTo = $this->samlResponse->getXMLDocument()->documentElement->getAttribute('InResponseTo');
             $this->state = new LoginState($inResponseTo);
+            LoginFlow::$activeState = $this->state;
         } catch (Throwable $e) {
             // All references to state removed when state doesnt exist yet.
             // Fix for: https://github.com/DonutsNL/samlsso/issues/104
@@ -247,17 +248,41 @@ class Acs extends LoginFlow
         // https://github.com/DonutsNL/samlsso/issues/104
         try {
             if (!$this->samlResponse->isValid($this->state->getSamlRequestId())) {
+                $errorStr = $this->samlResponse->getError(false) ?: '';
+                $suggestion = '';
+                if ($errorStr !== '') {
+                    if (stripos($errorStr, 'not encrypted') !== false) {
+                        $suggestion = __(" (Suggestion: check 'Want Assertions Encrypted' under Inbound Security in the Security tab)", PLUGIN_NAME);
+                    } elseif (stripos($errorStr, 'not signed') !== false && stripos($errorStr, 'Message') !== false) {
+                        $suggestion = __(" (Suggestion: check 'Want Messages Signed' under Inbound Security in the Security tab)", PLUGIN_NAME);
+                    } elseif (stripos($errorStr, 'not signed') !== false && stripos($errorStr, 'assertion') !== false) {
+                        $suggestion = __(" (Suggestion: check 'Want Assertions Signed' under Inbound Security in the Security tab)", PLUGIN_NAME);
+                    } elseif (stripos($errorStr, 'not signed') !== false && stripos($errorStr, 'NameID') !== false) {
+                        $suggestion = __(" (Suggestion: check 'Want NameID Signed' under Inbound Security in the Security tab)", PLUGIN_NAME);
+                    } elseif (stripos($errorStr, 'Signature validation failed') !== false || stripos($errorStr, 'signature') !== false) {
+                        $suggestion = __(" (Suggestion: verify the Identity Provider Certificates configuration)", PLUGIN_NAME);
+                    } elseif (stripos($errorStr, 'InResponseTo') !== false) {
+                        $suggestion = __(" (Suggestion: check proxy settings or ensure request timeout has not expired)", PLUGIN_NAME);
+                    }
+                }
                 $this->printError(
-                    __("Validation of the samlResponse document failed. Review the saml log for more details", PLUGIN_NAME),
+                    __("Validation of the samlResponse document failed", PLUGIN_NAME),
                     __('Samlsso->acs->assertSaml->SamlResponse::isValid', PLUGIN_NAME),
-                    "The following error was reported: " . $this->samlResponse->getError(false)
+                    $errorStr . $suggestion
                 );
             }
         } catch (Throwable $e) {
+            $errorMsg = $e->getMessage() ?: '';
+            $suggestion = '';
+            if ($errorMsg !== '') {
+                if (stripos($errorMsg, 'Signature validation failed') !== false || stripos($errorMsg, 'signature') !== false) {
+                    $suggestion = __(" (Suggestion: verify the Identity Provider Certificates configuration)", PLUGIN_NAME);
+                }
+            }
             $this->printError(
-                __("Validation of the samlResponse document failed with a critical error. Review the saml log for more details", PLUGIN_NAME),
+                __("Validation of the samlResponse document failed with a critical error", PLUGIN_NAME),
                 __('Samlsso->acs->assertSaml->SamlResponse::isValid', PLUGIN_NAME),
-                "The following error was reported: $e"
+                $errorMsg . $suggestion
             );
         }
 

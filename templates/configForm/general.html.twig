@@ -1,0 +1,150 @@
+<!-- General details -->
+{% import glpi_tpl_macro as fields %}
+<div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-lg-6 mb-4">
+                <!-- Group 1: State & Branding -->
+                <div class="samlsso-category-header">
+                    <i class="fas fa-toggle-on me-2 text-primary"></i>{{ __('State & Branding', plugin) }}
+                </div>
+                <div class="samlsso-category-body">
+                    <!-- name field -->
+                    <div class="mb-3">
+                        {% set error_helper %}
+                            {% if inputfields.name.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.name.errors }}</div>
+                            {% endif %}
+                            {% if buttonsHiddenWarn == true %}
+                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">{{ __('⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visible again.', plugin) }}</div>
+                            {% endif %}
+                        {% endset %}
+
+                        {{ fields.textField(
+                            inputfields.name.field, 
+                            inputfields.name.value, 
+                            inputfields.name.formtitle, 
+                            {
+                                'add_field_html': error_helper|raw,
+                                helper: inputfields.name.formexplain,
+                            }
+                        ) }}
+                    </div>
+
+                    <!-- enabled -->
+                    <div class="mb-3">
+                        {% set error_helper %}
+                            {% if inputfields.is_active.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.is_active.errors }}</div>
+                            {% endif %}
+                        {% endset %}
+                        {{ fields.sliderField(
+                            inputfields.is_active.field,
+                            inputfields.is_active.value,
+                            inputfields.is_active.formtitle,
+                           {
+                              'add_field_html': error_helper|raw,
+                              helper: inputfields.is_active.formexplain,
+                           }
+                        ) }}
+                    </div>
+
+                    <!-- Debug mode -->
+                    <div class="mb-3">
+                        {% set error_helper %}
+                            {% if inputfields.debug.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.debug.errors }}</div>
+                            {% endif %}
+                        {% endset %}
+                        {{ fields.sliderField(
+                            inputfields.debug.field,
+                            inputfields.debug.value,
+                            inputfields.debug.formtitle,
+                           {
+                              'add_field_html': error_helper|raw,
+                              helper: inputfields.debug.formexplain,
+                           }
+                        ) }}
+                    </div>
+                </div>
+
+                <!-- Group 2: Domain & Button Configurations -->
+                <div class="samlsso-category-header">
+                    <i class="fas fa-link me-2 text-primary"></i>{{ __('Domain & Button Configurations', plugin) }}
+                </div>
+                <div class="samlsso-category-body">
+                    <!-- icon field -->
+                    <div class="mb-3">
+                        {% set error_helper %}
+                            {% if inputfields.conf_icon.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.conf_icon.errors }}</div>
+                            {% endif %}
+                            {% if buttonsHiddenWarn == true %}
+                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">{{ __('⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visible again.', plugin) }}</div>
+                            {% endif %}
+                        {% endset %}
+                        {{ fields.textField(
+                            inputfields.conf_icon.field, 
+                            inputfields.conf_icon.value, 
+                            inputfields.conf_icon.formtitle, 
+                            {
+                                'add_field_html': error_helper|raw,
+                                helper: inputfields.conf_icon.formexplain,
+                            }
+                        ) }}
+                    </div>
+
+                    <!-- domain field -->
+                    <div class="mb-3">
+                        {% set error_helper %}
+                            {% if inputfields.conf_domain.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.conf_domain.errors }}</div>
+                            {% endif %}
+                            {% if buttonsHiddenWarn == true %}
+                                <div id="textHelper" class="form-text" style="color:rgb(3, 126, 26)">{{ __('🔒 Userdomain is configured. Users can trigger a Saml Login by providing their {username}@{userdomain} in the glpi username field and pressing the login button. The password field is ignored and can be left blank. This is a more secure option that wont expose configured IDPs.', plugin) }}
+                                </div>
+                            {% endif %}
+                        {% endset %}
+
+                        {{ fields.textField(
+                            inputfields.conf_domain.field, 
+                            inputfields.conf_domain.value, 
+                            inputfields.conf_domain.formtitle, 
+                            {
+                                'add_field_html': error_helper|raw,
+                                helper: inputfields.conf_domain.formexplain,
+                            }
+                        ) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6 mb-4">
+                <!-- Group 3: Comments -->
+                <div class="samlsso-category-header">
+                    <i class="fas fa-sticky-note me-2 text-primary"></i>{{ __('Comments', plugin) }}
+                </div>
+                <div class="samlsso-category-body">
+                    <!-- Comment field -->
+                    <div class="mb-3">
+                        {% set error_helper %}
+                            {% if inputfields.comment.errors == true %}
+                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.comment.errors }}</div>
+                            {% endif %}
+                        {% endset %}
+                        {{ fields.textareaField(
+                            inputfields.comment.field, 
+                            inputfields.comment.value, 
+                            inputfields.comment.formtitle, 
+                            {
+                                'required':false,
+                                'add_field_html': error_helper|raw,
+                                helper: inputfields.comment.formexplain,
+                            }
+                        ) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

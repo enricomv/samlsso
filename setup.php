@@ -148,6 +148,9 @@ function plugin_init_samlsso(): void                                            
         // Add samlSSO configuration page to menu
         $PLUGIN_HOOKS['menu_toadd'][PLUGIN_NAME]['config']  = [Config::class];
 
+        // Register CSS file for the plugin
+        $PLUGIN_HOOKS['add_css'][PLUGIN_NAME]               = ['css/samlSSO.css'];
+
         // Register and hook the samlRules to Hooks::RULE_MATCHED
         Plugin::registerClass(RuleSamlCollection::class, ['rulecollections_types' => true]);
         $PLUGIN_HOOKS[Hooks::RULE_MATCHED][PLUGIN_NAME]     = 'updateUser';

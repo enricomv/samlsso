@@ -22,7 +22,8 @@ You MUST follow these rules when performing any changes in this repository.
 
 
 ## 💻 Code Standards & Cleanliness
-- **DocBlocks**: Document every method and major logic block with detailed docblocks (description, `@param`, `@return`, `@throws`). Do not use inline comments (`//`); use DocBlocks instead.
+- **DocBlocks**: Document every method and major logic block with detailed docblocks (description, `@param`, `@return`, `@throws`). Do not use inline comments (`//`); use DocBlocks instead. Ensure all `@param` and `@return` types and parameter names are strictly aligned with the actual method signature and implementation.
+- **Intentional Assignments in Conditions**: When intentionally assigning a variable inside a conditional statement (e.g. `if`, `elseif`), always wrap the assignment in an extra set of parentheses (e.g. `if (($var = val))`) to explicitly signal intent to static analyzers and resolve linter warnings.
 - **PSR Compliance**: Follow PSR-12 coding standards.
 - **Linting Enforcement**: All code must pass static analysis and linting (Intelephense, SonarLint) with all errors corrected prior to proposing code, creating a release, or submitting a pull request.
 - **No Closing PHP Tags**: PHP-only files must not end with a closing `?>` tag to avoid accidental whitespace emissions.
@@ -31,6 +32,7 @@ You MUST follow these rules when performing any changes in this repository.
 - **Descriptive Naming**: Use descriptive names for variables, classes, functions, and constants. Follow GLPI naming conventions first, then plugin conventions.
 - **Obfuscations**: Never allow obfuscations (e.g., minification, magic strings, hashed strings, or encoded payloads) in the code. If detected, report it immediately and attempt to uncover its purpose.
 - **No Raw Strings for Config/Claim Mapping Fields**: Never use raw string literals when referencing configuration keys or claim mapping fields (e.g. use `ClaimMapItem::FIELD_EMAIL` instead of `'email'`). All fields and keys must be defined as class constants.
+- **Form Layout & Element Consistency**: All tab panels and their constituent elements must follow a single, unified visual layout system. If an element style or behavior (such as toggles, inputs, warning/error row styles, warning tooltips, or info helper hovers) changes in one child template or tab, the change must be identically and consistently applied to all similar elements across all tabs. Info messages underneath fields should be wrapped in `.form-text-info-hover-box` to trigger only on field/row hover.
 
 ## 🔒 Security & GLPI Architecture
 - **GLPI Core As-Is Rule**: Never modify or alter any class or method belonging to the GLPI core. Core files and methods must be considered "as-is". Always notify the developer immediately if any core security issues are found.

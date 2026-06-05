@@ -217,7 +217,7 @@ class User
             // Build the input array using the provided attributes (claims)
             // from the samlResponse. maybe use this method in the future
             // to also validate provided claims in one go.
-            if (!$id = $user->add(Sanitizer::sanitize($userFields))) {
+            if (!($id = $user->add(Sanitizer::sanitize($userFields)))) {
                 LoginFlow::PrintFatalLoginError(__("Your SSO login was successful but there is no matching GLPI user account and
                                                 we failed to create one dynamically using Just In Time user creation. Please
                                                 request a GLPI administrator to review the logs and correct the problem or
@@ -576,7 +576,7 @@ class User
                     /* Delete all default profile assignments */
                     Toolbox::logInFile(PLUGIN_NAME . PLUGIN_SAMLSSO_LOGEVENTS, __('JIT remove all default profiles from newly created user:' . "\n"));
                     $profileUser = new Profile_User();
-                    if ($pid = $profileUser->getForUser($update[User::USERSID])) {
+                    if (($pid = $profileUser->getForUser($update[User::USERSID]))) {
                         foreach ($pid as $key => $data) {
                             if ($data['profiles_id'] != $rights[User::PROFILESID]) {
                                 $profileUser->delete(['id' => $key]);

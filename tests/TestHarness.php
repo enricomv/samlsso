@@ -850,6 +850,7 @@ namespace GlpiPlugin\Samlsso {
             public const PHASE_FORCE_LOG            = 6;
             public const PHASE_TIMED_OUT            = 7;
             public const PHASE_LOGOFF               = 8;
+            public const PHASE_ERROR                = 9;
 
             /**
              * Gets database table name.
@@ -1099,7 +1100,13 @@ namespace GlpiPlugin\Samlsso {
              */
             public function getSafeStateForLogging(bool $debug): array
             {
-                return ['id' => 1, 'phase' => $this->phase];
+                $traceStr = '';
+                foreach ($this->trace as $entry) {
+                    foreach ($entry as $key => $value) {
+                        $traceStr .= "$key: $value\n";
+                    }
+                }
+                return ['id' => 1, 'phase' => $this->phase, self::LOGIN_FLOW_TRACE => $traceStr];
             }
 
             /**
@@ -1336,6 +1343,15 @@ namespace GlpiPlugin\Samlsso\Tests {
                         ['Field' => 'name', 'Type' => 'varchar(255)', 'Null' => 'YES'],
                         ['Field' => 'sp_certificate', 'Type' => 'text', 'Null' => 'YES'],
                         ['Field' => 'sp_private_key', 'Type' => 'text', 'Null' => 'YES'],
+                        ['Field' => 'strict', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_wantmessagessigned', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_wantassertionssigned', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_wantassertionsencrypted', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_wantnameid', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_nameidencrypted', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_authnrequestssigned', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_logoutrequestsigned', 'Type' => 'tinyint', 'Null' => 'NO'],
+                        ['Field' => 'security_logoutresponsesigned', 'Type' => 'tinyint', 'Null' => 'NO'],
                     ];
                     private int $index = 0;
                     public function fetch_assoc() {

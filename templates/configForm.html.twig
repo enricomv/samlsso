@@ -3,14 +3,205 @@
 {% import glpi_tpl_macro as fields %}
 
 <script>
+    const SamlSsoPopoverManager = {
+        activePopoverInstance: null,
+        activePopoverEl: null,
+        closeTimeout: null,
+
+        // Initialize a single popover element with consistent hover/click lifecycle rules
+        init: function(el, options = {}) {
+            const self = this;
+            const $el = $(el);
+
+            // Dispose any existing Popover or Tooltip instances to prevent duplicates
+            try {
+                if (typeof bootstrap !== 'undefined') {
+                    const instPopover = bootstrap.Popover.getInstance(el);
+                    if (instPopover) instPopover.dispose();
+                    const instTooltip = bootstrap.Tooltip.getInstance(el);
+                    if (instTooltip) instTooltip.dispose();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            if (typeof $.fn.popover === 'function') {
+                try { $el.popover('dispose'); } catch(e) {}
+            }
+            if (typeof $.fn.tooltip === 'function') {
+                try { $el.tooltip('dispose'); } catch(e) {}
+            }
+            
+            // Get data-samlsso-type or fallback
+            const type = $el.attr('data-samlsso-type') || 'info';
+            const customClass = $el.attr('data-bs-custom-class') || `samlsso-popover-${type}`;
+            const placement = $el.attr('data-bs-placement') || 'top';
+            const html = $el.attr('data-bs-html') !== 'false';
+            
+            // Determine header title
+            let title = $el.attr('data-samlsso-title') || $el.attr('title') || $el.attr('data-bs-original-title') || '';
+            const content = $el.attr('data-bs-content') || '';
+            if (!title || title === content) {
+                if (type === 'error') title = 'Error';
+                else if (type === 'warning') title = 'Warning';
+                else if (type === 'success') title = 'Success';
+                else if (type === 'trace') title = 'Login Flow Trace';
+                else title = 'Help';
+            }
+
+            // Clear original title attributes to prevent duplicate native rendering
+            $el.removeAttr('title').removeAttr('data-bs-original-title');
+
+            // Initialize Bootstrap Popover
+            const popoverInstance = new bootstrap.Popover(el, {
+                sanitize: false,
+                trigger: 'manual',
+                customClass: customClass,
+                html: html,
+                placement: placement,
+                container: 'body',
+                title: title,
+                ...options
+            });
+
+            function show() {
+                if (self.closeTimeout) {
+                    clearTimeout(self.closeTimeout);
+                }
+                if (self.activePopoverInstance && self.activePopoverInstance !== popoverInstance) {
+                    self.activePopoverInstance.hide();
+                }
+                popoverInstance.show();
+                self.activePopoverInstance = popoverInstance;
+                self.activePopoverEl = el;
+            }
+
+            function delayHide() {
+                if (self.closeTimeout) {
+                    clearTimeout(self.closeTimeout);
+                }
+                self.closeTimeout = setTimeout(function() {
+                    const activePopover = document.querySelector('.popover');
+                    const isTriggerHovered = self.activePopoverEl && self.activePopoverEl.matches(':hover');
+                    const isPopoverHovered = activePopover && activePopover.matches(':hover');
+
+                    if (isTriggerHovered || isPopoverHovered) {
+                        return; // Keep popover open
+                    }
+
+                    popoverInstance.hide();
+                    if (self.activePopoverInstance === popoverInstance) {
+                        self.activePopoverInstance = null;
+                        self.activePopoverEl = null;
+                    }
+                }, 750);
+            }
+
+            $el.on('mouseenter', show);
+            $el.on('mouseleave', delayHide);
+            $el.on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self.activePopoverInstance === popoverInstance) {
+                    popoverInstance.hide();
+                    self.activePopoverInstance = null;
+                    self.activePopoverEl = null;
+                } else {
+                    show();
+                }
+            });
+
+            return popoverInstance;
+        },
+
+        // Setup global listener rules (click outside, mouseover popover keeping it open, switching tabs)
+        setupGlobalListeners: function() {
+            const self = this;
+
+            // Keep popover open if mouse is hovering over the popover itself
+            document.addEventListener('mouseover', function(e) {
+                const targetPopover = e.target.closest('.popover');
+                if (targetPopover && self.activePopoverInstance) {
+                    if (self.closeTimeout) {
+                        clearTimeout(self.closeTimeout);
+                    }
+                }
+            });
+
+            document.addEventListener('mouseout', function(e) {
+                const targetPopover = e.target.closest('.popover');
+                if (targetPopover && self.activePopoverInstance) {
+                    if (e.relatedTarget && e.relatedTarget.closest('.popover') === targetPopover) {
+                        return;
+                    }
+                    if (self.closeTimeout) {
+                        clearTimeout(self.closeTimeout);
+                    }
+                    self.closeTimeout = setTimeout(function() {
+                        const activePopover = document.querySelector('.popover');
+                        const isTriggerHovered = self.activePopoverEl && self.activePopoverEl.matches(':hover');
+                        const isPopoverHovered = activePopover && activePopover.matches(':hover');
+
+                        if (isTriggerHovered || isPopoverHovered) {
+                            return; // Keep popover open
+                        }
+
+                        if (self.activePopoverInstance) {
+                            self.activePopoverInstance.hide();
+                            self.activePopoverInstance = null;
+                            self.activePopoverEl = null;
+                        }
+                    }, 750);
+                }
+            });
+
+            // Hide active popovers when clicking outside
+            document.addEventListener('click', function(e) {
+                if (self.activePopoverInstance && self.activePopoverEl && !self.activePopoverEl.contains(e.target) && !e.target.closest('.popover')) {
+                    self.activePopoverInstance.hide();
+                    self.activePopoverInstance = null;
+                    self.activePopoverEl = null;
+                }
+            });
+
+            // Hide active popover when switching tabs
+            document.querySelectorAll('.nav-link, [data-bs-toggle="tab"]').forEach(function(tabEl) {
+                tabEl.addEventListener('click', function() {
+                    if (self.activePopoverInstance) {
+                        self.activePopoverInstance.hide();
+                        self.activePopoverInstance = null;
+                        self.activePopoverEl = null;
+                    }
+                });
+            });
+        }
+    };
+
     // Remember tab state
     $(function() {
+        SamlSsoPopoverManager.setupGlobalListeners();
+        // Destroy all existing qtip tooltips to prevent balloons from staying open on field focus
+        if (typeof $.fn.qtip === 'function') {
+            try {
+                $('.glpisaml *').qtip('destroy', true);
+            } catch(e) {}
+        }
+
         if ($.fn.select2) {
             $('#preset_selector').select2();
         }
         
+        function toggleFooterVisibility(tabId) {
+            if (tabId === '#claim_mapping' || tabId === '#logging') {
+                $('.itil-footer').addClass('d-none');
+            } else {
+                $('.itil-footer').removeClass('d-none');
+            }
+        }
+
         $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-            localStorage.setItem('lastTab', $(this).attr('href'));
+            var tabId = $(this).attr('href') || $(this).data('bs-target');
+            localStorage.setItem('lastTab', tabId);
+            toggleFooterVisibility(tabId);
         });
         // Manage d-none class for tabpanels
         $('a[data-bs-toggle="tab"]').on('show.bs.tab', function (e) {
@@ -29,87 +220,206 @@
         
         if (lastTab) {
             $('[href="' + lastTab + '"]').tab('show');
+        } else {
+            var activeTab = $('.nav-tabs .nav-link.active').attr('href') || $('.nav-tabs .nav-link.active').data('bs-target');
+            if (activeTab) {
+                toggleFooterVisibility(activeTab);
+            }
         }
 
-        // Scan and highlight all fields containing errors across all tabs (only matching true red errors)
-        $('.form-text[style*="color:red"], .form-text[style*="color: red"]').each(function() {
-            var $errorText = $(this);
-            var $row = $errorText.closest('.form-field.row');
-            if ($row.length) {
-                // Apply red background styling class
-                $row.addClass('form-field-error-row');
-                
-                // Add warning icon next to the label if it's not already there
-                var $label = $row.find('.col-form-label, label');
-                if ($label.length && !$label.find('.fa-exclamation-triangle').length) {
-                    // Create unique ID for tooltip lookup
-                    var warningId = 'warning_tooltip_' + Math.random().toString(36).substr(2, 9);
-                    var errorMsg = $errorText.text().replace('⚠️', '').trim();
-                    
-                    var $warnSpan = $('<span class="text-danger ms-1" style="cursor: pointer;"><i class="fas fa-exclamation-triangle"></i></span>');
-                    $warnSpan.attr('id', warningId);
-                    $warnSpan.attr('title', errorMsg);
-                    
-                    $label.append($warnSpan);
-                    
-                    // Initialize standard bootstrap tooltip on the warning icon
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                        new bootstrap.Tooltip($warnSpan[0], {
-                            title: errorMsg,
-                            placement: 'top'
-                        });
-                    }
-                }
+        // Helper to structure label text on the left and all icons/tooltips on the right
+        function alignLabelIcons($row) {
+            var $label = $row.find('label').first();
+            if (!$label.length) {
+                $label = $row.find('.col-form-label').first();
             }
-        });
-
-        // Move informational warning elements (orange/green text) out of line to prevent vertical squishing
-        $('.form-text[style*="color:rgb(180, 120, 8)"], .form-text[style*="color:rgb(3, 126, 26)"], .form-text[style*="color:rgb(71, 180, 8)"], .form-text[style*="color:rgb(180, 140, 8)"]').each(function() {
-            var $infoText = $(this);
-            var $row = $infoText.closest('.form-field.row');
-            if ($row.length) {
-                // Give the row a warning-tint or info-tint style if desired
-                $infoText.addClass('mt-2 p-2 rounded').css({
-                    'background-color': 'rgba(255, 193, 7, 0.05)',
-                    'border': '1px solid rgba(255, 193, 7, 0.2)',
-                    'width': '100%'
-                });
-                // Move it underneath the row inputs (ensure it spans full width)
-                $row.after($infoText);
-            }
-        });
-
-        // Convert Security tab warning icons/tooltips to match General tab question-mark tooltips
-        $('[id$="_warning_icon"]').each(function() {
-            var $icon = $(this);
-            var $row = $icon.closest('.form-field.row');
-            var tooltipText = $icon.attr('data-bs-original-title') || $icon.attr('title') || $icon.attr('data-bs-content') || '';
+            if (!$label.length) return null;
             
-            if (tooltipText && $row.length) {
-                // Remove the native warning icon
-                $icon.remove();
+            var $iconsSpan = $label.find('.label-icons-part');
+            if ($iconsSpan.length) {
+                return $iconsSpan;
+            }
+            
+            var text = "";
+            $label.contents().each(function() {
+                if (this.nodeType === Node.TEXT_NODE) {
+                    text += this.nodeValue;
+                }
+            });
+            text = text.trim();
+            
+            var $icons = $label.contents().filter(function() {
+                return this.nodeType !== Node.TEXT_NODE && !$(this).hasClass('label-text-part') && !$(this).hasClass('label-icons-part');
+            });
+            
+            $label.empty();
+            
+            var $textSpan = $('<span class="label-text-part"></span>').text(text);
+            $iconsSpan = $('<span class="label-icons-part"></span>');
+            
+            $iconsSpan.append($icons);
+            $label.append($textSpan).append($iconsSpan);
+            return $iconsSpan;
+        }
+
+        // Initialize label alignment on all fields
+        $('.glpisaml .form-field.row').each(function() {
+            alignLabelIcons($(this));
+        });
+
+        // Delay scanning and popover manager initialization slightly to run after GLPI core has loaded
+        setTimeout(function() {
+            // Scan and highlight all fields containing errors across all tabs (only matching true red errors)
+            $('.form-text[style*="color:red"], .form-text[style*="color: red"]').each(function() {
+                var $errorText = $(this);
+                var $row = $errorText.closest('.form-field.row');
+                if ($row.length) {
+                    // Apply red background styling class
+                    $row.addClass('form-field-error-row');
+                    
+                    // Add error icon next to the label if it's not already there
+                    var $iconsSpan = alignLabelIcons($row);
+                    if ($iconsSpan && !$iconsSpan.find('.fa-exclamation-triangle.text-danger').length) {
+                        var $warnSpan = $('<span class="text-danger ms-1" style="cursor: pointer;" data-samlsso-toggle="popover" data-bs-placement="top" data-bs-html="true" data-samlsso-type="error"><i class="fas fa-exclamation-triangle"></i></span>');
+                        $warnSpan.attr('data-bs-content', $errorText.html() || $errorText.text());
+                        $warnSpan.attr('title', 'Error');
+                        $iconsSpan.prepend($warnSpan);
+                        SamlSsoPopoverManager.init($warnSpan[0]);
+                    }
+                    
+                    // Hide the raw error text
+                    $errorText.hide();
+                }
+            });
+
+            // Process warning helper texts (orange/yellow) and convert them to tooltips + warning row background
+            $('.form-text[style*="color:rgb(180, 120, 8)"], .form-text[style*="color: rgb(180, 120, 8)"], .form-text[style*="color:rgb(180, 140, 8)"], .form-text[style*="color: rgb(180, 140, 8)"]').each(function() {
+                var $warnText = $(this);
+                var $row = $warnText.closest('.form-field.row');
+                if ($row.length) {
+                    // Apply warning row class
+                    $row.addClass('form-field-warning-row');
+                    
+                    // Add warning icon next to the label
+                    var $iconsSpan = alignLabelIcons($row);
+                    if ($iconsSpan && !$iconsSpan.find('.fa-exclamation-triangle.text-warning').length) {
+                        var $warnSpan = $('<span class="text-warning ms-1" style="cursor: pointer;" data-samlsso-toggle="popover" data-bs-placement="top" data-bs-html="true" data-samlsso-type="warning"><i class="fas fa-exclamation-triangle"></i></span>');
+                        $warnSpan.attr('data-bs-content', $warnText.html() || $warnText.text());
+                        $warnSpan.attr('title', 'Warning');
+                        $iconsSpan.prepend($warnSpan);
+                        SamlSsoPopoverManager.init($warnSpan[0]);
+                    }
+                    
+                    // Hide the raw warning text
+                    $warnText.hide();
+                }
+            });
+
+            // Clean up and style green informational success text elements
+            $('.form-text[style*="color:rgb(3, 126, 26)"], .form-text[style*="color:rgb(71, 180, 8)"]').each(function() {
+                var $infoText = $(this);
+                var $row = $infoText.closest('.form-field.row');
+                if ($row.length) {
+                    // Apply info background class
+                    $row.addClass('form-field-info-row');
+                    
+                    // Add info icon next to the label
+                    var $iconsSpan = alignLabelIcons($row);
+                    if ($iconsSpan && !$iconsSpan.find('.fa-info-circle.text-info').length) {
+                        var $infoSpan = $('<span class="text-info ms-1" style="cursor: pointer;" data-samlsso-toggle="popover" data-bs-placement="top" data-bs-html="true" data-samlsso-type="success"><i class="fas fa-info-circle"></i></span>');
+                        $infoSpan.attr('data-bs-content', $infoText.html() || $infoText.text());
+                        $infoSpan.attr('title', 'Info');
+                        $iconsSpan.prepend($infoSpan);
+                        SamlSsoPopoverManager.init($infoSpan[0]);
+                    }
+                    
+                    // Hide the raw info text
+                    $infoText.hide();
+                }
+            });
+
+            // Convert Security tab warning icons/tooltips to match General tab warning styles
+            $('[id$="_warning_icon"]').each(function() {
+                var $icon = $(this);
+                var iconId = $icon.attr('id');
+                var $row = $icon.closest('.form-field.row');
+                var tooltipText = $icon.attr('data-bs-original-title') || $icon.attr('title') || $icon.attr('data-bs-content') || '';
                 
-                // Add warning question-mark indicator to the label to match General tab tooltips
-                var $label = $row.find('.col-form-label, label');
-                if ($label.length) {
-                    var cleanText = tooltipText.replace('⚠️', '').trim();
-                    var tooltipId = 'warning_tip_' + Math.random().toString(36).substr(2, 9);
-                    
-                    // Create standard question-mark trigger span matching General/Transit styles
-                    var $tipSpan = $('<span class="text-danger ms-1" style="cursor: pointer;"><i class="fas fa-exclamation-triangle"></i></span>');
-                    $tipSpan.attr('id', tooltipId);
-                    
-                    $label.append($tipSpan);
-                    
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-                        new bootstrap.Tooltip($tipSpan[0], {
-                            title: cleanText,
-                            placement: 'top'
-                        });
+                if (!tooltipText && iconId) {
+                    var $contentDiv = $('#content' + iconId);
+                    if ($contentDiv.length) {
+                        tooltipText = $contentDiv.text() || $contentDiv.html();
+                        $contentDiv.remove(); // Remove stray tooltip content div
                     }
                 }
-            }
-        });
+                
+                if (tooltipText && $row.length) {
+                    // Remove the native warning icon
+                    $icon.remove();
+                    
+                    // Add yellow warning background styling class
+                    $row.addClass('form-field-warning-row');
+                    
+                    // Add warning yellow triangle indicator to the label
+                    var $iconsSpan = alignLabelIcons($row);
+                    if ($iconsSpan && !$iconsSpan.find('.fa-exclamation-triangle.text-warning').length) {
+                        var $tipSpan = $('<span class="text-warning ms-1" style="cursor: pointer;" data-samlsso-toggle="popover" data-bs-placement="top" data-bs-html="true" data-samlsso-type="warning"><i class="fas fa-exclamation-triangle"></i></span>');
+                        $tipSpan.attr('data-bs-content', tooltipText.replace('⚠️', '').trim());
+                        $tipSpan.attr('title', 'Warning');
+                        $iconsSpan.prepend($tipSpan);
+                        SamlSsoPopoverManager.init($tipSpan[0]);
+                    }
+                }
+            });
+
+            // Convert all help icon tooltips/popovers into harmonized popovers
+            $('.glpisaml .form-help, .glpisaml [data-bs-toggle="popover"], .glpisaml [data-bs-toggle="tooltip"], .glpisaml .dropdown_tooltip, .glpisaml .fa-question-circle').not('#logging *').each(function() {
+                var $help = $(this);
+                var $row = $help.closest('.form-field.row');
+                
+                var helpText = $help.attr('data-bs-title') || $help.attr('data-bs-content') || $help.attr('data-bs-original-title') || $help.attr('title') || '';
+                
+                // If text is empty, check parent
+                if (!helpText) {
+                    var $parent = $help.parent();
+                    helpText = $parent.attr('data-bs-title') || $parent.attr('data-bs-content') || $parent.attr('data-bs-original-title') || $parent.attr('title') || '';
+                }
+
+                // If text is still empty, check children and this element's ID for content divs
+                if (!helpText) {
+                    var idsToCheck = [];
+                    if ($help.attr('id')) idsToCheck.push($help.attr('id'));
+                    $help.find('*[id]').each(function() {
+                        idsToCheck.push($(this).attr('id'));
+                    });
+                    for (var i = 0; i < idsToCheck.length; i++) {
+                        var $contentDiv = $('#content' + idsToCheck[i]);
+                        if ($contentDiv.length) {
+                            helpText = $contentDiv.text() || $contentDiv.html();
+                            $contentDiv.remove();
+                            break;
+                        }
+                    }
+                }
+
+                if (helpText) {
+                    alignLabelIcons($row);
+                    // Setup attributes for harmonized popover and strip standard data-bs attributes to bypass GLPI
+                    $help.attr('data-samlsso-toggle', 'popover')
+                         .removeAttr('data-bs-toggle')
+                         .removeAttr('data-bs-original-title')
+                         .attr('data-bs-placement', 'top')
+                         .attr('data-bs-html', 'true')
+                         .attr('data-samlsso-type', 'info')
+                         .attr('data-bs-content', helpText)
+                         .attr('title', 'Help')
+                         .css('cursor', 'pointer');
+                    
+                    // Initialize the popover
+                    SamlSsoPopoverManager.init($help[0]);
+                }
+            });
+        }, 150);
     });
 
     // Get user id and username
@@ -447,1769 +757,13 @@
             </li>
         </ul>
         <div class="tab-content flex-fill glpisaml" id="myTabContent">
-            <style>
-                .glpisaml .form-field.row {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
-                    margin-bottom: 0.75rem !important;
-                    width: 100%;
-                }
-                .glpisaml .col-form-label,
-                .glpisaml label {
-                    flex: 1 1 50% !important;
-                    width: auto !important;
-                    max-width: none !important;
-                    display: inline-flex !important;
-                    align-items: center !important;
-                    justify-content: flex-start !important;
-                    flex-wrap: wrap !important;
-                    gap: 6px !important;
-                    text-align: left !important;
-                    padding-right: 15px;
-                    word-break: break-word;
-                }
-                .glpisaml .form-field.row > div:not(.col-form-label) {
-                    flex: 1 1 auto !important;
-                    width: auto !important;
-                    max-width: none !important;
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start !important;
-                }
-                .glpisaml .form-field.row input[type="number"] {
-                    max-width: 100px;
-                    text-align: center;
-                }
-                .glpisaml .form-field.row input[type="text"],
-                .glpisaml .form-field.row select {
-                    min-width: 250px;
-                }
-                .glpisaml .form-field.row textarea {
-                    min-width: 300px;
-                }
-                .glpisaml .nav-tabs .nav-link.active {
-                    border-bottom-color: #fff !important;
-                    margin-bottom: -1px !important;
-                }
-                .glpisaml .card {
-                    border: 1px solid rgba(0,0,0,.125) !important;
-                    border-radius: 0.25rem !important;
-                    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075) !important;
-                }
-                .glpisaml .card-header {
-                    background-color: #f8f9fa !important;
-                    border-bottom: 1px solid rgba(0,0,0,.125) !important;
-                }
-                /* Error row indicators */
-                .glpisaml .form-field-error-row {
-                    background-color: rgba(220, 53, 69, 0.05) !important;
-                    border: 1px solid rgba(220, 53, 69, 0.2) !important;
-                    border-radius: 4px !important;
-                    padding: 0.375rem 0.75rem !important;
-                    transition: background-color 0.2s ease, border-color 0.2s ease;
-                }
-            </style>
-           <!-- ################################################################################-->
-            <!-- General details -->
-            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 1: State & Branding -->
-                            <div class="card mb-4">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-toggle-on me-2 text-primary"></i>{{ __('State & Branding', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- name field -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.name.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.name.errors }}</div>
-                                            {% endif %}
-                                            {% if buttonsHiddenWarn == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">{{ __('⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visible again.', plugin) }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.textField(
-                                            inputfields.name.field, 
-                                            inputfields.name.value, 
-                                            inputfields.name.formtitle, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.name.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- enabled -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.is_active.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.is_active.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.is_active.field,
-                                            inputfields.is_active.value,
-                                            inputfields.is_active.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                              helper: inputfields.is_active.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Debug mode -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.debug.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.debug.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.debug.field,
-                                            inputfields.debug.value,
-                                            inputfields.debug.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                              helper: inputfields.debug.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Group 2: Domain & Button Configurations -->
-                            <div class="card">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-link me-2 text-primary"></i>{{ __('Domain & Button Configurations', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- icon field -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.conf_icon.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.conf_icon.errors }}</div>
-                                            {% endif %}
-                                            {% if buttonsHiddenWarn == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8)">{{ __('⚠️ Userdomain is configured. The login button will be hidden from the loginscreen. Clear the Userdomain to make the button visible again.', plugin) }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.textField(
-                                            inputfields.conf_icon.field, 
-                                            inputfields.conf_icon.value, 
-                                            inputfields.conf_icon.formtitle, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.conf_icon.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- domain field -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.conf_domain.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.conf_domain.errors }}</div>
-                                            {% endif %}
-                                            {% if buttonsHiddenWarn == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(3, 126, 26)">{{ __('🔒 Userdomain is configured. Users can trigger a Saml Login by providing their {username}@{userdomain} in the glpi username field and pressing the login button. The password field is ignored and can be left blank. This is a more secure option that wont expose configured IDPs.', plugin) }}
-                                                </div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.textField(
-                                            inputfields.conf_domain.field, 
-                                            inputfields.conf_domain.value, 
-                                            inputfields.conf_domain.formtitle, 
-                                            {
-                                                'add_field_html': error_helper|raw,
-                                                helper: inputfields.conf_domain.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 3: Comments -->
-                            <div class="card" style="height: 100%;">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-sticky-note me-2 text-primary"></i>{{ __('Comments', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- Comment field -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.comment.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.comment.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.textareaField(
-                                            inputfields.comment.field, 
-                                            inputfields.comment.value, 
-                                            inputfields.comment.formtitle, 
-                                            {
-                                                'required':false,
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.comment.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ################################################################################-->
-            <!-- transit tab -->
-            <div class="tab-pane fade show" id="transit" role="tabpanel" aria-labelledby="transit-tab">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 1: Compression -->
-                            <div class="card mb-4">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-file-archive me-2 text-primary"></i>{{ __('Compression', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- compress_requests -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.compress_requests.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.compress_requests.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.compress_requests.field,
-                                            inputfields.compress_requests.value,
-                                            inputfields.compress_requests.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                               helper: inputfields.compress_requests.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-
-                                    <!-- compress_responses -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.compress_responses.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.compress_responses.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.compress_responses.field,
-                                            inputfields.compress_responses.value,
-                                            inputfields.compress_responses.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                               helper: inputfields.compress_responses.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Group 2: Proxied & Encoding -->
-                            <div class="card">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-network-wired me-2 text-primary"></i>{{ __('Proxied & Encoding', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- Proxied -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.proxied.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.proxied.errors }}</div>
-                                            {% endif %}
-                                            {% if inputfields.proxied.value == true %}
-                                                {% if inputfields.strict.value == true %}
-                                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ __('⚠️ Beware, misaligned proxy schemes might break the samlValidation in strict mode.<br>(<b>https</b>://external)=>(<b>http</b>://internal)', plugin)|raw }}</div>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.proxied.field,
-                                            inputfields.proxied.value,
-                                            inputfields.proxied.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                               helper: inputfields.proxied.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-
-                                    <!-- lowercase_url_encoding -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.lowercase_url_encoding.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.lowercase_url_encoding.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.lowercase_url_encoding.field,
-                                            inputfields.lowercase_url_encoding.value,
-                                            inputfields.lowercase_url_encoding.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                               helper: inputfields.lowercase_url_encoding.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 3: XML & Destination Validation -->
-                            <div class="card" style="height: 100%;">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-check-double me-2 text-primary"></i>{{ __('XML & Destination Validation', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- validate_xml -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.validate_xml.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.validate_xml.errors }}</div>
-                                            {% endif %}
-                                            {% if inputfields.strict.value == false %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ __('⚠️ Strict is disabled, validate xml setting will not do anything.', plugin) }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.validate_xml.field,
-                                            inputfields.validate_xml.value,
-                                            inputfields.validate_xml.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                               helper: inputfields.validate_xml.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-
-                                    <!-- validate_destination -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.validate_destination.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.validate_destination.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.validate_destination.field,
-                                            inputfields.validate_destination.value,
-                                            inputfields.validate_destination.formtitle,
-                                           {
-                                              'add_field_html': error_helper,
-                                               helper: inputfields.validate_destination.formexplain,
-                                           }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ################################################################################-->
-            <div class="tab-pane fade d-none" id="provider" role="tabpanel" aria-labelledby="provider-tab">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 1: Endpoints & Metadata -->
-                            <div class="card mb-4">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-network-wired me-2 text-primary"></i>{{ __('Endpoints & Metadata', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- Entity ID -->
-                                    <div class="mb-3">
-                                        {{ fields.textField(
-                                            'EntityID', 
-                                            entityID, 
-                                            __('Entity ID', plugin),
-                                            {
-                                                'id': 'EntityId',
-                                                'readonly':true,
-                                                'is_copyable': true,
-                                                helper: __('You need to configure the Entity ID at the identity provider. This value is crosschecked by the identity provider to make sure the sign-in request is originating from the correct service provider.', plugin),
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Meta URL -->
-                                    <div class="mb-3">
-                                        {% set metaUrl %}
-                                            <div class="btn-group btn-group-sm d-flex">
-                                                <input type="text" id="MetaUrl" class="form-control rounded-end-0" name="MetaUrl" value="{{ metaUrl }}" readonly="readonly">
-                                                {% if inputfields.debug.value == false %}
-                                                    {% set rand = random() %}
-                                                    <button type="button" id="meta_warning_{{ rand }}" class="btn btn-outline-secondary">
-                                                        <i class="ti ti-alert-triangle"></i>
-                                                    </button>
-                                                    {% do call('Html::showToolTip', [
-                                                        "Debug is disabled, metadata will only be exposed if 'debug' is enabled.",
-                                                        {'applyto': 'meta_warning_' ~ rand}
-                                                    ]) %}
-                                                {% endif %}
-                                                <button type="button" class="btn btn-outline-secondary" onclick="copyDisclosablePasswordFieldToClipboard('MetaUrl')">
-                                                    <i class="ti ti-clipboard-copy disclose"></i>
-                                                </button>
-                                            </div>
-                                        {% endset %}
-                                        {{ fields.field(
-                                            'MetaUrl', 
-                                            metaUrl, 
-                                            __('MetaUrl', plugin),
-                                            {
-                                                helper: __('The location of the metadata provider for this service provider (GLPI). The meta location can be used by the identity provider to collect important information from this service provider like what public certificate to use for signing and encrypting the SamlResponse.', plugin),
-                                            }
-                                        ) }}
-                                    </div>
-                                   
-                                    <!-- ACS url -->
-                                    <div class="mb-3">
-                                        {{ fields.textField(
-                                            'AcsUrl', 
-                                            acsUrl, 
-                                            __('AcsUrl', plugin),
-                                            {
-                                                'id': 'AcsUrl',
-                                                'readonly':true,
-                                                'is_copyable': true,
-                                                helper: __('The location of the Assertion Consumer Service (ACS) for this service provider (GLPI). This url is called by the identity provider after succesfull login.', plugin),
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Logout url -->
-                                    <div class="mb-3">
-                                        {{ fields.textField(
-                                            'SloUrl', 
-                                             sloUrl, 
-                                            __('SloUrl', plugin),
-                                            {
-                                                'id': 'SloUrl',
-                                                'readonly':true,
-                                                'is_copyable': true,
-                                                helper: __('The location where logout requests should be send back to from the Identity Provider.', plugin),
-                                            }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Group 2: Name ID Policy -->
-                            <div class="card">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-fingerprint me-2 text-primary"></i>{{ __('Name ID Policy', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.sp_nameid_format.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.sp_nameid_format.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.dropdownArrayField(
-                                            inputfields.sp_nameid_format.field,
-                                            inputfields.sp_nameid_format.value,
-                                            inputOptionsNameFormat,
-                                            inputfields.sp_nameid_format.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.sp_nameid_format.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 3: Certificates & Keys -->
-                            <div class="card" style="height: 100%;">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-key me-2 text-primary"></i>{{ __('Certificates & Keys', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- sp_certificate -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.sp_private_key.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.sp_private_key.errors }}</div>
-                                            {% endif %}
-                                            {% if inputfields.sp_certificate.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.sp_certificate.errors }}</div>
-                                            {% endif %}
-                                            {# make sure validate is an array/object before accessing nested keys #}
-                                            {% set sp_validate = inputfields.sp_certificate.validate|default({}) %}
-                                            {% if sp_validate.subject.CN|default(false) == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(71, 180, 8);">🆗 Valid certificate found: {{ sp_validate.subject.CN|default('') }}</div>
-                                            {% endif %}
-                                            {% if sp_validate.validations.validTo|default(false) == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ sp_validate.validations.validTo|default('') }}</div>
-                                            {% endif %}
-                                            {% if sp_validate.validations.validFrom|default(false) == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ sp_validate.validations.validFrom|default('') }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        
-                                        {{ fields.textareaField(
-                                            inputfields.sp_certificate.field,
-                                            inputfields.sp_certificate.value,
-                                            inputfields.sp_certificate.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.sp_certificate.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- sp_private_key -->
-                                    <div class="mb-3">
-                                        {{ fields.textareaField( 
-                                            inputfields.sp_private_key.field,
-                                            inputfields.sp_private_key.value,
-                                            inputfields.sp_private_key.formtitle,
-                                            {
-                                                helper: inputfields.sp_private_key.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ################################################################################-->
-            <!-- Identity provider details -->
-            <div class="tab-pane fade d-none" id="idp" role="tabpanel" aria-labelledby="idp-tab">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 1: Endpoints & Configurations -->
-                            <div class="card mb-4">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-network-wired me-2 text-success"></i>{{ __('Endpoints & Configurations', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                     <!-- idp_entity_id -->
-                                     <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.idp_entity_id.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.idp_entity_id.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.textField( 
-                                            inputfields.idp_entity_id.field, 
-                                            inputfields.idp_entity_id.value, 
-                                            inputfields.idp_entity_id.formtitle, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.idp_entity_id.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- idp_single_sign_on_service -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.idp_single_sign_on_service.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.idp_single_sign_on_service.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.textField( 
-                                            inputfields.idp_single_sign_on_service.field, 
-                                            inputfields.idp_single_sign_on_service.value, 
-                                            inputfields.idp_single_sign_on_service.formtitle ~ helper|raw, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.idp_single_sign_on_service.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- idp_single_logout_service -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.idp_single_logout_service.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.idp_single_logout_service.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.textField( 
-                                            inputfields.idp_single_logout_service.field, 
-                                            inputfields.idp_single_logout_service.value, 
-                                            inputfields.idp_single_logout_service.formtitle ~ helper|raw, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.idp_single_logout_service.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Group 2: Authentication Context -->
-                            <div class="card">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-key me-2 text-success"></i>{{ __('Authentication Context', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- requested_authn_context (multiple select) -->
-                                    <div class="mb-3">
-                                        <div class="form-field row col-12 mb-2">
-                                            <div class="col-form-label text-xxl-end">
-                                                <label for="{{ inputfields.requested_authn_context.field }}">{{ inputfields.requested_authn_context.formtitle }}</label>
-                                                <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
-                                                    data-bs-content="{{ inputfields.requested_authn_context.formexplain }}">?</span>
-                                            </div>
-                                            <div class="field-container">
-                                                <!--
-                                                @see: https://codeberg.org/QuinQuies/glpisaml/issues/14
-                                                Todo: add nicer, userfriendly drag-drop element
-                                                -->
-                                                <select id="keep-order" multiple="multiple" aria-label="multiple select" name="{{ inputfields.requested_authn_context.field }}[]">
-                                                    {% for key, authn in inputOptionsAuthnContext %}
-                                                        {% set selected = false %}
-                                                        {% for value in inputfields.requested_authn_context.value %}
-                                                            {% if value == key %}
-                                                                {% set selected = 'selected' %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        <option {{ selected }} value="{{ key }}">{{ authn }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- requested_authn_context_comparison -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.requested_authn_context_comparison.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.requested_authn_context_comparison.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.dropdownArrayField( 
-                                            inputfields.requested_authn_context_comparison.field,
-                                            inputfields.requested_authn_context_comparison.value,
-                                            inputOptionsAuthnCompare,
-                                            inputfields.requested_authn_context_comparison.formtitle ~ helper|raw, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.requested_authn_context_comparison.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 3: Identity Provider Certificates -->
-                            <div class="card" style="height: 100%;">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-certificate me-2 text-success"></i>{{ __('Identity Provider Certificates', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- idp_certificate -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.idp_certificate.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.idp_certificate.errors }}</div>
-                                            {% endif %}
-                                            {% if inputfields.idp_certificate.validate.subject.CN == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(71, 180, 8);">🆗 Valid Certificate found: {{ inputfields.idp_certificate.validate.subject.CN }}</div>
-                                            {% endif %}
-                                            {% if inputfields.idp_certificate.validate.validations.validTo == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 140, 8);">{{ inputfields.idp_certificate.validate.validations.validTo }}</div>
-                                            {% endif %}
-                                            {% if inputfields.idp_certificate.validate.validations.validFrom == true %}
-                                                <div id="textHelper" class="form-text" style="color:rgb(180, 140, 8);">{{ inputfields.idp_certificate.validate.validations.validFrom }}</div>
-                                            {% endif %}
-                                        {% endset %}
-
-                                        {{ fields.textareaField( 
-                                            inputfields.idp_certificate.field, 
-                                            inputfields.idp_certificate.value, 
-                                            inputfields.idp_certificate.formtitle, 
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.idp_certificate.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Security details -->
-            <div class="tab-pane fade d-none" id="security" role="tabpanel" aria-labelledby="security-tab">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 1: Enforcement & Sessions -->
-                            <div class="card mb-4">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-shield-alt me-2 text-primary"></i>{{ __('Enforcement & Sessions', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- enforce SSO -->
-                                    <div class="mb-3">
-                                        {% set enforce_sso_title %}
-                                            {{ inputfields.enforce_sso.formtitle }}
-                                            {% if inputfields.enforce_sso.errors == true %}
-                                                <span class="text-danger ms-1" id="enforce_sso_warning_icon" style="cursor: pointer;">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                </span>
-                                                {% do call('Html::showToolTip', [
-                                                    inputfields.enforce_sso.errors,
-                                                    {'applyto': 'enforce_sso_warning_icon'}
-                                                ]) %}
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.enforce_sso.field,
-                                            inputfields.enforce_sso.value,
-                                            enforce_sso_title|raw,
-                                            {
-                                                'add_field_html': '',
-                                                helper: inputfields.enforce_sso.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Request Expiry Timeout -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.request_timeout.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.request_timeout.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.textField(
-                                            inputfields.request_timeout.field,
-                                            inputfields.request_timeout.value,
-                                            inputfields.request_timeout.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                'type': 'number',
-                                                helper: inputfields.request_timeout.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Inactivity Timeout -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.inactivity_timeout.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.inactivity_timeout.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.textField(
-                                            inputfields.inactivity_timeout.field,
-                                            inputfields.inactivity_timeout.value,
-                                            inputfields.inactivity_timeout.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                'type': 'number',
-                                                helper: inputfields.inactivity_timeout.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Strict mode -->
-                                    <div class="mb-3">
-                                        {% set strict_title %}
-                                            {{ inputfields.strict.formtitle }}
-                                            {% if inputfields.strict.value == false %}
-                                                <span class="text-danger ms-1" id="strict_warning_icon" style="cursor: pointer;">
-                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                </span>
-                                                {% do call('Html::showToolTip', [
-                                                    __('⚠️ Your environment is at risk, make sure strict is enabled!', plugin),
-                                                    {'applyto': 'strict_warning_icon'}
-                                                ]) %}
-                                            {% endif %}
-                                        {% endset %}
-                                        {% set error_helper %}
-                                            {% if inputfields.strict.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.strict.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.strict.field,
-                                            inputfields.strict.value,
-                                            strict_title|raw,
-                                            {
-                                                'add_field_html': error_helper|raw,
-                                                helper: inputfields.strict.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Group 2: User Provisioning -->
-                            <div class="card">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-users-cog me-2 text-primary"></i>{{ __('User Provisioning', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- User JIT -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.user_jit.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.user_jit.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.user_jit.field,
-                                            inputfields.user_jit.value,
-                                            inputfields.user_jit.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.user_jit.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-
-                                    <!-- Sync on login -->
-                                    <div class="mb-3">
-                                        {% set sync_on_login_title %}
-                                            {{ inputfields.sync_on_login.formtitle }}
-                                            <span class="text-danger ms-1" id="sync_on_login_warning_icon" style="cursor: pointer;">
-                                                <i class="fas fa-exclamation-triangle"></i>
-                                            </span>
-                                            {% do call('Html::showToolTip', [
-                                                __('Enabling this field might cause data leak incidents because samlSSO will apply configuration mistakes made at the IDP directly into GLPI.', plugin),
-                                                {'applyto': 'sync_on_login_warning_icon'}
-                                            ]) %}
-                                        {% endset %}
-                                        {% set error_helper %}
-                                            {% if inputfields.sync_on_login.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.sync_on_login.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.sync_on_login.field,
-                                            inputfields.sync_on_login.value,
-                                            sync_on_login_title|raw,
-                                            {
-                                                'add_field_html': error_helper|raw,
-                                                helper: inputfields.sync_on_login.formexplain,
-                                            }
-                                        ) }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-lg-6 mb-4">
-                            <!-- Group 3: Inbound Security (IdP) -->
-                            <div class="card mb-4">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-sign-in-alt me-2 text-success"></i>{{ __('Inbound Security (IdP)', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- security_wantmessagessigned -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_wantmessagessigned.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_wantmessagessigned.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_wantmessagessigned.field,
-                                            inputfields.security_wantmessagessigned.value,
-                                            inputfields.security_wantmessagessigned.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_wantmessagessigned.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_wantassertionssigned -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_wantassertionssigned.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_wantassertionssigned.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_wantassertionssigned.field,
-                                            inputfields.security_wantassertionssigned.value,
-                                            inputfields.security_wantassertionssigned.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_wantassertionssigned.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_wantassertionsencrypted -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_wantassertionsencrypted.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_wantassertionsencrypted.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_wantassertionsencrypted.field,
-                                            inputfields.security_wantassertionsencrypted.value,
-                                            inputfields.security_wantassertionsencrypted.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_wantassertionsencrypted.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_wantnameid -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_wantnameid.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_wantnameid.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_wantnameid.field,
-                                            inputfields.security_wantnameid.value,
-                                            inputfields.security_wantnameid.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_wantnameid.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Group 4: Outbound Security (SP) -->
-                            <div class="card">
-                                <div class="card-header py-2 px-3">
-                                    <h6 class="card-title mb-0 text-uppercase text-muted"><i class="fas fa-sign-out-alt me-2 text-success"></i>{{ __('Outbound Security (SP)', plugin) }}</h6>
-                                </div>
-                                <div class="card-body p-3">
-                                    <!-- security_nameidencrypted -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_nameidencrypted.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_nameidencrypted.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_nameidencrypted.field,
-                                            inputfields.security_nameidencrypted.value,
-                                            inputfields.security_nameidencrypted.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_nameidencrypted.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_authnrequestssigned -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_authnrequestssigned.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_authnrequestssigned.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_authnrequestssigned.field,
-                                            inputfields.security_authnrequestssigned.value,
-                                            inputfields.security_authnrequestssigned.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_authnrequestssigned.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_logoutrequestsigned -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_logoutrequestsigned.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_logoutrequestsigned.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_logoutrequestsigned.field,
-                                            inputfields.security_logoutrequestsigned.value,
-                                            inputfields.security_logoutrequestsigned.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_logoutrequestsigned.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_logoutresponsesigned -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_logoutresponsesigned.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_logoutresponsesigned.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_logoutresponsesigned.field,
-                                            inputfields.security_logoutresponsesigned.value,
-                                            inputfields.security_logoutresponsesigned.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_logoutresponsesigned.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-
-                                    <!-- security_signmetadata -->
-                                    <div class="mb-3">
-                                        {% set error_helper %}
-                                            {% if inputfields.security_signmetadata.errors == true %}
-                                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.security_signmetadata.errors }}</div>
-                                            {% endif %}
-                                        {% endset %}
-                                        {{ fields.sliderField(
-                                            inputfields.security_signmetadata.field,
-                                            inputfields.security_signmetadata.value,
-                                            inputfields.security_signmetadata.formtitle,
-                                            {
-                                                'add_field_html': error_helper,
-                                                helper: inputfields.security_signmetadata.formexplain,
-                                            }) 
-                                        }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ################################################################################-->
-            <!-- Claim Mapping details -->
-            <div class="tab-pane fade" id="claim_mapping" role="tabpanel" aria-labelledby="claim-mapping-tab">
-                <style>
-                    #xml_highlighted_code { color: #24292e; }
-                    .xml-tag { color: #d73a49; font-weight: bold; }
-                    .xml-attr { color: #6f42c1; }
-                    .xml-val { color: #032f62; }
-                    .xml-comment { color: #6a737d; font-style: italic; }
-                    #samlsso-mapping-tools-collapse .select2-container .select2-selection.select2-selection--single .select2-selection__rendered::before {
-                        display: inline !important;
-                    }
-                </style>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title mb-0">{{ __('SAML Claim Mapping', plugin) }}</h5>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#samlsso-mapping-tools-collapse" aria-expanded="false" aria-controls="samlsso-mapping-tools-collapse">
-                            <i class="fas fa-tools me-1"></i>{{ __('Mapping Tools', plugin) }}
-                        </button>
-                    </div>
-
-                    <!-- Collapsible Mapping Tools Panel -->
-                    <div class="collapse mb-4" id="samlsso-mapping-tools-collapse">
-                        <div class="card card-body bg-light border-0 shadow-sm p-3">
-                            <h6 class="fw-bold mb-2 text-dark"><i class="fas fa-info-circle me-1"></i>{{ __('Mapping Assistant', plugin) }}</h6>
-                            <p class="text-muted mb-3" style="font-size: 0.85rem;">
-                                {{ __('Map SAML response claim keys dynamically either directly to user profile fields or as JIT Rule criteria. Configure defaults and required verification checks.', plugin) }}
-                            </p>
-
-                            <!-- Preset selection and XML toggle -->
-                            <div class="row align-items-center g-3">
-                                <div class="col-md-7">
-                                    <div class="d-flex align-items-center">
-                                        <label class="mb-0 me-3 fw-bold" style="white-space: nowrap;">{{ __('Apply Preset', plugin) }}</label>
-                                        <select id="preset_selector" class="form-select form-select-sm" onchange="applyPreset(this.value)">
-                                            <option value="">-- {{ __('Select Preset', plugin) }} --</option>
-                                            {% for name, preset in mapping_presets %}
-                                                <option value="{{ name }}">{{ name|title }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-5 text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#samlsso-xml-collapse" aria-expanded="false" aria-controls="samlsso-xml-collapse">
-                                        <i class="fas fa-code me-1"></i>{{ __('View observed samlResponse XML', plugin) }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Collapsible SAML Response XML structure inside the assistant -->
-                            <div class="collapse mt-3" id="samlsso-xml-collapse">
-                                <div class="border rounded bg-white p-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="fw-bold text-muted small"><i class="fas fa-code"></i> {{ __('Sanitized SAML Response XML Structure', plugin) }}</span>
-                                    </div>
-                                    {% if saml_xml_structure is not empty %}
-                                        <div class="alert alert-info py-2 px-3 mb-2 small">
-                                            <i class="fas fa-info-circle text-primary me-1"></i>{{ __('This shows the structure of the last received SAML Response. Cryptographic keys, signatures, digests, and PII text node values have been stripped.', plugin) }}
-                                        </div>
-                                        <pre class="bg-light p-3 border rounded font-monospace mb-0" style="max-height: 450px; overflow-y: auto;"><code id="xml_highlighted_code"></code></pre>
-                                    {% else %}
-                                        <p class="text-muted mb-0 small"><i class="fas fa-info-circle"></i> {{ __('No SAML response has been recorded yet. Perform a successful login to populate this view.', plugin) }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <datalist id="observed_claims_list">
-                        {% for claim in observed_claims %}
-                            <option value="{{ claim }}"></option>
-                        {% endfor %}
-                    </datalist>
-
-                    <!-- Dynamic Mapping Grid -->
-                    {% if claim_errors is not empty %}
-                        <div class="alert alert-danger mb-4">
-                            <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>{{ __('Claim Mapping Validation Errors', plugin) }}</h5>
-                            <ul class="mb-0">
-                                {% for key, err in claim_errors %}
-                                    <li>{{ err }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-
-                    <div>
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th style="width: 18%;">{{ __('Target Type', plugin) }}</th>
-                                    <th style="width: 18%;">{{ __('GLPI Target Field', plugin) }}</th>
-                                    <th style="width: 25%;">{{ __('SAML Response Claim Key', plugin) }}</th>
-                                    <th style="width: 18%;">{{ __('Default Fallback Value', plugin) }}</th>
-                                    <th class="text-center" style="width: 8%;">{{ __('Required', plugin) }}</th>
-                                    <th>{{ __('Status', plugin) }}</th>
-                                    <th style="width: 8%;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="claim_mapping_tbody">
-                                {% for index, mapping in claim_mappings %}
-                                    {% set is_system_required = (mapping.target_type == 'user_field' and (mapping.glpi_field == 'username' or mapping.glpi_field == 'email')) %}
-                                    {% set is_username_locked = (mapping.target_type == 'user_field' and mapping.glpi_field == 'username') %}
-                                    <tr class="claim-mapping-row" data-index="{{ index }}">
-                                        <td>
-                                            {% if is_system_required %}
-                                                <input type="hidden" name="claim_map[{{ index }}][target_type]" value="{{ mapping.target_type }}">
-                                            {% endif %}
-                                            <select name="claim_map[{{ index }}][target_type]" class="form-select target-type-select" onchange="updateGlpiFields(this)" {% if is_system_required %}disabled{% endif %}>
-                                                <option value="user_field" {% if mapping.target_type == 'user_field' %}selected{% endif %}>{{ __('User Field', plugin) }}</option>
-                                                <option value="rule_field" {% if mapping.target_type == 'rule_field' %}selected{% endif %}>{{ __('Rule Field', plugin) }}</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            {% if is_system_required %}
-                                                <input type="hidden" name="claim_map[{{ index }}][glpi_field]" value="{{ mapping.glpi_field }}">
-                                            {% endif %}
-                                            <select name="claim_map[{{ index }}][glpi_field]" class="form-select glpi-field-select" {% if is_system_required %}disabled{% endif %}>
-                                                {% if mapping.target_type == 'rule_field' %}
-                                                    {% for field in allowed_rule_fields %}
-                                                        <option value="{{ field }}" {% if mapping.glpi_field == field %}selected{% endif %}>{{ field|title }}</option>
-                                                    {% endfor %}
-                                                {% else %}
-                                                    {% for field in allowed_user_fields %}
-                                                        <option value="{{ field }}" {% if mapping.glpi_field == field %}selected{% endif %}>{{ field|title }}</option>
-                                                    {% endfor %}
-                                                {% endif %}
-                                            </select>
-                                        </td>
-                                        <td>
-                                            {% if is_username_locked %}
-                                                <input type="hidden" name="claim_map[{{ index }}][saml_claim]" value="NameId">
-                                            {% endif %}
-                                            <div class="input-group">
-                                                <input type="text" name="claim_map[{{ index }}][saml_claim]" value="{{ is_username_locked ? 'NameId' : mapping.saml_claim }}" class="form-control saml-claim-input" oninput="checkObserved(this)" {% if is_username_locked %}disabled{% else %}list="observed_claims_list"{% endif %}>
-                                                {% if not is_username_locked and observed_claims is not empty %}
-                                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false"></button>
-                                                    <ul class="dropdown-menu dropdown-menu-end" style="max-height: 200px; overflow-y: auto;">
-                                                        {% for claim in observed_claims %}
-                                                            <li><a class="dropdown-item" href="#" onclick="selectClaim(this, '{{ claim|escape('js') }}'); return false;">{{ claim }}</a></li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="claim_map[{{ index }}][default_value]" value="{{ mapping.default_value }}" class="form-control">
-                                        </td>
-                                        <td class="text-center">
-                                            {% if is_system_required %}
-                                                <input type="hidden" name="claim_map[{{ index }}][is_required]" value="1">
-                                            {% endif %}
-                                            <input type="checkbox" name="claim_map[{{ index }}][is_required]" value="1" class="form-check-input" {% if is_system_required or mapping.is_required == 1 %}checked{% endif %} {% if is_system_required %}disabled{% endif %}>
-                                        </td>
-                                        <td>
-                                            <div class="status-indicators d-flex align-items-center gap-2">
-                                                {% if is_username_locked or mapping.saml_claim in observed_claims %}
-                                                    <span class="badge bg-success observed-badge">✅ {{ __('Observed', plugin) }}</span>
-                                                {% elseif mapping.saml_claim is not empty %}
-                                                    <span class="badge bg-warning unobserved-badge">⚠️ {{ __('Unobserved', plugin) }}</span>
-                                                {% endif %}
-                                                {% if mapping.target_type == 'rule_field' and mapping.glpi_field in unused_rule_fields %}
-                                                    <span class="badge bg-danger unused-rule-badge" title="{{ __('This JIT criteria has no active rules in GLPI evaluating it.', plugin) }}">⚠️ {{ __('Unused in Rules', plugin) }}</span>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {% if not is_system_required %}
-                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteRow(this)">
-                                                    <i class="fas fa-trash"></i> {{ __('Delete', plugin) }}
-                                                </button>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mb-4">
-                        <button type="button" class="btn btn-primary" onclick="addRow('', '', '', '', 0)">
-                            <i class="fas fa-plus"></i> {{ __('Add Mapping', plugin) }}
-                        </button>
-                    </div>
-
-
-
-                    {% if claim_mappings is empty %}
-                        <script>
-                            $(function() {
-                                addRow('user_field', 'username', 'NameId', '', 1);
-                                addRow('user_field', 'email', 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress', '', 1);
-                                
-                                const rawXml = {{ saml_xml_structure|json_encode|raw }};
-                                const codeElem = document.getElementById('xml_highlighted_code');
-                                if (codeElem && rawXml) {
-                                    codeElem.innerHTML = highlightXml(rawXml);
-                                }
-                            });
-                        </script>
-                    {% else %}
-                        <script>
-                            $(function() {
-                                rowCounter = {{ claim_mappings|length }};
-                                
-                                const rawXml = {{ saml_xml_structure|json_encode|raw }};
-                                const codeElem = document.getElementById('xml_highlighted_code');
-                                if (codeElem && rawXml) {
-                                    codeElem.innerHTML = highlightXml(rawXml);
-                                }
-                            });
-                        </script>
-                    {% endif %}
-                </div>
-            </div>
-            </div>
-            <!-- ################################################################################-->
-            <!-- Logging details -->
-            <div class="tab-pane fade d-none" id="logging" role="tabpanel" aria-labelledby="logging-tab">
-                <style>
-                    /* Styling for custom logging tab */
-                    .logging-badge {
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        padding: 0.25em 0.6em;
-                        font-size: 0.75rem;
-                        font-weight: 600;
-                        line-height: 1;
-                        text-align: center;
-                        white-space: nowrap;
-                        vertical-align: baseline;
-                        border-radius: 0.375rem;
-                        border: 1px solid transparent;
-                    }
-                    .logging-badge-success {
-                        background-color: hsl(142, 70%, 95%);
-                        color: hsl(142, 76%, 28%);
-                        border-color: hsl(142, 70%, 90%);
-                    }
-                    .logging-badge-danger {
-                        background-color: hsl(354, 70%, 96%);
-                        color: hsl(354, 76%, 35%);
-                        border-color: hsl(354, 70%, 90%);
-                    }
-                    /* Phase Badges HSL curated palette */
-                    .logging-badge-phase-1 { /* Initial */
-                        background-color: hsl(210, 80%, 96%);
-                        color: hsl(210, 80%, 35%);
-                        border-color: hsl(210, 80%, 90%);
-                    }
-                    .logging-badge-phase-2 { /* SAML ACS Expected */
-                        background-color: hsl(35, 90%, 96%);
-                        color: hsl(35, 90%, 35%);
-                        border-color: hsl(35, 90%, 90%);
-                    }
-                    .logging-badge-phase-3 { /* SAML Authed */
-                        background-color: hsl(190, 80%, 95%);
-                        color: hsl(190, 80%, 30%);
-                        border-color: hsl(190, 80%, 90%);
-                    }
-                    .logging-badge-phase-4 { /* GLPI Authed */
-                        background-color: hsl(150, 60%, 95%);
-                        color: hsl(150, 60%, 30%);
-                        border-color: hsl(150, 60%, 90%);
-                    }
-                    .logging-badge-phase-5 { /* Reserved */
-                        background-color: hsl(260, 30%, 95%);
-                        color: hsl(260, 30%, 45%);
-                        border-color: hsl(260, 30%, 90%);
-                    }
-                    .logging-badge-phase-6 { /* Forced Logoff */
-                        background-color: hsl(10, 85%, 96%);
-                        color: hsl(10, 85%, 40%);
-                        border-color: hsl(10, 85%, 90%);
-                    }
-                    .logging-badge-phase-7 { /* Timed Out */
-                        background-color: hsl(0, 0%, 90%);
-                        color: hsl(0, 0%, 35%);
-                        border-color: hsl(0, 0%, 80%);
-                    }
-                    .logging-badge-phase-8 { /* Logged Out */
-                        background-color: hsl(280, 50%, 95%);
-                        color: hsl(280, 50%, 40%);
-                        border-color: hsl(280, 50%, 90%);
-                    }
-                    
-                    .logging-table th {
-                        font-weight: 600;
-                        font-size: 0.8rem;
-                        text-transform: uppercase;
-                        letter-spacing: 0.05em;
-                        color: var(--tb-secondary, #626976);
-                    }
-                    
-                    .logging-table td {
-                        padding: 0.65rem 0.5rem;
-                    }
-                    
-                    /* Popover improvements */
-                    .popover {
-                        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-                        border-color: var(--tb-border-color, #dee2e6) !important;
-                        border-radius: 0.5rem !important;
-                        max-width: 480px !important;
-                    }
-                    .popover-header {
-                        font-weight: 600;
-                        background-color: var(--tb-light, #f8f9fa);
-                        border-bottom-color: var(--tb-border-color, #dee2e6);
-                    }
-                </style>
-
-                <div class="card-body">
-                    <div class="d-flex flex-column gap-3">
-                        <!-- Header with description -->
-                        <div class="logging-header p-3 mb-2 rounded-3 border" style="background-color: var(--tb-light, #f8f9fa); border-color: var(--tb-border-color, #dee2e6);">
-                            <h4 class="mb-2 text-primary d-flex align-items-center gap-2">
-                                <i class="ti ti-history"></i>
-                                {{ __("SAML SSO Authentication Logs", plugin) }}
-                            </h4>
-                            <p class="mb-0 text-muted fs-7">
-                                {{ __("Track login phases, active sessions, assertion validations, and flow outcomes for troubleshooting.", plugin) }}
-                            </p>
-                        </div>
-
-                        <!-- Search and filter toolbar -->
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 p-2 rounded-2 border mb-3" style="background-color: rgba(0, 0, 0, 0.02);">
-                            <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 500px;">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-transparent border-end-0">
-                                        <i class="ti ti-search text-muted"></i>
-                                    </span>
-                                    <input type="text" id="logging-search-input" class="form-control border-start-0" 
-                                           placeholder="{{ __('Search username, session ID, location, or ID...', plugin) }}" 
-                                           value="{{ logging_search }}">
-                                    {% if logging_search is not empty %}
-                                        <button type="button" class="btn btn-outline-secondary border-start-0 border-end-0" onclick="clearLoggingSearch()">
-                                            <i class="ti ti-x"></i>
-                                        </button>
-                                    {% endif %}
-                                    <button type="button" class="btn btn-primary" onclick="performLoggingSearch()">
-                                        {{ __("Search", plugin) }}
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="text-muted fs-7">
-                                {{ __('Total records found: %s', plugin)|format('<strong>' ~ logging_total_count ~ '</strong>')|raw }}
-                            </div>
-                        </div>
-
-                        <!-- Log entries table -->
-                        <div class="table-responsive rounded-2 border">
-                            <table class="table table-hover align-middle mb-0 logging-table">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 70px;">{{ __("ID", plugin) }}</th>
-                                        <th style="width: 80px;">{{ __("IdP ID", plugin) }}</th>
-                                        <th>{{ __("Username", plugin) }}</th>
-                                        <th style="width: 110px;" class="text-center">{{ __("GLPI Authed", plugin) }}</th>
-                                        <th style="width: 110px;" class="text-center">{{ __("SAML Authed", plugin) }}</th>
-                                        <th>{{ __("Phase", plugin) }}</th>
-                                        <th>{{ __("Login Time", plugin) }}</th>
-                                        <th>{{ __("Last Click", plugin) }}</th>
-                                        <th style="width: 90px;" class="text-center">{{ __("Location", plugin) }}</th>
-                                        <th style="width: 90px;" class="text-center">{{ __("Trace", plugin) }}</th>
-                                        <th style="width: 160px;" class="text-center">{{ __("Actions", plugin) }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if loggingfields is empty %}
-                                        <tr>
-                                            <td colspan="11" class="text-center py-4 text-muted">
-                                                <i class="ti ti-database-x fs-1 d-block mb-2"></i>
-                                                {{ __("No logs match the criteria.", plugin) }}
-                                            </td>
-                                        </tr>
-                                    {% else %}
-                                        {% for logrow in loggingfields %}
-                                            <tr>
-                                                <td class="font-monospace text-muted">{{ logrow.id }}</td>
-                                                <td>
-                                                    <span class="badge bg-secondary-lt font-monospace px-2 py-1">{{ logrow.idpId }}</span>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        {% if logrow.avatarUrl is not empty %}
-                                                            <span class="avatar avatar-xs rounded-circle" style="background-image: url({{ logrow.avatarUrl }})"></span>
-                                                        {% else %}
-                                                            <span class="avatar avatar-xs rounded-circle bg-blue-lt">
-                                                                {{ logrow.userName|slice(0, 2)|upper }}
-                                                            </span>
-                                                        {% endif %}
-                                                        <div>
-                                                            <div class="font-weight-medium">
-                                                                {{ logrow.userName }}
-                                                                {% if logrow.clientCountry is not empty and logrow.clientCountry != '??' and logrow.clientCountry|upper != 'ZZ' %}
-                                                                    <span class="ms-1" style="cursor: help;" data-bs-toggle="tooltip" title="{{ logrow.clientCountryName }} ({{ logrow.clientIp }})">
-                                                                        <img src="https://flagcdn.com/16x12/{{ logrow.clientCountry|lower }}.png" width="16" height="12" alt="{{ logrow.clientCountry }}" style="vertical-align: middle; margin-top: -2px;">
-                                                                    </span>
-                                                                {% endif %}
-                                                            </div>
-                                                            <div class="text-muted fs-8 font-monospace" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-bs-toggle="tooltip" title="Session ID: {{ logrow.sessionId }}">
-                                                                {{ logrow.sessionId }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                    {% if logrow.glpiAuthed == 1 %}
-                                                        <span class="logging-badge logging-badge-success">{{ __("Yes", plugin) }}</span>
-                                                    {% else %}
-                                                        <span class="logging-badge logging-badge-danger">{{ __("No", plugin) }}</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-center">
-                                                    {% if logrow.samlAuthed == 1 %}
-                                                        <span class="logging-badge logging-badge-success">{{ __("Yes", plugin) }}</span>
-                                                    {% else %}
-                                                        <span class="logging-badge logging-badge-danger">{{ __("No", plugin) }}</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% if logrow.phase == 1 %}
-                                                        <span class="logging-badge logging-badge-phase-1" title="{{ __('Phase 1: Initial visit', plugin) }}">{{ __("Initial", plugin) }}</span>
-                                                    {% elseif logrow.phase == 2 %}
-                                                        <span class="logging-badge logging-badge-phase-2" 
-                                                              data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
-                                                              data-bs-content="{{ __("The identity provider was contacted, but GLPI didn't receive a successful response back at the ACS endpoint.<br><br><b>Common Solutions:</b><br>&bull; Verify the <strong>Reply URL</strong> in IdP matches the plugin setting <code>AcsUrl</code> exactly.<br>&bull; If using a reverse proxy, ensure the plugin setting <code>REQUESTS PROXIED</code> is enabled to trust <strong>X-Forwarded-Proto</strong> headers.<br>&bull; Check if the user closed the browser during login.", plugin)|e('html_attr') }}" 
-                                                              title="{{ __('Phase 2: SAML ACS Expected', plugin) }}"
-                                                              style="cursor: help;">
-                                                            {{ __("SAML ACS Expected", plugin) }}
-                                                        </span>
-                                                    {% elseif logrow.phase == 3 %}
-                                                        <span class="logging-badge logging-badge-phase-3" title="{{ __('Phase 3: Performed SAML IDP authentication', plugin) }}">{{ __("SAML Authed", plugin) }}</span>
-                                                    {% elseif logrow.phase == 4 %}
-                                                        <span class="logging-badge logging-badge-phase-4" title="{{ __('Phase 4: Performed GLPI session authentication', plugin) }}">{{ __("GLPI Authed", plugin) }}</span>
-                                                    {% elseif logrow.phase == 5 %}
-                                                        <span class="logging-badge logging-badge-phase-5" title="{{ __('Phase 5: File Exclude / Reserved', plugin) }}">{{ __("Reserved", plugin) }}</span>
-                                                    {% elseif logrow.phase == 6 %}
-                                                        <span class="logging-badge logging-badge-phase-6" title="{{ __('Phase 6: Session forced logged off', plugin) }}">{{ __("Forced Logoff", plugin) }}</span>
-                                                    {% elseif logrow.phase == 7 %}
-                                                        <span class="logging-badge logging-badge-phase-7" title="{{ __('Phase 7: Session Timed out', plugin) }}">{{ __("Timed Out", plugin) }}</span>
-                                                    {% elseif logrow.phase == 8 %}
-                                                        <span class="logging-badge logging-badge-phase-8" title="{{ __('Phase 8: Session Logged Out', plugin) }}">{{ __("Logged Out", plugin) }}</span>
-                                                    {% else %}
-                                                        <span class="logging-badge bg-light text-dark">{{ logrow.phase }}</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-nowrap fs-7 text-muted">{{ logrow.loginTime }}</td>
-                                                <td class="text-nowrap fs-7 text-muted">{{ logrow.lastClickTime }}</td>
-                                                <td class="text-center">
-                                                    {% if logrow.location is not empty %}
-                                                        <button type="button" class="btn btn-sm btn-ghost-secondary p-1 border-0" 
-                                                                data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
-                                                                data-bs-content="<pre class='p-2 mb-0 font-monospace text-wrap' style='max-height: 250px; overflow-y: auto; word-break: break-all;'>{{ logrow.location }}</pre>" 
-                                                                title="{{ __('Location URL', plugin) }}">
-                                                            <i class="ti ti-map-pin fs-4 text-info"></i>
-                                                        </button>
-                                                    {% else %}
-                                                        <span class="text-muted fs-7">-</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-center">
-                                                    {% if logrow.loginFlowTrace is not empty %}
-                                                        <button type="button" class="btn btn-sm btn-ghost-secondary p-1 border-0" 
-                                                                data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
-                                                                data-bs-content="<pre class='p-2 mb-0 font-monospace text-wrap text-start' style='max-height: 350px; overflow-y: auto; white-space: pre-wrap; font-size: 0.8rem;'>{{ logrow.loginFlowTrace }}</pre>" 
-                                                                title="{{ __('Login Flow Trace', plugin) }}">
-                                                            <i class="ti ti-terminal-2 fs-4 text-warning"></i>
-                                                        </button>
-                                                    {% else %}
-                                                        <span class="text-muted fs-7">-</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-center text-nowrap">
-                                                    {% if logrow.isUserActive == 1 and logrow.phase != 6 and logrow.phase != 8 %}
-                                                        <button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1" onclick="samlssoForceLogoff({{ logrow.id }}, {{ inputfields.id.value }})">
-                                                            <i class="ti ti-user-off fs-4"></i>
-                                                            {{ __("Force Logoff & Disable", plugin) }}
-                                                        </button>
-                                                    {% else %}
-                                                        <span class="text-muted fs-7">-</span>
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Pagination controls -->
-                        {% if logging_total_pages > 1 %}
-                            {% set start_page = logging_page - 3 < 1 ? 1 : logging_page - 3 %}
-                            {% set end_page = logging_page + 3 > logging_total_pages ? logging_total_pages : logging_page + 3 %}
-                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-2">
-                                <div class="text-muted fs-7">
-                                    {{ __('Showing page %1$s of %2$s', plugin)|format('<strong>' ~ logging_page ~ '</strong>', '<strong>' ~ logging_total_pages ~ '</strong>')|raw }}
-                                </div>
-                                <nav aria-label="Logging pagination">
-                                    <ul class="pagination pagination-sm mb-0">
-                                        <li class="page-item {% if logging_page <= 1 %}disabled{% endif %}">
-                                            <a class="page-link" href="#" onclick="changeLoggingPage({{ logging_page - 1 }}); return false;">
-                                                <i class="ti ti-chevron-left"></i>
-                                            </a>
-                                        </li>
-                                        
-                                        {% if start_page > 1 %}
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" onclick="changeLoggingPage(1); return false;">1</a>
-                                            </li>
-                                            {% if start_page > 2 %}
-                                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                                            {% endif %}
-                                        {% endif %}
-                                        
-                                        {% for p in start_page..end_page %}
-                                            <li class="page-item {% if p == logging_page %}active{% endif %}">
-                                                <a class="page-link" href="#" onclick="changeLoggingPage({{ p }}); return false;">{{ p }}</a>
-                                            </li>
-                                        {% endfor %}
-                                        
-                                        {% if end_page < logging_total_pages %}
-                                            {% if end_page < logging_total_pages - 1 %}
-                                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                                            {% endif %}
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" onclick="changeLoggingPage({{ logging_total_pages }}); return false;">{{ logging_total_pages }}</a>
-                                            </li>
-                                        {% endif %}
-                                        
-                                        <li class="page-item {% if logging_page >= logging_total_pages %}disabled{% endif %}">
-                                            <a class="page-link" href="#" onclick="changeLoggingPage({{ logging_page + 1 }}); return false;">
-                                                <i class="ti ti-chevron-right"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <script>
-                    function performLoggingSearch() {
-                        var searchInput = document.getElementById('logging-search-input');
-                        var searchValue = searchInput ? searchInput.value.trim() : '';
-                        var currentUrl = new URL(window.location.href);
-                        if (searchValue) {
-                            currentUrl.searchParams.set('search', searchValue);
-                        } else {
-                            currentUrl.searchParams.delete('search');
-                        }
-                        currentUrl.searchParams.set('page', '1');
-                        window.location.href = currentUrl.toString();
-                    }
-
-                    function clearLoggingSearch() {
-                        var currentUrl = new URL(window.location.href);
-                        currentUrl.searchParams.delete('search');
-                        currentUrl.searchParams.set('page', '1');
-                        window.location.href = currentUrl.toString();
-                    }
-
-                    function changeLoggingPage(pageNumber) {
-                        var currentUrl = new URL(window.location.href);
-                        currentUrl.searchParams.set('page', pageNumber);
-                        window.location.href = currentUrl.toString();
-                    }
-
-                    $(function() {
-                        var searchInput = document.getElementById('logging-search-input');
-                        if (searchInput) {
-                            searchInput.addEventListener('keypress', function(e) {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    performLoggingSearch();
-                                }
-                            });
-                        }
-                        
-                        // Initialize popovers on logging tab specifically with auto-close when mouse is not near or tabs switch
-                        var popoverTriggerList = [].slice.call(document.querySelectorAll('#logging [data-bs-toggle="popover"]'));
-                        var activePopoverInstance = null;
-                        var activePopoverEl = null;
-                        var closeTimeout = null;
-
-                        popoverTriggerList.map(function (popoverTriggerEl) {
-                            var popoverInstance = new bootstrap.Popover(popoverTriggerEl, {
-                                sanitize: false,
-                                trigger: 'manual'
-                            });
-
-                            function showPopover() {
-                                if (closeTimeout) {
-                                    clearTimeout(closeTimeout);
-                                }
-                                if (activePopoverInstance && activePopoverInstance !== popoverInstance) {
-                                    activePopoverInstance.hide();
-                                }
-                                popoverInstance.show();
-                                activePopoverInstance = popoverInstance;
-                                activePopoverEl = popoverTriggerEl;
-                            }
-
-                            function delayHidePopover() {
-                                if (closeTimeout) {
-                                    clearTimeout(closeTimeout);
-                                }
-                                closeTimeout = setTimeout(function() {
-                                    // Check if trigger or popover itself is hovered before hiding
-                                    var activePopover = document.querySelector('.popover');
-                                    var isTriggerHovered = activePopoverEl && activePopoverEl.matches(':hover');
-                                    var isPopoverHovered = activePopover && activePopover.matches(':hover');
-
-                                    if (isTriggerHovered || isPopoverHovered) {
-                                        return; // Keep popover open
-                                    }
-
-                                    popoverInstance.hide();
-                                    if (activePopoverInstance === popoverInstance) {
-                                        activePopoverInstance = null;
-                                        activePopoverEl = null;
-                                    }
-                                }, 750);
-                            }
-
-                            popoverTriggerEl.addEventListener('mouseenter', showPopover);
-                            popoverTriggerEl.addEventListener('mouseleave', delayHidePopover);
-                            popoverTriggerEl.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                if (activePopoverInstance === popoverInstance) {
-                                    popoverInstance.hide();
-                                    activePopoverInstance = null;
-                                    activePopoverEl = null;
-                                } else {
-                                    showPopover();
-                                }
-                            });
-
-                            return popoverInstance;
-                        });
-
-                        // Keep popover open if mouse is hovering over the popover itself
-                        document.addEventListener('mouseover', function(e) {
-                            var targetPopover = e.target.closest('.popover');
-                            if (targetPopover && activePopoverInstance) {
-                                if (closeTimeout) {
-                                    clearTimeout(closeTimeout);
-                                }
-                            }
-                        });
-
-                        document.addEventListener('mouseout', function(e) {
-                            var targetPopover = e.target.closest('.popover');
-                            if (targetPopover && activePopoverInstance) {
-                                // Ignore mouseout events if moving to an element within the same popover
-                                if (e.relatedTarget && e.relatedTarget.closest('.popover') === targetPopover) {
-                                    return;
-                                }
-                                if (closeTimeout) {
-                                    clearTimeout(closeTimeout);
-                                }
-                                closeTimeout = setTimeout(function() {
-                                    var activePopover = document.querySelector('.popover');
-                                    var isTriggerHovered = activePopoverEl && activePopoverEl.matches(':hover');
-                                    var isPopoverHovered = activePopover && activePopover.matches(':hover');
-
-                                    if (isTriggerHovered || isPopoverHovered) {
-                                        return; // Keep popover open
-                                    }
-
-                                    if (activePopoverInstance) {
-                                        activePopoverInstance.hide();
-                                        activePopoverInstance = null;
-                                        activePopoverEl = null;
-                                    }
-                                }, 750);
-                            }
-                        });
-
-                        // Hide all popovers when switching tabs or clicking elsewhere
-                        document.querySelectorAll('.nav-link, [data-bs-toggle="tab"]').forEach(function(tabEl) {
-                            tabEl.addEventListener('click', function() {
-                                if (activePopoverInstance) {
-                                    activePopoverInstance.hide();
-                                    activePopoverInstance = null;
-                                    activePopoverEl = null;
-                                }
-                            });
-                        });
-
-                        document.addEventListener('click', function(e) {
-                            if (activePopoverInstance && activePopoverEl && !activePopoverEl.contains(e.target) && !e.target.closest('.popover')) {
-                                activePopoverInstance.hide();
-                                activePopoverInstance = null;
-                                activePopoverEl = null;
-                            }
-                        });
-                    });
-                </script>
-            </div>
+            {% include '@samlsso/configForm/general.html.twig' %}
+            {% include '@samlsso/configForm/transit.html.twig' %}
+            {% include '@samlsso/configForm/provider.html.twig' %}
+            {% include '@samlsso/configForm/idp.html.twig' %}
+            {% include '@samlsso/configForm/security.html.twig' %}
+            {% include '@samlsso/configForm/claim_mapping.html.twig' %}
+            {% include '@samlsso/configForm/logging.html.twig' %}
         </div>
     </div>
     <div class="card itil-footer" style="margin-top:10px;">

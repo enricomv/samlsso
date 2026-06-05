@@ -279,6 +279,57 @@ namespace GlpiPlugin\Samlsso\Tests {
 
             echo "✅ Multi-IDP Enforce auto-disable and warning verified\n";
         }
+
+        /**
+         * Test that inbound security fields are automatically disabled and warnings
+         * are populated when strict mode is disabled.
+         *
+         * @throws \Exception if validation behaves incorrectly.
+         */
+        public function testStrictDisabledAutoDisableInboundSecurity(): void {
+            /**
+             * Create ConfigEntity with strict mode disabled and inbound security enabled.
+             */
+            $entity = new ConfigEntity(-1, [
+                'template' => 'post',
+                'postData' => [
+                    'id' => 3,
+                    'is_active' => 1,
+                    'is_deleted' => 0,
+                    'strict' => 0,
+                    'security_wantmessagessigned' => 1,
+                    'security_wantassertionssigned' => 1,
+                    'security_wantassertionsencrypted' => 1,
+                    'security_wantnameid' => 1,
+                ]
+            ]);
+
+            $fields = $entity->getFields();
+
+            $inboundFields = [
+                ConfigEntity::SECURITY_WANTMESSAGESSIGNED,
+                ConfigEntity::SECURITY_WANTASSERTIONSSIGNED,
+                ConfigEntity::SECURITY_WANTASSERTIONSENCRYPTED,
+                ConfigEntity::SECURITY_WANTNAMEID
+            ];
+
+            foreach ($inboundFields as $field) {
+                $f = $fields[$field] ?? null;
+                if ($f === null) {
+                    throw new \Exception("Field '$field' not populated in fields array.");
+                }
+
+                if ((int)$f[ConfigItem::VALUE] !== 0) {
+                    throw new \Exception("Expected '$field' value to be corrected to 0, got: " . var_export($f[ConfigItem::VALUE], true));
+                }
+
+                if (empty($f[ConfigItem::ERRORS])) {
+                    throw new \Exception("Expected '$field' error message to be set, but it was empty.");
+                }
+            }
+
+            echo "✅ Inbound Security Auto-Disable when strict mode disabled verified\n";
+        }
     }
 }
 
@@ -292,6 +343,7 @@ namespace {
         $test->testValidatorsExistence();
         $test->testDeadConfigDetection();
         $test->testMultiIdpEnforceAutoDisable();
+        $test->testStrictDisabledAutoDisableInboundSecurity();
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";
         exit(1);

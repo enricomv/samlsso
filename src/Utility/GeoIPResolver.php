@@ -146,9 +146,8 @@ class GeoIPResolver
             $startVal = (float) sprintf('%u', $unpacked['start']);
             $endVal = (float) sprintf('%u', $unpacked['end']);
             $recordCountry = $unpacked['country'];
-
             if ($targetIp >= $startVal && $targetIp <= $endVal) {
-                $country = $recordCountry;
+                $country = $recordCountry === 'ZZ' ? '??' : $recordCountry;
                 break;
             } elseif ($targetIp < $startVal) {
                 $high = $mid - 1;

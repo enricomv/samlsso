@@ -103,6 +103,12 @@ class LoginFlow extends CommonDBTM
     protected ?LoginState $state;
 
     /**
+     * Holds the currently active state object for static error handlers to log details.
+     * @var ?LoginState
+     */
+    public static ?LoginState $activeState = null;
+
+    /**
      * Support exception throwing in tests instead of exiting.
      * @var bool
      */
@@ -250,6 +256,7 @@ class LoginFlow extends CommonDBTM
         // an existing one. The state properties tell which one we are dealing with.
         try {
             $this->state = new Loginstate();
+            self::$activeState = $this->state;
             // We need to check if this is the initial state, if so we write it to database.
             // This logic cant be part of the objects logic because its reinitialized by the
             // CommonDBTM object causing the sessions to be duplicated. This should also be
@@ -350,7 +357,7 @@ class LoginFlow extends CommonDBTM
         // CAPTURE LOGIN FIELD
         // https://codeberg.org/QuinQuies/glpisaml/issues/3
         // https://github.com/DonutsNL/samlsso/issues/16
-        if ($id = $this->resolveIdpFromLoginForm()) {
+        if (($id = $this->resolveIdpFromLoginForm())) {
             $_POST[LoginFlow::POSTFIELD] = $id;
         }
 
@@ -464,7 +471,7 @@ class LoginFlow extends CommonDBTM
         global $CFG_GLPI;
 
         // Fetch the correct configEntity GLPI
-        if ($configEntity = new ConfigEntity($this->state->getIdpId())) { // Get the configEntity object using our stored ID
+        if (($configEntity = new ConfigEntity($this->state->getIdpId()))) { // Get the configEntity object using our stored ID
             $samlConfig = $configEntity->getPhpSamlConfig();      // Get the correctly formatted SamlConfig array
         }
 
@@ -732,16 +739,23 @@ class LoginFlow extends CommonDBTM
 
         $debug = false;
         try {
-            $state = new Loginstate();
-            if ($state->getStateId() > 0 && $state->getIdpId() > 0) {
-                $configEntity = new ConfigEntity($state->getIdpId());
-                $debug = (bool)$configEntity->getField(ConfigEntity::DEBUG);
+            $state = self::$activeState;
+            if ($state === null || $state->getStateId() <= 0) {
+                $state = new Loginstate();
+            }
+            if ($state->getStateId() > 0) {
+                $state->addLoginFlowTrace(['Fatal Error' => (string)$errorMsg]);
+                $state->setPhase(LoginState::PHASE_ERROR);
+                if ($state->getIdpId() > 0) {
+                    $configEntity = new ConfigEntity($state->getIdpId());
+                    $debug = (bool)$configEntity->getField(ConfigEntity::DEBUG);
+                }
             }
         } catch (\Throwable $t) {
             /* ignore */
         }
 
-        $displayMsg = $debug ? (string)$errorMsg : __('An internal error occurred. Please contact your GLPI administrator.', PLUGIN_NAME);
+        $displayMsg = $debug ? (string)$errorMsg : __('Something went wrong during authentication assertion and prevents you from logging in. Please contact your GLPI administrator for more information and support.', PLUGIN_NAME);
 
         /* Define static translatable elements */
         $tplVars['header']      = __('⚠️ Sorry we are unable to log you in', PLUGIN_NAME);
@@ -792,16 +806,23 @@ class LoginFlow extends CommonDBTM
 
         $debug = false;
         try {
-            $state = new Loginstate();
-            if ($state->getStateId() > 0 && $state->getIdpId() > 0) {
-                $configEntity = new ConfigEntity($state->getIdpId());
-                $debug = (bool)$configEntity->getField(ConfigEntity::DEBUG);
+            $state = self::$activeState;
+            if ($state === null || $state->getStateId() <= 0) {
+                $state = new Loginstate();
+            }
+            if ($state->getStateId() > 0) {
+                $state->addLoginFlowTrace(['Error' => $errorMsg . ($extended ? ": " . $extended : "")]);
+                $state->setPhase(LoginState::PHASE_ERROR);
+                if ($state->getIdpId() > 0) {
+                    $configEntity = new ConfigEntity($state->getIdpId());
+                    $debug = (bool)$configEntity->getField(ConfigEntity::DEBUG);
+                }
             }
         } catch (\Throwable $t) {
             /* ignore */
         }
 
-        $displayMsg = $debug ? $errorMsg : __('An internal error occurred. Please contact your GLPI administrator.', PLUGIN_NAME);
+        $displayMsg = $debug ? $errorMsg : __('Something went wrong during authentication assertion and prevents you from logging in. Please contact your GLPI administrator for more information and support.', PLUGIN_NAME);
 
         /* Define static translatable elements */
         $tplVars['header']      = __('⚠️ An error occurred', PLUGIN_NAME);

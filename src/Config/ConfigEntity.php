@@ -157,7 +157,7 @@ class ConfigEntity extends ConfigItem
      * Populates the instance of ConfigEntity using a template.
      *
      * @param  array   $options      - name of the Config[NAME]Tpl class to use as template.
-     * @return object  ConfigEntity    - returns instance of ConfigEntity.
+     * @return void
      */
     private function validateAndPopulateTemplateEntity(array $options): void    //NOSONAR we are to lazy to split method further.
     {
@@ -200,7 +200,7 @@ class ConfigEntity extends ConfigItem
      * Populates the instance of ConfigEntity using a DB query from the glpisaml config table.
      *
      * @param  int      $id             - id of the database row to fetch
-     * @return object   ConfigEntity    - returns instance of ConfigEntity.
+     * @return void
      */
     private function validateAndPopulateDBEntity($id): void
     {
@@ -292,7 +292,7 @@ class ConfigEntity extends ConfigItem
         $classConstants = ConfigEntity::getConstants();
         // Fetch database columns;
         $sql = 'SHOW COLUMNS FROM ' . SamlConfig::getTable();
-        if ($result = $DB->doQuery($sql)) {
+        if (($result = $DB->doQuery($sql))) {
             while ($data = $result->fetch_assoc()) {
                 $fields[$data['Field']] = [
                     ConfigItem::FIELD       => $data['Field'],
@@ -358,36 +358,61 @@ class ConfigEntity extends ConfigItem
     private function validateAdvancedConfig(array $fields): array
     {
         $disable = false;
-        if (empty($fields[configEntity::SP_CERTIFICATE][ConfigItem::VALUE]) || empty($fields[configEntity::SP_KEY][ConfigItem::VALUE])) {
-            $disable = true;
-        } else {
-            // Perform key validation
-            if (!$this->validateCertKeyPairModulus($fields[configEntity::SP_CERTIFICATE][configItem::VALUE], $fields[configEntity::SP_KEY][configItem::VALUE])) {
-                $fields[configEntity::SP_KEY][configItem::ERRORS] = __('⚠️ SP private key does not seem to match provided SP certificates modulus.', PLUGIN_NAME);
+        if (isset($fields[configEntity::SP_CERTIFICATE]) && isset($fields[configEntity::SP_KEY])) {
+            if (empty($fields[configEntity::SP_CERTIFICATE][ConfigItem::VALUE]) || empty($fields[configEntity::SP_KEY][ConfigItem::VALUE])) {
                 $disable = true;
-            } // Only show key issue on error.
+            } else {
+                // Perform key validation
+                if (!$this->validateCertKeyPairModulus($fields[configEntity::SP_CERTIFICATE][configItem::VALUE], $fields[configEntity::SP_KEY][configItem::VALUE])) {
+                    $fields[configEntity::SP_KEY][configItem::ERRORS] = __('⚠️ SP private key does not seem to match provided SP certificates modulus.', PLUGIN_NAME);
+                    $disable = true;
+                } // Only show key issue on error.
+            }
         }
         if ($disable) {
             $errormsg = __('⚠️ Will be defaulted to "No" because the provided SP certificate does not look valid!', PLUGIN_NAME);
             // Strict cannot be enabled without valid certificate!
-            if ($fields[configEntity::ENCRYPT_NAMEID][configItem::VALUE]) {
+            if (isset($fields[configEntity::ENCRYPT_NAMEID]) && $fields[configEntity::ENCRYPT_NAMEID][configItem::VALUE]) {
                 $fields[configEntity::ENCRYPT_NAMEID][configItem::VALUE] = false;
                 $fields[configEntity::ENCRYPT_NAMEID][configItem::ERRORS] = $errormsg;
             }
             // Strict cannot be enabled without valid certificate!
-            if ($fields[configEntity::SIGN_AUTHN][configItem::VALUE]) {
+            if (isset($fields[configEntity::SIGN_AUTHN]) && $fields[configEntity::SIGN_AUTHN][configItem::VALUE]) {
                 $fields[configEntity::SIGN_AUTHN][configItem::VALUE] = false;
                 $fields[configEntity::SIGN_AUTHN][configItem::ERRORS] = $errormsg;
             }
             // Strict cannot be enabled without valid certificate!
-            if ($fields[configEntity::SIGN_SLO_REQ][configItem::VALUE]) {
+            if (isset($fields[configEntity::SIGN_SLO_REQ]) && $fields[configEntity::SIGN_SLO_REQ][configItem::VALUE]) {
                 $fields[configEntity::SIGN_SLO_REQ][configItem::VALUE] = false;
                 $fields[configEntity::SIGN_SLO_REQ][configItem::ERRORS] = $errormsg;
             }
             // Strict cannot be enabled without valid certificate!
-            if ($fields[configEntity::SIGN_SLO_RES][configItem::VALUE]) {
+            if (isset($fields[configEntity::SIGN_SLO_RES]) && $fields[configEntity::SIGN_SLO_RES][configItem::VALUE]) {
                 $fields[configEntity::SIGN_SLO_RES][configItem::VALUE] = false;
                 $fields[configEntity::SIGN_SLO_RES][configItem::ERRORS] = $errormsg;
+            }
+        }
+
+        /**
+         * Disable inbound security options if strict mode is disabled
+         * and attach a warning message explaining they are not enforced.
+         */
+        if (isset($fields[configEntity::STRICT])) {
+            $strict = (bool)($fields[configEntity::STRICT][configItem::VALUE] ?? false);
+            if (!$strict) {
+                $strictWarning = __('⚠️ These fields are only enforced when strict mode is enabled. Your environment is at risk without strict mode.', PLUGIN_NAME);
+                $inboundFields = [
+                    configEntity::SECURITY_WANTMESSAGESSIGNED,
+                    configEntity::SECURITY_WANTASSERTIONSSIGNED,
+                    configEntity::SECURITY_WANTASSERTIONSENCRYPTED,
+                    configEntity::SECURITY_WANTNAMEID
+                ];
+                foreach ($inboundFields as $secField) {
+                    if (isset($fields[$secField])) {
+                        $fields[$secField][configItem::VALUE] = false;
+                        $fields[$secField][configItem::ERRORS] = $strictWarning;
+                    }
+                }
             }
         }
 

@@ -94,12 +94,6 @@ class ClaimMapEntity extends ClaimMapItem
      * @param int $configs_id The IDP configuration ID
      * @return void
      */
-    /**
-     * Load the claim mappings from the database for the given configs_id.
-     *
-     * @param int $configs_id The IDP configuration ID
-     * @return void
-     */
     private function loadFromDB(int $configs_id): void
     {
         global $DB;

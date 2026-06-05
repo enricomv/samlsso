@@ -71,7 +71,7 @@ class Meta
             $configEntity = new ConfigEntity($id);                                  // ConfigEntity expects/validates datatype INT.
             if($configEntity->getField(ConfigEntity::DEBUG)){                       // Are we allowed to expose metadata.
                 $samlSettings = new Settings($configEntity->getPhpSamlConfig());    // Get the samlConfig using the provided ID.
-                if ( !$metadata = $samlSettings->getSPMetadata() ) {                // Get the Serviceprovider metadata.
+                if ( !($metadata = $samlSettings->getSPMetadata()) ) {                // Get the Serviceprovider metadata.
                     $metadata = self::STAG.                                         // Set error if something is wrong
                                 __("Error fetching spMetadata.",PLUGIN_NAME).
                                 self::ETAG;

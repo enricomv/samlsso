@@ -339,7 +339,7 @@ class Config extends CommonDBTM
         // Get global DB object to query the configTable.
         global $DB;
         // VALIDATE EMAIL AND EXTRACT DOMAIN
-        if (!$upn = filter_var($fielda, FILTER_VALIDATE_EMAIL)) {
+        if (!($upn = filter_var($fielda, FILTER_VALIDATE_EMAIL))) {
             // Username is not formatted as an email address, return 0
             return 0;
         }

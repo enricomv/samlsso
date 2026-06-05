@@ -104,6 +104,8 @@ class LoginState extends CommonDBTM
     public const PHASE_FORCE_LOG            = 6;                // Session forced logged off
     public const PHASE_TIMED_OUT            = 7;                // Session Timed out
     public const PHASE_LOGOFF               = 8;                // Session was logged off
+    public const PHASE_ERROR                = 9;                // Assertion error / failed auth
+
     private $state = [];                                        // Stores the stateValues;
 
     /**
@@ -117,8 +119,7 @@ class LoginState extends CommonDBTM
      * This makes debugging this object very complex
      * and error prone!
      *
-     * @param   $samlInResponseTo   - (optional) Load from database using requestId or get default (empty) state on fail.
-     * @return  LoginState          - Returns LoginState Object with (pre) populated State.
+     * @param   string  $samlInResponseTo   - (optional) Load from database using requestId or get default (empty) state on fail.
      * @since   1.0.0
      */
     public function __construct(string $samlInResponseTo = '')
@@ -132,8 +133,8 @@ class LoginState extends CommonDBTM
      * create a new initial one. This method is called initially and
      * after each successive click after the auth step.
      *
-     * @param   $samlInResponseTo   - Fetch state using inResponseTo instead of phpSessionId;
-     * @return  bool
+     * @param   string  $samlInResponseTo   - Fetch state using inResponseTo instead of phpSessionId;
+     * @return  void
      * @since   1.2.0
      */
     private function getState(string $samlInResponseTo): void
@@ -154,10 +155,10 @@ class LoginState extends CommonDBTM
             $where = [
                 LoginState::SESSION_ID => session_id(),
                 'NOT' => [
-                    LoginState::PHASE => LoginState::PHASE_LOGOFF
+                    LoginState::PHASE => [LoginState::PHASE_LOGOFF, LoginState::PHASE_ERROR]
                 ]
             ];
-            if (!$sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where])) {
+            if (!($sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]))) {
                 throw new LoginStateException('Failed to fetch state using current sessionId');
             }
         } else {
@@ -166,7 +167,13 @@ class LoginState extends CommonDBTM
             // reset by the GLPI session handler and we need to use the inResponseTo
             // header to find the correct database session. The sessionId will be
             // updated by the calling this->getStateInResponseTo method.
-            if (!$sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => [LoginState::SAML_REQUEST_ID => $samlInResponseTo]])) {
+            $where = [
+                LoginState::SAML_REQUEST_ID => $samlInResponseTo,
+                'NOT' => [
+                    LoginState::PHASE => [LoginState::PHASE_LOGOFF, LoginState::PHASE_ERROR]
+                ]
+            ];
+            if (!($sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]))) {
                 throw new LoginStateException('Failed to fetch state using InResponseTo value');
             }
         }
@@ -348,7 +355,7 @@ class LoginState extends CommonDBTM
     public function writeState(): bool
     {
         if (!isset($this->state[LoginState::STATE_ID])) {
-            if ($id = $this->add($this->state)) {
+            if (($id = $this->add($this->state))) {
                 // Make the ID available to the object.
                 // So it can be referenced;
                 $this->state[LoginState::STATE_ID] = $id;
@@ -533,7 +540,7 @@ class LoginState extends CommonDBTM
     {
         if (isset($this->state[LoginState::STATE_ID])) {
             // would checking if the phase is always higher provide an additional layer of security?
-            if ($phase > 0 && $phase <= 8) {
+            if ($phase > 0 && $phase <= 9) {
                 $this->state[LoginState::PHASE] = $phase;
                 return ($this->update($this->state)) ? true : false;
             }
@@ -555,7 +562,7 @@ class LoginState extends CommonDBTM
         if (isset($this->state[LoginState::STATE_ID])) {
             // https://github.com/DonutsNL/glpisaml/issues/22
             // https://github.com/DonutsNL/samlsso/issues/2
-            if ($redirect_url = filter_input(INPUT_GET, loginstate::REDIRECT, FILTER_DEFAULT)) {  //NOSONAR wont merge for readability
+            if (($redirect_url = filter_input(INPUT_GET, loginstate::REDIRECT, FILTER_DEFAULT))) {  //NOSONAR wont merge for readability
                 $this->state[LoginState::REDIRECT] = $redirect_url;
                 return ($this->update($this->state)) ? true : false;
             }
@@ -719,7 +726,7 @@ class LoginState extends CommonDBTM
         // Verify if $DB->request is already escaping the string.
 
         // This field should match the samlRequestId registered in LoginFlow::performSamlSSO();
-        if (!$sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => [LoginState::SAML_RESPONSE_ID => $responseId]])) {
+        if (!($sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => [LoginState::SAML_RESPONSE_ID => $responseId]]))) {
             throw new LoginStateException('Could not fetch Login State from database');   //NOSONAR we are happy with this one!
         }
 
