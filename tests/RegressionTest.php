@@ -195,11 +195,9 @@ namespace GlpiPlugin\Samlsso\Tests {
                                 $paramTokens = [];
                                 while ($j < $count && $tokens[$j] !== ',' && $tokens[$j] !== ')') {
                                     $t = $tokens[$j];
-                                    if (is_array($t) && in_array($t[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT])) {
-                                        /** skip comment and whitespace tokens */
-                                    } else {
-                                        $paramTokens[] = $t;
-                                    }
+                                if (!(is_array($t) && in_array($t[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT]))) {
+                                    $paramTokens[] = $t;
+                                }
                                     $j++;
                                 }
                                 $paramCount = count($paramTokens);
@@ -236,11 +234,9 @@ namespace GlpiPlugin\Samlsso\Tests {
                         while ($j < $count) {
                             $t = $tokens[$j];
                             if (is_array($t)) {
-                                if (in_array($t[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT])) {
-                                    /** skip */
-                                } elseif (in_array($t[0], [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED, T_NS_SEPARATOR])) {
+                                if (in_array($t[0], [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED, T_NS_SEPARATOR])) {
                                     $classTokens[] = $t[1];
-                                } else {
+                                } elseif (!in_array($t[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT])) {
                                     break;
                                 }
                             } else {
