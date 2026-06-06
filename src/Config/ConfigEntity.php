@@ -126,7 +126,7 @@ class ConfigEntity extends ConfigItem
     /**
      * Contains all field values of a certain configuration
      */
-    private $fields             = [];
+    protected $fields             = [];
 
     /**
      * Contains all validation error messages generated during validation
@@ -458,7 +458,8 @@ class ConfigEntity extends ConfigItem
     {
         if (
             key_exists($fieldName, $this->fields) &&
-            is_numeric($this->fields[$fieldName])
+            is_numeric($this->fields[$fieldName]) &&
+            !in_array($fieldName, [self::REQUEST_TIMEOUT, self::INACTIVITY_TIMEOUT], true)
         ) {
             return (bool) $this->fields[$fieldName];
         } elseif (key_exists($fieldName, $this->fields)) {
@@ -526,8 +527,8 @@ class ConfigEntity extends ConfigItem
         if ($this->isValid()) {
 
             return [
-                'strict'                                => $this->fields[ConfigEntity::STRICT],
-                'debug'                                 => $this->fields[ConfigEntity::DEBUG],
+                'strict'                                => (bool) $this->fields[ConfigEntity::STRICT],
+                'debug'                                 => (bool) $this->fields[ConfigEntity::DEBUG],
                 'baseurl'                               => null,
                 'sp' => [
                     'entityId'                          => $CFG_GLPI['url_base'] . '/',
@@ -557,10 +558,10 @@ class ConfigEntity extends ConfigItem
                     'responses'                         => (bool) $this->fields[ConfigEntity::COMPRESS_RES],
                 ],
                 'security'                              => [
-                    'nameIdEncrypted'                   => $this->fields[ConfigEntity::ENCRYPT_NAMEID],
-                    'authnRequestsSigned'               => $this->fields[ConfigEntity::SIGN_AUTHN],
-                    'logoutRequestSigned'               => $this->fields[ConfigEntity::SIGN_SLO_REQ],
-                    'logoutResponseSigned'              => $this->fields[ConfigEntity::SIGN_SLO_RES],
+                    'nameIdEncrypted'                   => (bool) $this->fields[ConfigEntity::ENCRYPT_NAMEID],
+                    'authnRequestsSigned'               => (bool) $this->fields[ConfigEntity::SIGN_AUTHN],
+                    'logoutRequestSigned'               => (bool) $this->fields[ConfigEntity::SIGN_SLO_REQ],
+                    'logoutResponseSigned'              => (bool) $this->fields[ConfigEntity::SIGN_SLO_RES],
                     'wantMessagesSigned'                => (bool)$this->fields[ConfigEntity::SECURITY_WANTMESSAGESSIGNED],
                     'wantAssertionsSigned'              => (bool)$this->fields[ConfigEntity::SECURITY_WANTASSERTIONSSIGNED],
                     'wantAssertionsEncrypted'           => (bool)$this->fields[ConfigEntity::SECURITY_WANTASSERTIONSENCRYPTED],
@@ -570,8 +571,8 @@ class ConfigEntity extends ConfigItem
                     // Set an array with the possible auth context values: array ('urn:oasis:names:tc:SAML:2.0:ac:classes:Password', 'urn:oasis:names:tc:SAML:2.0:ac:classes:X509'),
                     'requestedAuthnContext'             => $this->getAuthn($this->fields[ConfigEntity::AUTHN_CONTEXT]),
                     'requestedAuthnContextComparison'   => (isset($this->fields[ConfigEntity::AUTHN_COMPARE]) ? $this->fields[ConfigEntity::AUTHN_COMPARE] : 'exact'),
-                    'wantXMLValidation'                 => $this->fields[ConfigEntity::XML_VALIDATION],
-                    'relaxDestinationValidation'        => $this->fields[ConfigEntity::DEST_VALIDATION],
+                    'wantXMLValidation'                 => (bool) $this->fields[ConfigEntity::XML_VALIDATION],
+                    'relaxDestinationValidation'        => (bool) $this->fields[ConfigEntity::DEST_VALIDATION],
 
                     // Algorithm that the toolkit will use on signing process. Options:
                     //    'http://www.w3.org/2000/09/xmldsig#rsa-sha1'
@@ -590,7 +591,7 @@ class ConfigEntity extends ConfigItem
                     //    'http://www.w3.org/2001/04/xmlenc#sha512'
                     // Notice that sha1 is a deprecated algorithm and should not be used
                     'digestAlgorithm'               => 'http://www.w3.org/2001/04/xmlenc#sha256',
-                    'lowercaseUrlencoding'          => $this->fields[ConfigEntity::LOWERCASE_URL],
+                    'lowercaseUrlencoding'          => (bool) $this->fields[ConfigEntity::LOWERCASE_URL],
                 ]
             ];
         } else {

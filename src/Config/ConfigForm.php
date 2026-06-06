@@ -262,33 +262,7 @@ HTML;
             return new RedirectResponse(PLUGIN_SAMLSSO_WEBDIR . SamlSsoController::CONFIG_ROUTE);
         }
 
-        // Strip UTF-8 BOM if present (some editors add it and json_decode rejects it)
-        if (str_starts_with($json, "\xEF\xBB\xBF")) {
-            $json = substr($json, 3);
-        }
-
-        // Attempt to decode the JSON as-is
-        $data = json_decode($json, true);
-
-        // Healing pass 1: strip literal CR bytes (0x0D).
-        // Occurs when PEM certificate values in the DB contain Windows CR+LF line endings that
-        // ended up as raw control characters inside JSON string values (invalid per RFC 8259).
-        // Stripping CR is safe: the JSON structure is unaffected and PEM certificates are
-        // valid with LF-only line endings.
-        if (!is_array($data) && json_last_error() !== JSON_ERROR_NONE) {
-            $healed = str_replace("\r", '', $json);
-            if ($healed !== $json) {
-                $data = json_decode($healed, true);
-            }
-        }
-
-        // Healing pass 2: attempt invalid UTF-8 byte sequence repair and retry
-        if (!is_array($data) && json_last_error() !== JSON_ERROR_NONE) {
-            $repaired = mb_convert_encoding($json, 'UTF-8', 'UTF-8');
-            if ($repaired !== false && $repaired !== $json) {
-                $data = json_decode($repaired, true);
-            }
-        }
+        $data = $this->decodeAndHealBackupJson($json);
 
         if (!is_array($data) || !isset($data['configurations']) || !is_array($data['configurations']) || count($data['configurations']) === 0) {
             $jsonError = json_last_error() !== JSON_ERROR_NONE
@@ -334,51 +308,9 @@ HTML;
         $now            = date('Y-m-d H:i:s');
 
         foreach ($data['configurations'] as $index => $entry) {
-            if (!isset($entry['config']) || !is_array($entry['config'])) {
-                $errors[] = sprintf(__('Entry %d skipped: missing config block.', PLUGIN_NAME), $index);
-                continue;
+            if ($this->restoreConfigEntry($index, $entry, $now, $exportFields, $configsTable, $errors)) {
+                $restoredCount++;
             }
-
-            $cfgData = $entry['config'];
-            $origId  = isset($cfgData[ConfigEntity::ID]) ? (int)$cfgData[ConfigEntity::ID] : 0;
-
-            if ($origId <= 0) {
-                $errors[] = sprintf(__('Entry %d skipped: missing or invalid id.', PLUGIN_NAME), $index);
-                continue;
-            }
-
-            // Build insert row; only use known fields that are present in export
-            $defaultTpl = ConfigDefaultTpl::template();
-            $insertRow = [ConfigEntity::IS_DELETED => 0, 'date_creation' => $now, 'date_mod' => $now];
-            foreach ($exportFields as $field) {
-                if ($field === ConfigEntity::ID) {
-                    $insertRow['id'] = $origId;
-                    continue;
-                }
-                if (array_key_exists($field, $cfgData) && $cfgData[$field] !== null) {
-                    $insertRow[$field] = $cfgData[$field];
-                } elseif (array_key_exists($field, $defaultTpl)) {
-                    $insertRow[$field] = is_bool($defaultTpl[$field]) ? ($defaultTpl[$field] ? 1 : 0) : $defaultTpl[$field];
-                }
-            }
-
-            // Direct DB insert to preserve original ID
-            if (!$DB->insert($configsTable, $insertRow)) {
-                $errors[] = sprintf(__('Entry %d (%s) could not be inserted into database.', PLUGIN_NAME), $index, $cfgData[ConfigEntity::NAME] ?? '?');
-                continue;
-            }
-
-            // --- 4. Restore claim mappings for this config ---
-            $claimMaps = isset($entry['claim_maps']) && is_array($entry['claim_maps'])
-                ? $entry['claim_maps']
-                : [];
-
-            $claimMapEntity = new ClaimMapEntity($origId);
-            if (!$claimMapEntity->save($claimMaps)) {
-                $errors[] = sprintf(__('Config %s restored but claim mappings had validation errors.', PLUGIN_NAME), $cfgData[ConfigEntity::NAME] ?? (string)$origId);
-            }
-
-            $restoredCount++;
         }
 
         // --- 5. Report results ---
@@ -397,6 +329,102 @@ HTML;
         }
 
         return new RedirectResponse(PLUGIN_SAMLSSO_WEBDIR . SamlSsoController::CONFIG_ROUTE);
+    }
+
+    /**
+     * Decodes backup JSON and applies healing passes for bad encoding/PEM formatting.
+     *
+     * @param string $json Raw JSON content
+     * @return array|null Decoded data array or null on failure
+     */
+    private function decodeAndHealBackupJson(string $json): ?array
+    {
+        // Strip UTF-8 BOM if present
+        if (str_starts_with($json, "\xEF\xBB\xBF")) {
+            $json = substr($json, 3);
+        }
+
+        $data = json_decode($json, true);
+
+        // Healing pass 1: strip literal CR bytes (0x0D).
+        if (!is_array($data) && json_last_error() !== JSON_ERROR_NONE) {
+            $healed = str_replace("\r", '', $json);
+            if ($healed !== $json) {
+                $data = json_decode($healed, true);
+            }
+        }
+
+        // Healing pass 2: attempt invalid UTF-8 byte sequence repair and retry
+        if (!is_array($data) && json_last_error() !== JSON_ERROR_NONE) {
+            $repaired = mb_convert_encoding($json, 'UTF-8', 'UTF-8');
+            if ($repaired !== false && $repaired !== $json) {
+                $data = json_decode($repaired, true);
+            }
+        }
+
+        return is_array($data) ? $data : null;
+    }
+
+    /**
+     * Restores a single IDP configuration entry and its claim mappings.
+     *
+     * @param int    $index        Entry index
+     * @param array  $entry        Entry data
+     * @param string $now          Current datetime string
+     * @param array  $exportFields List of fields to copy
+     * @param string $configsTable Configuration DB table name
+     * @param array  $errors       Reference to errors log
+     * @return bool True if successfully restored
+     */
+    private function restoreConfigEntry(int $index, array $entry, string $now, array $exportFields, string $configsTable, array &$errors): bool
+    {
+        global $DB;
+
+        if (!isset($entry['config']) || !is_array($entry['config'])) {
+            $errors[] = sprintf(__('Entry %d skipped: missing config block.', PLUGIN_NAME), $index);
+            return false;
+        }
+
+        $cfgData = $entry['config'];
+        $origId  = isset($cfgData[ConfigEntity::ID]) ? (int)$cfgData[ConfigEntity::ID] : 0;
+
+        if ($origId <= 0) {
+            $errors[] = sprintf(__('Entry %d skipped: missing or invalid id.', PLUGIN_NAME), $index);
+            return false;
+        }
+
+        // Build insert row; only use known fields that are present in export
+        $defaultTpl = ConfigDefaultTpl::template();
+        $insertRow = [ConfigEntity::IS_DELETED => 0, 'date_creation' => $now, 'date_mod' => $now];
+        foreach ($exportFields as $field) {
+            if ($field === ConfigEntity::ID) {
+                $insertRow['id'] = $origId;
+                continue;
+            }
+            if (array_key_exists($field, $cfgData) && $cfgData[$field] !== null) {
+                $insertRow[$field] = $cfgData[$field];
+            } elseif (array_key_exists($field, $defaultTpl)) {
+                $insertRow[$field] = is_bool($defaultTpl[$field]) ? ($defaultTpl[$field] ? 1 : 0) : $defaultTpl[$field];
+            }
+        }
+
+        // Direct DB insert to preserve original ID
+        if (!$DB->insert($configsTable, $insertRow)) {
+            $errors[] = sprintf(__('Entry %d (%s) could not be inserted into database.', PLUGIN_NAME), $index, $cfgData[ConfigEntity::NAME] ?? '?');
+            return false;
+        }
+
+        // Restore claim mappings for this config
+        $claimMaps = isset($entry['claim_maps']) && is_array($entry['claim_maps'])
+            ? $entry['claim_maps']
+            : [];
+
+        $claimMapEntity = new ClaimMapEntity($origId);
+        if (!$claimMapEntity->save($claimMaps)) {
+            $errors[] = sprintf(__('Config %s restored but claim mappings had validation errors.', PLUGIN_NAME), $cfgData[ConfigEntity::NAME] ?? (string)$origId);
+        }
+
+        return true;
     }
 
     /**
@@ -808,9 +836,88 @@ HTML;
                                              'minimum'                      => __('Minimum', PLUGIN_NAME),
                                              'maximum'                      => __('Maximum', PLUGIN_NAME),
                                              'better'                       => __('Better', PLUGIN_NAME)],
+            'inputOptionsIcons'         =>  self::getAvailableIcons(),
         ]);
 
         // https://codeberg.org/QuinQuies/glpisaml/issues/12
         return TemplateRenderer::getInstance()->render('@samlsso/configForm.html.twig',  $tplVars);
+    }
+
+    /**
+     * Parses the installed FontAwesome CSS file to extract all available icons.
+     *
+     * @return array Array of icon classes mapping to their friendly/readable names.
+     */
+    protected static function getAvailableIcons(): array
+    {
+        $defaultIcons = [
+            'fa-brands fa-microsoft'       => __('Microsoft', PLUGIN_NAME),
+            'fa-brands fa-google'          => __('Google', PLUGIN_NAME),
+            'fa-brands fa-github'          => __('GitHub', PLUGIN_NAME),
+            'fa-brands fa-apple'           => __('Apple', PLUGIN_NAME),
+            'fa-brands fa-openid'          => __('OpenID', PLUGIN_NAME),
+            'fa-solid fa-key'              => __('Key', PLUGIN_NAME),
+            'fa-solid fa-shield-halved'    => __('Shield', PLUGIN_NAME),
+            'fa-solid fa-lock'             => __('Lock', PLUGIN_NAME),
+            'fa-solid fa-user-lock'        => __('User Lock', PLUGIN_NAME),
+            'fa-solid fa-cloud'            => __('Cloud / Azure', PLUGIN_NAME),
+            'fa-solid fa-right-to-bracket' => __('Sign In', PLUGIN_NAME),
+        ];
+
+        $cssPath = GLPI_ROOT . '/public/lib/base.css';
+        if (!file_exists($cssPath)) {
+            return $defaultIcons;
+        }
+
+        $content = file_get_contents($cssPath);
+        if ($content === false) {
+            return $defaultIcons;
+        }
+
+        $brandsStartOffset = strpos($content, '.fa-brands {');
+
+        if (!preg_match_all('/^\.fa-([a-z0-9-]+)/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
+            return $defaultIcons;
+        }
+
+        $icons = [];
+        $ignoredNames = [
+            'solid', 'regular', 'brands', 'classic', 'fw', 'ul', 'li', 'border', 'inverse',
+            'pull-left', 'pull-right', 'beat', 'bounce', 'fade', 'beat-fade', 'flip', 'shake',
+            'spin', 'spin-reverse', 'pulse', 'spin-pulse', 'rotate-90', 'rotate-180',
+            'rotate-270', 'flip-horizontal', 'flip-vertical', 'flip-both', 'rotate-by',
+            'stack', 'stack-1x', 'stack-2x', 'sr-only', 'sr-only-focusable'
+        ];
+
+        foreach ($matches[1] as $match) {
+            $name = $match[0];
+            $offset = $match[1];
+
+            if (in_array($name, $ignoredNames, true)) {
+                continue;
+            }
+
+            if (preg_match('/^\d+x$/', $name) || preg_match('/^\d+xs$/', $name) || preg_match('/^\d+xl$/', $name) ||
+                preg_match('/^(xs|sm|lg|xl)$/', $name) || preg_match('/^\d+$/', $name)
+            ) {
+                continue;
+            }
+
+            $readableName = ucwords(str_replace('-', ' ', $name));
+
+            if ($brandsStartOffset !== false && $offset >= $brandsStartOffset) {
+                $icons["fa-brands fa-$name"] = $readableName;
+            } else {
+                $icons["fa-solid fa-$name"] = $readableName;
+                $icons["fa-regular fa-$name"] = $readableName;
+            }
+        }
+
+        if (count($icons) > 0) {
+            asort($icons);
+            return $icons;
+        }
+
+        return $defaultIcons;
     }
 }

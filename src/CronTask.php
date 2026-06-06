@@ -85,6 +85,38 @@ class CronTask extends CommonDBTM
         $cron_status = 0;
         $volume = 0;
 
+        // 1. Process inactivity timeout for active sessions
+        try {
+            $configsTable = Config::getTable();
+            $configs = $DB->request([
+                'FROM'  => $configsTable,
+                'WHERE' => [
+                    'inactivity_timeout' => ['>', 0],
+                    'is_deleted' => 0
+                ]
+            ]);
+
+            foreach ($configs as $cfg) {
+                $idpId = (int)$cfg['id'];
+                $timeoutMinutes = (int)$cfg['inactivity_timeout'];
+
+                $DB->update(
+                    LoginState::getTable(),
+                    [
+                        'phase' => LoginState::PHASE_TIMED_OUT
+                    ],
+                    [
+                        'idp_id' => $idpId,
+                        'phase'  => LoginState::PHASE_GLPI_AUTH,
+                        'last_activity' => ['<', new QueryExpression('NOW() - INTERVAL ' . $timeoutMinutes . ' MINUTE')]
+                    ]
+                );
+            }
+        } catch (\Throwable $e) {
+            // Keep going to clean up old sessions
+        }
+
+        // 2. Cleanup sessions older than retention period (days)
         if ($days > 0) {
             $result = $DB->delete(
                 LoginState::getTable(),
@@ -92,7 +124,6 @@ class CronTask extends CommonDBTM
             );
 
             if ($result) {
-                //$vol = $DB->affectedRows(); unsure this is required..
                 $cron_status = 1;
             }
         }
@@ -100,7 +131,7 @@ class CronTask extends CommonDBTM
         $task->setVolume($volume);
 
         return $cron_status;
-   }
+    }
 
     /**
      * Cron action to update the GeoIP database.

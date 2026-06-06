@@ -58,6 +58,8 @@ use GlpiPlugin\Samlsso\Config\ConfigEntity;
 
 class ConfigItem    //NOSONAR
 {
+    protected $fields = [];
+
     public const FIELD      = 'field';                                  // Name of the database field
     public const TYPE       = 'datatype';                               // Database type
     public const NULL       = 'notnull';                                // NOT NULL setting
@@ -463,6 +465,15 @@ class ConfigItem    //NOSONAR
 
     protected function proxied(mixed $var): array
     {
+        $result = ConfigItem::handleAsBool($var, ConfigEntity::PROXIED);
+        
+        if ($result[ConfigItem::VALUE] == 1) {
+            $validation = $this->validateProxyEnvironment();
+            if (!$validation['isValid']) {
+                $result[ConfigItem::ERRORS] = $validation['htmlTable'];
+            }
+        }
+        
         return array_merge(
             [
                 ConfigItem::FORMEXPLAIN   => __('Is GLPI positioned behind a proxy that alters the SAML response scheme?', PLUGIN_NAME),
@@ -470,7 +481,7 @@ class ConfigItem    //NOSONAR
                 ConfigItem::FIELD         => __function__,
                 ConfigItem::VALIDATOR     => __method__,
             ],
-            ConfigItem::handleAsBool($var, ConfigEntity::PROXIED)
+            $result
         );
     }
 
@@ -491,7 +502,7 @@ class ConfigItem    //NOSONAR
     {
         return array_merge(
             [
-                ConfigItem::FORMEXPLAIN   => __('If enabled it will enforce OneLogin PHPSAML to print status and error messages. Be aware that not all message\'s might be captured by samlSSO and might therefor not become visible.', PLUGIN_NAME),
+                ConfigItem::FORMEXPLAIN   => __('If enabled it will enforce OneLogin PHPSAML to print status and error messages. Be aware that not all message\'s might be captured by samlSSO and might therefor not become visible. WARNING: Enabling debug mode will expose the Service Provider metadata publicly.', PLUGIN_NAME),
                 ConfigItem::FORMTITLE     => __('DEBUG', PLUGIN_NAME),
                 ConfigItem::FIELD         => __function__,
                 ConfigItem::VALIDATOR     => __method__,
@@ -748,6 +759,9 @@ class ConfigItem    //NOSONAR
     // Make sure we always return the correct boolean datatype.
     protected function handleAsBool(mixed $var, $field = null): array
     {
+        if ($var === '' || $var === null) {
+            $var = '0';
+        }
         // Default to false if no or an impropriate value is provided.
         $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? __("⭕ $field can only be 1 or 0", PLUGIN_NAME) : false;
 
@@ -833,12 +847,6 @@ class ConfigItem    //NOSONAR
         }
     }
 
-    /**
-     * Validates and normalizes the request_timeout integer configuration option.
-     *
-     * @param  mixed $var  Raw input value
-     * @return array       Metadata and validation results
-     */
     protected function request_timeout(mixed $var): array
     {
         $error = false;
@@ -846,7 +854,7 @@ class ConfigItem    //NOSONAR
             $error = __('⭕ Request timeout must be a positive integer (minutes)', PLUGIN_NAME);
         }
 
-        return [
+        $result = [
             ConfigItem::FORMEXPLAIN => __('The duration in minutes before an uncompleted SAML request is considered expired.', PLUGIN_NAME),
             ConfigItem::FORMTITLE => __('REQUEST TIMEOUT (MINUTES)', PLUGIN_NAME),
             ConfigItem::EVAL      => ($error) ? ConfigItem::INVALID : ConfigItem::VALID,
@@ -855,14 +863,20 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALIDATOR => __method__,
             ConfigItem::ERRORS    => ($error) ? $error : false,
         ];
+
+        if (!$error) {
+            $tzValidation = $this->validateTimezoneEnvironment();
+            if (!empty($tzValidation['htmlTable'])) {
+                $result[ConfigItem::ERRORS] = $tzValidation['htmlTable'];
+                if (!$tzValidation['isValid']) {
+                    $result[ConfigItem::EVAL] = ConfigItem::INVALID;
+                }
+            }
+        }
+
+        return $result;
     }
 
-    /**
-     * Validates and normalizes the inactivity_timeout integer configuration option.
-     *
-     * @param  mixed $var  Raw input value
-     * @return array       Metadata and validation results
-     */
     protected function inactivity_timeout(mixed $var): array
     {
         $error = false;
@@ -870,7 +884,7 @@ class ConfigItem    //NOSONAR
             $error = __('⭕ Inactivity timeout must be a non-negative integer (minutes)', PLUGIN_NAME);
         }
 
-        return [
+        $result = [
             ConfigItem::FORMEXPLAIN => __('The duration in minutes of inactivity before a session is forcefully logged out (0 to disable).', PLUGIN_NAME),
             ConfigItem::FORMTITLE => __('INACTIVITY TIMEOUT (MINUTES)', PLUGIN_NAME),
             ConfigItem::EVAL      => ($error) ? ConfigItem::INVALID : ConfigItem::VALID,
@@ -879,5 +893,166 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALIDATOR => __method__,
             ConfigItem::ERRORS    => ($error) ? $error : false,
         ];
+
+        if (!$error) {
+            $tzValidation = $this->validateTimezoneEnvironment();
+            if (!empty($tzValidation['htmlTable'])) {
+                $result[ConfigItem::ERRORS] = $tzValidation['htmlTable'];
+                if (!$tzValidation['isValid']) {
+                    $result[ConfigItem::EVAL] = ConfigItem::INVALID;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Validates the reverse proxy headers and secure cookie configuration.
+     *
+     * @return array Array with keys 'isValid' (bool) and 'htmlTable' (string) containing details.
+     */
+    private function validateProxyEnvironment(): array
+    {
+        $xff = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : '';
+        $xfp = !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : '';
+        $xfh = !empty($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : '';
+        
+        $isHttps = (
+            (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) ||
+            (strtolower($xfp) === 'https')
+        );
+        
+        $cookieSecureEnabled = (bool)ini_get('session.cookie_secure');
+        $cookieConflict = ($cookieSecureEnabled && !$isHttps);
+        $cookieSecurityMissing = ($isHttps && !$cookieSecureEnabled);
+        
+        $hasXForwarded = !empty($xff) || !empty($xfh) || !empty($xfp);
+        
+        if ($hasXForwarded && $isHttps && !$cookieConflict && !$cookieSecurityMissing) {
+            return ['isValid' => true, 'htmlTable' => ''];
+        }
+        
+        $cookieSecure = $cookieSecureEnabled ? __('Active (Secure)', PLUGIN_NAME) : __('Inactive', PLUGIN_NAME);
+        
+        $statusXff = !empty($xff) ? '✅' : '❌';
+        $statusXfp = (strtolower($xfp) === 'https') ? '✅' : '❌';
+        $statusXfh = !empty($xfh) ? '✅' : '❌';
+        $statusHttps = $isHttps ? '✅' : '❌';
+        $statusCookie = ($cookieConflict || $cookieSecurityMissing) ? '❌' : '✅';
+        
+        $detectedHttpsStr = $isHttps ? 'HTTPS' : 'HTTP';
+        
+        $table = '<table class="table table-bordered table-sm text-start mt-2" style="font-size: 0.8rem; min-width: 320px; margin-bottom: 0;">';
+        $table .= '<thead><tr class="table-light"><th>' . __('Condition / Parameter', PLUGIN_NAME) . '</th><th>' . __('Expected', PLUGIN_NAME) . '</th><th>' . __('Detected', PLUGIN_NAME) . '</th><th>' . __('Status', PLUGIN_NAME) . '</th></tr></thead>';
+        $table .= '<tbody>';
+        
+        // session.cookie_secure check
+        $expectedCookie = $isHttps ? __('Active (Secure)', PLUGIN_NAME) : __('Any', PLUGIN_NAME);
+        $table .= '<tr><td>session.cookie_secure</td><td>' . $expectedCookie . '</td><td>' . $cookieSecure . '</td><td>' . $statusCookie . '</td></tr>';
+        
+        // Proxy headers
+        $detectedXff = !empty($xff) ? sprintf(__('Detected (%s)', PLUGIN_NAME), $xff) : __('Not Detected', PLUGIN_NAME);
+        $detectedXfp = !empty($xfp) ? sprintf(__('Detected (%s)', PLUGIN_NAME), $xfp) : __('Not Detected', PLUGIN_NAME);
+        $detectedXfh = !empty($xfh) ? sprintf(__('Detected (%s)', PLUGIN_NAME), $xfh) : __('Not Detected', PLUGIN_NAME);
+        
+        $linkXff = '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For" target="_blank" rel="noopener noreferrer">X-Forwarded-For</a>';
+        $linkXfp = '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto" target="_blank" rel="noopener noreferrer">X-Forwarded-Proto</a>';
+        $linkXfh = '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host" target="_blank" rel="noopener noreferrer">X-Forwarded-Host</a>';
+        
+        $table .= '<tr><td>' . $linkXff . '</td><td>' . __('Present', PLUGIN_NAME) . '</td><td>' . $detectedXff . '</td><td>' . $statusXff . '</td></tr>';
+        $table .= '<tr><td>' . $linkXfp . '</td><td>https</td><td>' . $detectedXfp . '</td><td>' . $statusXfp . '</td></tr>';
+        $table .= '<tr><td>' . $linkXfh . '</td><td>' . __('Present', PLUGIN_NAME) . '</td><td>' . $detectedXfh . '</td><td>' . $statusXfh . '</td></tr>';
+        
+        // HTTPS Context
+        $expectedHttps = $cookieSecureEnabled ? __('HTTPS (Secure)', PLUGIN_NAME) : __('HTTP or HTTPS', PLUGIN_NAME);
+        $table .= '<tr><td>HTTPS Context (PHP)</td><td>' . $expectedHttps . '</td><td>' . $detectedHttpsStr . '</td><td>' . $statusHttps . '</td></tr>';
+        $table .= '</tbody></table>';
+        
+        if ($cookieConflict) {
+            $table .= '<div class="mt-2 text-danger" style="font-size: 0.75rem; font-weight: 600;">' . __('⚠️ Conflict: Secure cookie is enabled but PHP is running in a non-secure HTTP context. Cookies will be rejected by the browser!', PLUGIN_NAME) . '</div>';
+        }
+        if ($cookieSecurityMissing) {
+            $table .= '<div class="mt-2 text-warning" style="font-size: 0.75rem; font-weight: 600;">' . __('⚠️ Security Warning: HTTPS is detected but session.cookie_secure is disabled. Cookies are not protected!', PLUGIN_NAME) . '</div>';
+        }
+        $table .= '<div class="mt-2 text-muted" style="font-size: 0.75rem;">' . __('Unsatisfied conditions might break the authentication flow in proxied or containerized environments depending on your setup and naming schemes.', PLUGIN_NAME) . '</div>';
+        
+        return ['isValid' => false, 'htmlTable' => $table];
+    }
+
+    /**
+     * Validates if the PHP timezone and database timezone are synchronized.
+     *
+     * @return array Array with keys 'isValid' (bool) and 'htmlTable' (string) containing details.
+     */
+    private function validateTimezoneEnvironment(): array
+    {
+        global $DB;
+        $dbNow = null;
+        try {
+            $iterator = $DB->request('SELECT CURRENT_TIMESTAMP() as now');
+            if ($iterator && $iterator->count() > 0) {
+                $dbNow = $iterator->current()['now'];
+            }
+        } catch (\Throwable $e) {
+            // Keep null
+        }
+
+        if (empty($dbNow)) {
+            return ['isValid' => true, 'htmlTable' => ''];
+        }
+
+        $dbTime = strtotime($dbNow);
+        $phpTime = time();
+        $diff = abs($phpTime - $dbTime);
+
+        $isDebug = false;
+        if (isset($_POST['debug'])) {
+            $isDebug = ((int)$_POST['debug'] === 1);
+        } elseif (isset($this->fields['debug'])) {
+            $isDebug = !empty($this->fields['debug']);
+        }
+
+        // If not misaligned and debug is not active, do not show anything
+        if ($diff <= 15 && !$isDebug) {
+            return ['isValid' => true, 'htmlTable' => ''];
+        }
+
+        // Format times for presentation
+        $phpTz = date_default_timezone_get();
+        $phpTimeStr = date('Y-m-d H:i:s', $phpTime) . ' (' . $phpTz . ')';
+
+        $dbTzQuery = null;
+        try {
+            $tzIterator = $DB->request('SELECT @@session.time_zone as tz');
+            if ($tzIterator && $tzIterator->count() > 0) {
+                $dbTzQuery = $tzIterator->current()['tz'];
+            }
+        } catch (\Throwable $e) {
+            // Keep null
+        }
+        $dbTz = $dbTzQuery ?: 'Unknown';
+        $dbTimeStr = $dbNow . ' (' . $dbTz . ')';
+
+        $table = '<table class="table table-bordered table-sm text-start mt-2" style="font-size: 0.8rem; min-width: 320px; margin-bottom: 0;">';
+        $table .= '<thead><tr class="table-light"><th>' . __('System', PLUGIN_NAME) . '</th><th>' . __('Current Time', PLUGIN_NAME) . '</th><th>' . __('Status', PLUGIN_NAME) . '</th></tr></thead>';
+        $table .= '<tbody>';
+        $table .= '<tr><td>PHP Environment</td><td>' . $phpTimeStr . '</td><td>✅</td></tr>';
+
+        if ($diff <= 15) {
+            $table .= '<tr><td>Database Session</td><td>' . $dbTimeStr . '</td><td>✅</td></tr>';
+            $table .= '</tbody></table>';
+            $table .= '<div class="mt-2 text-success" style="font-size: 0.75rem; font-weight: 600;">' . __('✅ Timezone Alignment: PHP and Database connection clocks are synchronized. (Shown because Debug mode is enabled)', PLUGIN_NAME) . '</div>';
+            return ['isValid' => true, 'htmlTable' => $table];
+        }
+
+        $table .= '<tr><td>Database Session</td><td>' . $dbTimeStr . '</td><td>❌</td></tr>';
+        $table .= '</tbody></table>';
+
+        $diffHours = round($diff / 3600, 2);
+        $table .= '<div class="mt-2 text-danger" style="font-size: 0.75rem; font-weight: 600;">' . sprintf(__('⚠️ Timezone Mismatch: PHP and Database connection clocks differ by %s hours (%s seconds). This will cause authentication requests to time out prematurely or linger too long.', PLUGIN_NAME), $diffHours, $diff) . '</div>';
+        $table .= '<div class="mt-2 text-muted" style="font-size: 0.75rem;">' . __('Ensure GLPI\'s timezone usage configuration is enabled (under Setup > General > System), MySQL timezone tables are loaded, or PHP\'s date.timezone matches the database timezone.', PLUGIN_NAME) . '</div>';
+
+        return ['isValid' => true, 'htmlTable' => $table];
     }
 }

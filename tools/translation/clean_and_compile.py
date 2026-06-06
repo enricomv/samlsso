@@ -61,23 +61,24 @@ def write_po(file_path, entries):
             for comment in entry['comments']:
                 f.write(comment + '\n')
             
-            if len(entry['msgid']) == 1:
-                f.write(f'msgid "{entry["msgid"][0]}"\n')
-            elif len(entry['msgid']) > 1:
-                f.write('msgid ""\n')
-                for part in entry['msgid']:
-                    f.write(f'"{part}"\n')
-            else:
-                f.write('msgid ""\n')
-                
-            if len(entry['msgstr']) == 1:
-                f.write(f'msgstr "{entry["msgstr"][0]}"\n')
-            elif len(entry['msgstr']) > 1:
-                f.write('msgstr ""\n')
-                for part in entry['msgstr']:
-                    f.write(f'"{part}"\n')
-            else:
-                f.write('msgstr ""\n')
+            if entry['msgid'] or entry['msgstr']:
+                if len(entry['msgid']) == 1:
+                    f.write(f'msgid "{entry["msgid"][0]}"\n')
+                elif len(entry['msgid']) > 1:
+                    f.write('msgid ""\n')
+                    for part in entry['msgid']:
+                        f.write(f'"{part}"\n')
+                else:
+                    f.write('msgid ""\n')
+                    
+                if len(entry['msgstr']) == 1:
+                    f.write(f'msgstr "{entry["msgstr"][0]}"\n')
+                elif len(entry['msgstr']) > 1:
+                    f.write('msgstr ""\n')
+                    for part in entry['msgstr']:
+                        f.write(f'"{part}"\n')
+                else:
+                    f.write('msgstr ""\n')
                 
             if i < len(entries) - 1:
                 f.write('\n')
@@ -130,6 +131,8 @@ def clean_and_compile(po_path):
         print(f"Error compiling {po_path}: {res.stderr}", flush=True)
 
 def main():
+    plugin_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+    os.chdir(plugin_dir)
     locales_dir = 'locales'
     for file in os.listdir(locales_dir):
         if file.endswith('.po') and not file.endswith('~'):
@@ -138,3 +141,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

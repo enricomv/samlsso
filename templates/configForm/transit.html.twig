@@ -55,12 +55,7 @@
                     <div class="mb-3">
                         {% set error_helper %}
                             {% if inputfields.proxied.errors == true %}
-                                <div id="textHelper" class="form-text" style="color:red;">{{ inputfields.proxied.errors }}</div>
-                            {% endif %}
-                            {% if inputfields.proxied.value == true %}
-                                {% if inputfields.strict.value == true %}
-                                    <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ __('⚠️ Beware, misaligned proxy schemes might break the samlValidation in strict mode.<br>(<b>https</b>://external)=>(<b>http</b>://internal)', plugin)|raw }}</div>
-                                {% endif %}
+                                <div id="textHelper" class="form-text" style="color:rgb(180, 120, 8);">{{ inputfields.proxied.errors|raw }}</div>
                             {% endif %}
                         {% endset %}
                         {{ fields.sliderField(

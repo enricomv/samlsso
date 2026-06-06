@@ -199,14 +199,7 @@ class LoginFlow extends CommonDBTM
      */
     public function doAuth()                         //NOSONAR - complexity by design
     {
-        // The plugin should remain dormant with all CLI calls.
-        // https://github.com/DonutsNL/samlsso/issues/38
-        // TODO remove all other SAPI = cli validations in the code
-        // as this renders them useless.
-        if (isCommandLine()) {
-            // Do nothing.
-            return;
-        }
+
 
         /**
          * Skip authentication logic for AJAX requests to avoid session state
@@ -216,6 +209,10 @@ class LoginFlow extends CommonDBTM
             return;
         }
 
+        // Run invalidation logic at the earliest possible moment
+        LoginState::expireStaleAcsRequests();
+        LoginState::expireStaleGlpiSessions();
+
         // Do not process login flow if the user is already logged in, unless they are logging out
         $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         if (!is_string($requestPath)) {
@@ -224,10 +221,6 @@ class LoginFlow extends CommonDBTM
         $isLogout = (strpos($requestPath, 'front/logout') !== false) ||
                     isset($_GET[self::SLOLOGOUT]) ||
                     isset($_GET[self::LOCALLOGOUT]);
-
-        if (!$isLogout && Session::getLoginUserID() !== false) {
-            return;
-        }
 
 
         // Dont process anything if we are handling an ACS call.
@@ -287,6 +280,11 @@ class LoginFlow extends CommonDBTM
             Session::addMessageAfterRedirect(__('Your session has timed out due to inactivity.', PLUGIN_NAME), false, ERROR);
             header('Location: ' . $CFG_GLPI['url_base'] . '/index.php?noAuto=1');
             exit;
+        }
+
+        if (!$isLogout && Session::getLoginUserID() !== false) {
+            $this->state->updateLastActivity();
+            return;
         }
 
         if (isset($_GET[self::LOCALLOGOUT])) {

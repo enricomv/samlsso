@@ -80,21 +80,55 @@
                                     data-bs-title="{{ inputfields.requested_authn_context.formexplain }}">?</span>
                             </label>
                             <div class="col-xxl-7 field-container">
-                                <!--
-                                @see: https://codeberg.org/QuinQuies/glpisaml/issues/14
-                                Todo: add nicer, userfriendly drag-drop element
-                                -->
-                                <select id="keep-order" multiple="multiple" aria-label="multiple select" name="{{ inputfields.requested_authn_context.field }}[]">
+                                <div class="samlsso-authn-checkboxes-container">
                                     {% for key, authn in inputOptionsAuthnContext %}
-                                        {% set selected = false %}
+                                        {% set checked = false %}
                                         {% for value in inputfields.requested_authn_context.value %}
                                             {% if value == key %}
-                                                {% set selected = 'selected' %}
+                                                {% set checked = true %}
                                             {% endif %}
                                         {% endfor %}
-                                        <option {{ selected }} value="{{ key }}">{{ authn }}</option>
+                                        <div class="form-check form-check-inline samlsso-authn-checkbox {% if checked %}checked{% endif %}">
+                                            <input class="form-check-input samlsso-authn-checkbox-input" type="checkbox" 
+                                                   id="authn_{{ key }}" 
+                                                   name="{{ inputfields.requested_authn_context.field }}[]" 
+                                                   value="{{ key }}"
+                                                   {% if checked %}checked="checked"{% endif %}>
+                                            <label class="form-check-label" for="authn_{{ key }}">
+                                                {{ authn }}
+                                            </label>
+                                        </div>
                                     {% endfor %}
-                                </select>
+                                </div>
+                                <script>
+                                $(function() {
+                                    const $checkboxes = $('.samlsso-authn-checkbox-input');
+                                    const $noneCheckbox = $('#authn_none');
+                                    
+                                    $checkboxes.on('change', function() {
+                                        const $this = $(this);
+                                        const isChecked = $this.is(':checked');
+                                        
+                                        $this.closest('.samlsso-authn-checkbox').toggleClass('checked', isChecked);
+                                        
+                                        if ($this.attr('id') === 'authn_none') {
+                                            if (isChecked) {
+                                                $checkboxes.not($noneCheckbox).each(function() {
+                                                    $(this).prop('checked', false).closest('.samlsso-authn-checkbox').removeClass('checked');
+                                                });
+                                            }
+                                        } else {
+                                            if (isChecked) {
+                                                $noneCheckbox.prop('checked', false).closest('.samlsso-authn-checkbox').removeClass('checked');
+                                            }
+                                        }
+                                        
+                                        if ($checkboxes.filter(':checked').length === 0) {
+                                            $noneCheckbox.prop('checked', true).closest('.samlsso-authn-checkbox').addClass('checked');
+                                        }
+                                    });
+                                });
+                                </script>
                             </div>
                         </div>
                     </div>

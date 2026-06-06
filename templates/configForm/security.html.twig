@@ -37,7 +37,7 @@
                     <div class="mb-3">
                         {% set error_helper %}
                             {% if inputfields.request_timeout.errors == true %}
-                                <div id="textHelper" class="form-text" style="color:{% if '⚠️' in inputfields.request_timeout.errors %}rgb(180, 120, 8){% else %}red{% endif %};">{{ inputfields.request_timeout.errors }}</div>
+                                <div id="textHelper" class="form-text" style="color:{% if '⚠️' in inputfields.request_timeout.errors %}rgb(180, 120, 8){% elseif '✅' in inputfields.request_timeout.errors %}rgb(71, 180, 8){% else %}red{% endif %};">{{ inputfields.request_timeout.errors|raw }}</div>
                             {% endif %}
                         {% endset %}
                         {{ fields.textField(
@@ -56,7 +56,7 @@
                     <div class="mb-3">
                         {% set error_helper %}
                             {% if inputfields.inactivity_timeout.errors == true %}
-                                <div id="textHelper" class="form-text" style="color:{% if '⚠️' in inputfields.inactivity_timeout.errors %}rgb(180, 120, 8){% else %}red{% endif %};">{{ inputfields.inactivity_timeout.errors }}</div>
+                                <div id="textHelper" class="form-text" style="color:{% if '⚠️' in inputfields.inactivity_timeout.errors %}rgb(180, 120, 8){% elseif '✅' in inputfields.inactivity_timeout.errors %}rgb(71, 180, 8){% else %}red{% endif %};">{{ inputfields.inactivity_timeout.errors|raw }}</div>
                             {% endif %}
                         {% endset %}
                         {{ fields.textField(

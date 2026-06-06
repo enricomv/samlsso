@@ -64,9 +64,46 @@ class GeoIPUpdater
 
         self::log("Starting GeoIP offline database compiler...", $task);
 
-        $downloaded = false;
         $tempGz = tempnam(sys_get_temp_dir(), 'dbip_');
+        $downloaded = self::downloadDbIpLite($task, $tempGz);
 
+        if (!$downloaded) {
+            self::log("Could not download DB-IP Lite CSV database. Please verify internet access or URL updates.", $task);
+            if (file_exists($tempGz)) {
+                unlink($tempGz);
+            }
+            return false;
+        }
+
+        self::log("Compiling CSV data to optimized binary format...", $task);
+
+        $count = self::compileDbIpLite($task, $tempGz, $destFile);
+        if (file_exists($tempGz)) {
+            unlink($tempGz);
+        }
+
+        if ($count < 0) {
+            return false;
+        }
+
+        self::log("Compilation finished successfully! Compiled $count IPv4 ranges to $destFile.", $task);
+
+        if ($task !== null && method_exists($task, 'setVolume')) {
+            $task->setVolume($count);
+        }
+
+        return true;
+    }
+
+    /**
+     * Attempts to download the DB-IP Lite database.
+     *
+     * @param glpiCronTask|null $task
+     * @param string            $tempGz
+     * @return bool
+     */
+    private static function downloadDbIpLite(?glpiCronTask $task, string $tempGz): bool
+    {
         for ($i = 0; $i < 6; $i++) {
             $date = new DateTime('now', new DateTimeZone('UTC'));
             $date->modify("-$i month");
@@ -87,42 +124,40 @@ class GeoIPUpdater
             if ($httpCode === 200 && !empty($data)) {
                 file_put_contents($tempGz, $data);
                 self::log("Successfully downloaded database for {$ym}.", $task);
-                $downloaded = true;
-                break;
+                return true;
             } else {
                 self::log("Failed with HTTP code $httpCode.", $task);
             }
         }
+        return false;
+    }
 
-        if (!$downloaded) {
-            self::log("Could not download DB-IP Lite CSV database. Please verify internet access or URL updates.", $task);
-            if (file_exists($tempGz)) {
-                unlink($tempGz);
-            }
-            return false;
-        }
-
-        self::log("Compiling CSV data to optimized binary format...", $task);
-
+    /**
+     * Compiles the downloaded GZ database to our optimized binary format.
+     *
+     * @param glpiCronTask|null $task
+     * @param string            $tempGz
+     * @param string            $destFile
+     * @return int Number of compiled ranges, or -1 on error
+     */
+    private static function compileDbIpLite(?glpiCronTask $task, string $tempGz, string $destFile): int
+    {
         if (!function_exists('gzopen')) {
             self::log("Error: zlib PHP extension is required to decompress the database.", $task);
-            unlink($tempGz);
-            return false;
+            return -1;
         }
 
         $gz = gzopen($tempGz, 'rb');
         if (!$gz) {
             self::log("Error opening downloaded gzip file.", $task);
-            unlink($tempGz);
-            return false;
+            return -1;
         }
 
         $out = fopen($destFile, 'wb');
         if (!$out) {
             self::log("Error creating output file $destFile.", $task);
             gzclose($gz);
-            unlink($tempGz);
-            return false;
+            return -1;
         }
 
         $count = 0;
@@ -149,7 +184,6 @@ class GeoIPUpdater
                 $endLong = ip2long($endIp);
 
                 if ($startLong !== false && $endLong !== false) {
-                    // Pack as: 4-byte unsigned int start, 4-byte unsigned int end, 2-byte ASCII country
                     $packed = pack('NNA2', $startLong, $endLong, $country);
                     fwrite($out, $packed);
                     $count++;
@@ -159,15 +193,7 @@ class GeoIPUpdater
 
         fclose($out);
         gzclose($gz);
-        unlink($tempGz);
-
-        self::log("Compilation finished successfully! Compiled $count IPv4 ranges to $destFile.", $task);
-
-        if ($task !== null && method_exists($task, 'setVolume')) {
-            $task->setVolume($count);
-        }
-
-        return true;
+        return $count;
     }
 
     /**

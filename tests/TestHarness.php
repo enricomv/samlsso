@@ -852,6 +852,10 @@ namespace GlpiPlugin\Samlsso {
             public const PHASE_LOGOFF               = 8;
             public const PHASE_ERROR                = 9;
 
+            public static function expireStaleAcsRequests(): void {}
+            public static function expireStaleGlpiSessions(): void {}
+            public function updateLastActivity(): void {}
+
             /**
              * Gets database table name.
              *

@@ -422,3 +422,53 @@
     margin-bottom: 1.5rem !important;
 }
 
+/* Custom authn checkbox pill styling */
+.samlsso-authn-checkboxes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+    max-width: 650px;
+}
+.samlsso-authn-checkbox {
+    background-color: var(--tb-light, #f8f9fa);
+    border: 1px solid var(--tb-border-color, #dee2e6);
+    border-radius: 6px;
+    padding: 6px 12px !important;
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    flex-direction: row !important;
+}
+.samlsso-authn-checkbox:hover {
+    background-color: var(--tb-border-color, #e9ecef);
+    border-color: #adb5bd;
+}
+.samlsso-authn-checkbox input[type="checkbox"] {
+    margin: 0 !important;
+    cursor: pointer;
+    width: 1.1em;
+    height: 1.1em;
+}
+.samlsso-authn-checkbox label {
+    margin: 0 !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    text-transform: none !important;
+    cursor: pointer;
+    color: var(--tb-dark, #212529) !important;
+    letter-spacing: normal !important;
+    display: inline-flex !important;
+}
+.samlsso-authn-checkbox.checked {
+    background-color: rgba(13, 110, 253, 0.08) !important;
+    border-color: #0d6efd !important;
+}
+.samlsso-authn-checkbox.checked label {
+    color: #0d6efd !important;
+}
+

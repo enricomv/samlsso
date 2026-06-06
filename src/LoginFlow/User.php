@@ -166,7 +166,9 @@ class User
             /* User is found, check if we are allowed to use it. */
 
             /* Verify the found user is not deleted (in trashcan) */
+            if ($user->fields[User::DELETED] == 1) {
                 LoginFlow::PrintFatalLoginError(sprintf(__("User with GlpiUserid: %s is marked deleted but still exists in the GLPI database. Because of this we cannot log you in as this would violate GLPI its security policies. Please contact the GLPI administrator to restore the user with provided ID or purge the user to allow the Just in Time (JIT) user creation to create a new user with the idp provided claims.", PLUGIN_NAME), $user->fields[User::USERID]));
+            }
 
             /* Verify the found user is not disabled by the admin; */
             if ($user->fields[User::ACTIVE] == 0) {

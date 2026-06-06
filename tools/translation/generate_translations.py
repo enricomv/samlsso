@@ -128,23 +128,24 @@ def write_po(file_path, entries):
             for comment in entry['comments']:
                 f.write(comment + '\n')
             
-            if len(entry['msgid']) == 1:
-                f.write(f'msgid "{entry["msgid"][0]}"\n')
-            elif len(entry['msgid']) > 1:
-                f.write('msgid ""\n')
-                for part in entry['msgid']:
-                    f.write(f'"{part}"\n')
-            else:
-                f.write('msgid ""\n')
-                
-            if len(entry['msgstr']) == 1:
-                f.write(f'msgstr "{entry["msgstr"][0]}"\n')
-            elif len(entry['msgstr']) > 1:
-                f.write('msgstr ""\n')
-                for part in entry['msgstr']:
-                    f.write(f'"{part}"\n')
-            else:
-                f.write('msgstr ""\n')
+            if entry['msgid'] or entry['msgstr']:
+                if len(entry['msgid']) == 1:
+                    f.write(f'msgid "{entry["msgid"][0]}"\n')
+                elif len(entry['msgid']) > 1:
+                    f.write('msgid ""\n')
+                    for part in entry['msgid']:
+                        f.write(f'"{part}"\n')
+                else:
+                    f.write('msgid ""\n')
+                    
+                if len(entry['msgstr']) == 1:
+                    f.write(f'msgstr "{entry["msgstr"][0]}"\n')
+                elif len(entry['msgstr']) > 1:
+                    f.write('msgstr ""\n')
+                    for part in entry['msgstr']:
+                        f.write(f'"{part}"\n')
+                else:
+                    f.write('msgstr ""\n')
                 
             if i < len(entries) - 1:
                 f.write('\n')
@@ -221,8 +222,23 @@ def main():
                         if target_lang != 'en':
                             time.sleep(0.05)
                         
+        # Fix trailing newline mismatches for all entries
+        for entry in entries:
+            msgid_joined = "".join(entry['msgid'])
+            msgstr_joined = "".join(entry['msgstr'])
+            if msgid_joined != "":
+                if msgid_joined.endswith('\\n') and not msgstr_joined.endswith('\\n'):
+                    if entry['msgstr']:
+                        entry['msgstr'][-1] = entry['msgstr'][-1] + '\\n'
+                    else:
+                        entry['msgstr'] = ['\\n']
+                elif not msgid_joined.endswith('\\n') and msgstr_joined.endswith('\\n'):
+                    if entry['msgstr'] and entry['msgstr'][-1].endswith('\\n'):
+                        entry['msgstr'][-1] = entry['msgstr'][-1][:-2]
+
         print(f"[{locale}] Finished translation. Updated {count} entries.", flush=True)
         write_po(po_path, entries)
+
 
         # 4. Compile PO file to MO file
         mo_file = f"{locale}.mo"

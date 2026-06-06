@@ -1,5 +1,9 @@
 
 **V1.3.1**
+- Feature: Added dynamic FontAwesome CSS parser to populate the LOGIN ICON selector with all available installed icons, sorted alphabetically.
+- Fix: Removed '. UTC' from datetime conversions in LoginState to resolve timezone mismatches and premature timeouts on servers not configured to UTC. (Related issue https://github.com/DonutsNL/samlsso/issues/124)
+- Feature: Added timezone validation warning popout to timeout configuration settings to detect and display PHP vs Database timezone mismatches.
+- Feature: Added ADR 0023 documenting the timezone fix and validation for login states.
 - Fix: Applied raw filter to Twig error helper variables passed to form fields to prevent HTML auto-escaping, restoring warning/error popovers and yellow background highlighting.
 - Feature: Automatically disable and display warnings on inbound security fields when strict mode is disabled.
 - Architecture: Added ADR 0022 documenting the decision to auto-disable inbound security options when strict is off and use prefix-based dynamic styling for warnings.

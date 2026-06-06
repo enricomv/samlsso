@@ -142,8 +142,6 @@ class LoginState extends CommonDBTM
         // Get the globals we need
         global $DB;
 
-        self::expireStaleAcsRequests();
-
         // Use either the sessionId or the requestId (after redirect)
         // to find the correct session. As long as there isnt an redirect
         // performed to an external host the PHP session ID can be used to
@@ -196,6 +194,7 @@ class LoginState extends CommonDBTM
                     LoginState::GLPI_AUTHED       => (bool) $sessionState[LoginState::GLPI_AUTHED],
                     LoginState::SAML_AUTHED       => (bool) $sessionState[LoginState::SAML_AUTHED],
                     LoginState::LOGIN_DATETIME    => $sessionState[LoginState::LOGIN_DATETIME],
+                    LoginState::LAST_ACTIVITY     => $sessionState[LoginState::LAST_ACTIVITY],
                     LoginState::ENFORCE_LOGOFF    => $sessionState[LoginState::ENFORCE_LOGOFF],
                     LoginState::IDP_ID            => $sessionState[LoginState::IDP_ID],
                     LoginState::SAML_RESPONSE_ID  => $sessionState[LoginState::SAML_RESPONSE_ID],
@@ -228,7 +227,7 @@ class LoginState extends CommonDBTM
                         // Keep default fallback
                     }
                 }
-                $loginTime = strtotime($this->state[LoginState::LOGIN_DATETIME] . ' UTC');
+                $loginTime = strtotime($this->state[LoginState::LOGIN_DATETIME]);
                 if (time() - $loginTime > ($timeoutMinutes * 60)) {
                     $this->state[LoginState::PHASE] = LoginState::PHASE_TIMED_OUT;
                 }
@@ -265,7 +264,7 @@ class LoginState extends CommonDBTM
                     }
                 }
                 if ($inactivityTimeout > 0) {
-                    $lastActivityTime = strtotime($this->state[LoginState::LAST_ACTIVITY] . ' UTC');
+                    $lastActivityTime = strtotime($this->state[LoginState::LAST_ACTIVITY]);
                     if (time() - $lastActivityTime > ($inactivityTimeout * 60)) {
                         $this->state[LoginState::PHASE] = LoginState::PHASE_TIMED_OUT;
                     }
@@ -434,6 +433,7 @@ class LoginState extends CommonDBTM
                     LoginState::GLPI_AUTHED       => (bool) $sessionState[LoginState::GLPI_AUTHED],
                     LoginState::SAML_AUTHED       => (bool) $sessionState[LoginState::SAML_AUTHED],
                     LoginState::LOGIN_DATETIME    => $sessionState[LoginState::LOGIN_DATETIME],
+                    LoginState::LAST_ACTIVITY     => $sessionState[LoginState::LAST_ACTIVITY],
                     LoginState::ENFORCE_LOGOFF    => $sessionState[LoginState::ENFORCE_LOGOFF],
                     LoginState::IDP_ID            => $sessionState[LoginState::IDP_ID],
                     LoginState::SAML_RESPONSE_ID  => $sessionState[LoginState::SAML_RESPONSE_ID],
@@ -474,6 +474,17 @@ class LoginState extends CommonDBTM
         $this->state[LoginState::LOCATION] = (isset($_SERVER['REQUEST_URI'])) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : 'CLI';
         // Update the timestamp so we can clean the table accordingly.
         $this->state[LoginState::LAST_ACTIVITY] = date('Y-m-d H:i:s');
+    }
+
+    /**
+     * Updates the last activity time in the database for the current state.
+     */
+    public function updateLastActivity(): void
+    {
+        $this->setLastActivity();
+        if (isset($this->state[LoginState::STATE_ID])) {
+            $this->update($this->state);
+        }
     }
 
     /**
@@ -1229,7 +1240,7 @@ class LoginState extends CommonDBTM
      * Finds and expires stale ACS requests in the database.
      * Evaluates all records in PHASE_SAML_ACS and transitions them to PHASE_TIMED_OUT if expired.
      */
-    private static function expireStaleAcsRequests(): void
+    public static function expireStaleAcsRequests(): void
     {
         global $DB;
 
@@ -1257,7 +1268,7 @@ class LoginState extends CommonDBTM
                     }
                 }
 
-                $loginTime = strtotime($sessionState[LoginState::LOGIN_DATETIME] . ' UTC');
+                $loginTime = strtotime($sessionState[LoginState::LOGIN_DATETIME]);
                 if (time() - $loginTime > ($timeoutMinutes * 60)) {
                     // Update trace
                     $trace = [];
@@ -1281,6 +1292,67 @@ class LoginState extends CommonDBTM
                         $updateData,
                         [LoginState::STATE_ID => $sessionState[LoginState::STATE_ID]]
                     );
+                }
+            }
+        }
+    }
+
+    /**
+     * Evaluates all records in PHASE_GLPI_AUTH and transitions them to PHASE_TIMED_OUT if idle beyond inactivity_timeout.
+     */
+    public static function expireStaleGlpiSessions(): void
+    {
+        global $DB;
+
+        // Query all records currently in GLPI_AUTH phase (4)
+        $where = [
+            LoginState::PHASE => LoginState::PHASE_GLPI_AUTH
+        ];
+
+        $iterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]);
+        if ($iterator) {
+            foreach ($iterator as $sessionState) {
+                $idpId = $sessionState[LoginState::IDP_ID];
+                $inactivityTimeout = 0; // default (disabled)
+                if ($idpId && (int)$idpId > 0) {
+                    try {
+                        $configEntity = new \GlpiPlugin\Samlsso\Config\ConfigEntity((int)$idpId);
+                        if ($configEntity->isValid()) {
+                            $configInactivity = $configEntity->getField(\GlpiPlugin\Samlsso\Config\ConfigEntity::INACTIVITY_TIMEOUT);
+                            if ($configInactivity !== false && is_numeric($configInactivity)) {
+                                $inactivityTimeout = (int)$configInactivity;
+                            }
+                        }
+                    } catch (\Throwable $e) {
+                        // Keep default fallback
+                    }
+                }
+
+                if ($inactivityTimeout > 0) {
+                    $lastActivityTime = strtotime($sessionState[LoginState::LAST_ACTIVITY]);
+                    if (time() - $lastActivityTime > ($inactivityTimeout * 60)) {
+                        // Update trace
+                        $trace = [];
+                        if (!empty($sessionState[LoginState::LOGIN_FLOW_TRACE])) {
+                            $unserialized = unserialize($sessionState[LoginState::LOGIN_FLOW_TRACE]);
+                            if (is_array($unserialized)) {
+                                $trace = $unserialized;
+                            }
+                        }
+                        $trace['inactivityTimeout'] = __('Session was timed out due to inactivity.', PLUGIN_NAME);
+
+                        $updateData = [
+                            LoginState::STATE_ID          => $sessionState[LoginState::STATE_ID],
+                            LoginState::PHASE             => LoginState::PHASE_TIMED_OUT,
+                            LoginState::LOGIN_FLOW_TRACE  => serialize($trace)
+                        ];
+
+                        $DB->update(
+                            LoginState::getTable(),
+                            $updateData,
+                            [LoginState::STATE_ID => $sessionState[LoginState::STATE_ID]]
+                        );
+                    }
                 }
             }
         }
