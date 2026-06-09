@@ -1129,18 +1129,13 @@ class LoginState extends CommonDBTM
             Session::addMessageAfterRedirect("🆗 Added field LoginState::SAML_RESPONSE_ID for v1.1.2");
         } // We silently ignore errors. Most common cause for an error is if the field already exists.
 
-        if (
-            $DB->tableExists($table)                                                                                                                       &&   /* Table should exist */
-            !$DB->fieldExists($table, LoginState::LOGIN_FLOW_TRACE, false)                                                                                  &&   /* Field should not exist */
-            $migration->addField($table, LoginState::LOGIN_FLOW_TRACE, 'text', ['null' => true, 'update' => true])
-        ) {   /* @see Migration::fieldFormat() */
-            Session::addMessageAfterRedirect("🆗 Added field LoginState::LOGIN_FLOW_TRACE for v1.1.2");
-        } /* We silently ignore errors. Most common cause for an error is if the field already exists. */
-
-        /* Upgrade loginFlowTrace field type to text to support longer trace logs. */
-        if ($DB->tableExists($table) && $DB->fieldExists($table, LoginState::LOGIN_FLOW_TRACE)) {
-            $migration->changeField($table, LoginState::LOGIN_FLOW_TRACE, LoginState::LOGIN_FLOW_TRACE, 'text');
-            $migration->migrationOneTable($table);
+        if ($DB->tableExists($table)) {
+            if (!$DB->fieldExists($table, LoginState::LOGIN_FLOW_TRACE, false)) {
+                $migration->addField($table, LoginState::LOGIN_FLOW_TRACE, 'text', ['null' => true, 'update' => true]);
+                Session::addMessageAfterRedirect("🆗 Added field LoginState::LOGIN_FLOW_TRACE for v1.1.2");
+            } else {
+                $migration->changeField($table, LoginState::LOGIN_FLOW_TRACE, LoginState::LOGIN_FLOW_TRACE, 'text');
+            }
         }
 
         // @see https://github.com/DonutsNL/glpisaml/issues/22
