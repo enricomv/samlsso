@@ -247,6 +247,35 @@ namespace GlpiPlugin\Samlsso\Tests {
 
             echo "✅ LoginState: session expiration phase transition (positive & negative paths)\n";
         }
+
+        /**
+         * Test that LoginState location falls back to 'UNKNOWN' if parse_url fails.
+         */
+        public function testLoginStateLocationFallback(): void {
+            global $DB;
+            $db = new MockDB();
+            $DB = $db;
+
+            // Set request URI to something that causes parse_url to fail/return false or null
+            $_SERVER['REQUEST_URI'] = 'http://:80';
+
+            $loginState = new LoginState();
+
+            // Use reflection to verify private state property
+            $refObj = new \ReflectionObject($loginState);
+            $refProp = $refObj->getProperty('state');
+            $refProp->setAccessible(true);
+            $state = $refProp->getValue($loginState);
+
+            if (($state[LoginState::LOCATION] ?? '') !== 'UNKNOWN') {
+                throw new \Exception("Expected location fallback to 'UNKNOWN' when parse_url fails, got: " . var_export($state[LoginState::LOCATION] ?? null, true));
+            }
+
+            // Clean up
+            unset($_SERVER['REQUEST_URI']);
+
+            echo "✅ LoginState: location fallback to UNKNOWN on parse_url failure\n";
+        }
     }
 }
 
@@ -257,6 +286,7 @@ namespace {
         $test->testTwigTemplateFormatting();
         $test->testLoginStateRequestTimeout();
         $test->testLoginStateSessionExpiry();
+        $test->testLoginStateLocationFallback();
         $test = null;
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";

@@ -6,6 +6,7 @@
 - Feature: Added ADR 0023 documenting the timezone fix and validation for login states.
 - Fix: Applied raw filter to Twig error helper variables passed to form fields to prevent HTML auto-escaping, restoring warning/error popovers and yellow background highlighting.
 - Fix: Resolved database migration race condition where `loginFlowTrace` column failed to upgrade to `TEXT` if it did not exist prior to update. (Related issue https://github.com/DonutsNL/samlsso/issues/123)
+- Fix: Ensured the `location` column in the login states table does not receive a `null` value when `parse_url()` fails on malformed or empty URIs by defaulting to `'UNKNOWN'`. (Related issue https://github.com/DonutsNL/samlsso/issues/123)
 - Feature: Automatically disable and display warnings on inbound security fields when strict mode is disabled.
 - Architecture: Added ADR 0022 documenting the decision to auto-disable inbound security options when strict is off and use prefix-based dynamic stylinrsg for warnings.
 - Redesigned the configuration form fields layout to use a modern two-line strategy (Labels and tooltips on line 1, input controls on line 2), preventing squishing and making better use of the available space.

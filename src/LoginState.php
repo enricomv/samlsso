@@ -471,7 +471,8 @@ class LoginState extends CommonDBTM
     {
         // Capture the requested location via main url.
         // In GLPI11 this should always be via the /public/ folder and we might want to validate that.
-        $this->state[LoginState::LOCATION] = (isset($_SERVER['REQUEST_URI'])) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : 'CLI';
+        $location = (isset($_SERVER['REQUEST_URI'])) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : 'CLI';
+        $this->state[LoginState::LOCATION] = is_string($location) ? $location : 'UNKNOWN';
         // Update the timestamp so we can clean the table accordingly.
         $this->state[LoginState::LAST_ACTIVITY] = date('Y-m-d H:i:s');
     }
