@@ -504,7 +504,10 @@ class LoginState extends CommonDBTM
             isset($_SESSION[LoginState::SESSION_VALID_ID_ACCESSOR])
         ) {
             $this->state[LoginState::GLPI_AUTHED] = true;
-            $this->state[LoginState::PHASE] = LoginState::PHASE_GLPI_AUTH;
+            if ($this->state[LoginState::PHASE] !== LoginState::PHASE_TIMED_OUT &&
+                $this->state[LoginState::PHASE] !== LoginState::PHASE_FORCE_LOG) {
+                $this->state[LoginState::PHASE] = LoginState::PHASE_GLPI_AUTH;
+            }
         } else {
             $this->state[LoginState::GLPI_AUTHED] = false;
             if ($this->state[LoginState::PHASE] === LoginState::PHASE_GLPI_AUTH) {

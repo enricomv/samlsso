@@ -276,6 +276,63 @@ namespace GlpiPlugin\Samlsso\Tests {
 
             echo "✅ LoginState: location fallback to UNKNOWN on parse_url failure\n";
         }
+
+        /**
+         * Test that inactivity timeout correctly transitions the phase to PHASE_TIMED_OUT
+         * and evalGlpiAuth does not overwrite it when the session is still active in PHP.
+         */
+        public function testLoginStateInactivityTimeoutNoOverwrite(): void {
+            global $DB;
+            $db = new MockDB();
+            $DB = $db;
+
+            $table = LoginState::getTable();
+            $staleTime = gmdate('Y-m-d H:i:s', time() - 1200); // 20 mins ago
+
+            $db->setResponse($table, [
+                [
+                    LoginState::STATE_ID => 1,
+                    LoginState::IDP_ID => 2,
+                    LoginState::USER_NAME => 'test_user',
+                    LoginState::SESSION_ID => session_id(),
+                    LoginState::SESSION_NAME => 'sid',
+                    LoginState::GLPI_AUTHED => 1,
+                    LoginState::SAML_AUTHED => 1,
+                    LoginState::LOGIN_DATETIME => $staleTime,
+                    LoginState::LAST_ACTIVITY => $staleTime,
+                    LoginState::LOCATION => 'https://glpi.local/index.php',
+                    LoginState::ENFORCE_LOGOFF => 0,
+                    LoginState::SAML_REQUEST_ID => '',
+                    LoginState::SAML_RESPONSE_ID => '',
+                    LoginState::SAML_UNSOLICITED => 0,
+                    LoginState::LOGIN_FLOW_TRACE => serialize([]),
+                    LoginState::PHASE => LoginState::PHASE_GLPI_AUTH,
+                    LoginState::REDIRECT => '',
+                    LoginState::CLIENT_IP => '127.0.0.1',
+                    LoginState::CLIENT_COUNTRY => 'US',
+                ]
+            ]);
+
+            // Set up $_SESSION variables so the session appears active
+            $_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR] = 'test_user';
+            $_SESSION[LoginState::SESSION_VALID_ID_ACCESSOR] = session_id();
+
+            // Mock ConfigEntity inactivity timeout response
+            \GlpiPlugin\Samlsso\Config\MockConfigEntity::$mockFields[\GlpiPlugin\Samlsso\Config\MockConfigEntity::INACTIVITY_TIMEOUT] = 15;
+
+            $loginState = new LoginState();
+
+            if ($loginState->getPhase() !== LoginState::PHASE_TIMED_OUT) {
+                throw new \Exception("Inactivity timeout did not transition phase to PHASE_TIMED_OUT, or evalGlpiAuth incorrectly overwrote it. Got phase: " . $loginState->getPhase());
+            }
+
+            // Clean up
+            unset($_SESSION[LoginState::SESSION_GLPI_NAME_ACCESSOR]);
+            unset($_SESSION[LoginState::SESSION_VALID_ID_ACCESSOR]);
+            \GlpiPlugin\Samlsso\Config\MockConfigEntity::$mockFields = [];
+
+            echo "✅ LoginState: inactivity timeout transitions to TIMED_OUT and is not overwritten\n";
+        }
     }
 }
 
@@ -287,6 +344,7 @@ namespace {
         $test->testLoginStateRequestTimeout();
         $test->testLoginStateSessionExpiry();
         $test->testLoginStateLocationFallback();
+        $test->testLoginStateInactivityTimeoutNoOverwrite();
         $test = null;
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";

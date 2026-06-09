@@ -103,12 +103,12 @@ class CronTask extends CommonDBTM
                 $DB->update(
                     LoginState::getTable(),
                     [
-                        'phase' => LoginState::PHASE_TIMED_OUT
+                        LoginState::PHASE => LoginState::PHASE_TIMED_OUT
                     ],
                     [
-                        'idp_id' => $idpId,
-                        'phase'  => LoginState::PHASE_GLPI_AUTH,
-                        'last_activity' => ['<', new QueryExpression('NOW() - INTERVAL ' . $timeoutMinutes . ' MINUTE')]
+                        LoginState::IDP_ID => $idpId,
+                        LoginState::PHASE  => LoginState::PHASE_GLPI_AUTH,
+                        LoginState::LAST_ACTIVITY => ['<', new QueryExpression('NOW() - INTERVAL ' . $timeoutMinutes . ' MINUTE')]
                     ]
                 );
             }
