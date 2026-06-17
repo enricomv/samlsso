@@ -345,6 +345,50 @@ namespace GlpiPlugin\Samlsso\Tests {
             
             echo "✅ Synchronize claim mappings trace logging verified\n";
         }
+
+        /**
+         * Test that synchronization checks user emails case-insensitively.
+         */
+        public function testSyncOnLoginCaseInsensitiveEmail(): void {
+            $samlUser = new SamlUser();
+            $configEntity = new ConfigEntity();
+            
+            \User::$mockObject->mockUserData = [
+                'id'         => 999,
+                'name'       => 'existing_user',
+                'email'      => 'existing@example.com',
+                'is_deleted' => 0,
+                'is_active'  => 1
+            ];
+            
+            MockConfigEntity::$mockFields[ConfigEntity::SYNC_ON_LOGIN] = 1;
+            
+            // Set response from DB to mock user's email in glpi_useremails
+            $this->db->setResponse('glpi_useremails', [
+                ['email' => 'Existing@Example.Com']
+            ]);
+            
+            // New incoming SAML email has different casing: existing@example.com
+            $userFields = $this->getFullUserData('existing_user', 'existing@example.com');
+            
+            /* Emulate LoginState */
+            $state = new class extends \GlpiPlugin\Samlsso\LoginState {
+                public array $traces = [];
+                public function __construct() {}
+                public function addLoginFlowTrace(array $condition): bool {
+                    $this->traces = array_merge($this->traces, $condition);
+                    return true;
+                }
+            };
+            
+            $resUser = $samlUser->getOrCreateUser($userFields, $configEntity, $state);
+            
+            if (isset($state->traces['syncUpdatedFields']) && str_contains($state->traces['syncUpdatedFields'], "email added")) {
+                throw new \Exception("Email casing mismatch incorrectly triggered a duplicate email addition.");
+            }
+            
+            echo "✅ Case-insensitive user email comparison on sync_on_login verified\n";
+        }
     }
 }
 
@@ -361,6 +405,7 @@ namespace {
         $test->testRuleActionsHaveHandlers();
         $test->testSyncOnLogin();
         $test->testSyncOnLoginTraceLogging();
+        $test->testSyncOnLoginCaseInsensitiveEmail();
         $test = null;
     } catch (\Exception $e) {
         echo "\n❌ Test Failed: " . $e->getMessage() . "\n";

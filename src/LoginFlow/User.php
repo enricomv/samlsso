@@ -442,10 +442,10 @@ class User
             ]);
             foreach ($emailsFromDb as $emailRow) {
                 if (isset($emailRow['email'])) {
-                    $existingEmails[] = $emailRow['email'];
+                    $existingEmails[] = strtolower($emailRow['email']);
                 }
             }
-            if (!in_array($newEmail, $existingEmails)) {
+            if (!in_array(strtolower($newEmail), $existingEmails)) {
                 $changes[] = "email added: '$newEmail'";
             } else {
                 $emailExists = true;
