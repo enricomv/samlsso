@@ -149,18 +149,22 @@ class ConfigItem    //NOSONAR
 
     protected function sp_certificate(mixed $var): array //NOSONAR
     {
-        // Certificate is not required, if missing the ConfigEntity will toggle
-        // depending security options false if there is an error. Provided certificate
-        // string (if any) should be valid.
         $e = false;
-        if ((!empty($var))                                     &&
-            ($certificate = ConfigItem::parseX509Certificate($var)) &&
-            (!array_key_exists('subject', $certificate))
-        ) {
-
-            $e = __('⭕ Provided certificate does not look like a valid (base64 encoded) certificate', PLUGIN_NAME);
-        } else {
-            $certificate = '';
+        $certificate = '';
+        if (!empty($var)) {
+            $parsed = ConfigItem::parseX509Certificate($var);
+            if ($parsed) {
+                if (!array_key_exists('subject', $parsed)) {
+                    $e = __('⭕ Provided certificate does not look like a valid (base64 encoded) certificate', PLUGIN_NAME);
+                } else {
+                    $certificate = $parsed;
+                    if (!empty($parsed['validations'])) {
+                        $e = implode('<br>', $parsed['validations']);
+                    }
+                }
+            } else {
+                $e = __('⭕ Provided certificate does not look like a valid (base64 encoded) certificate', PLUGIN_NAME);
+            }
         }
         return [
             ConfigItem::FORMEXPLAIN => __('The base64 encoded x509 service provider certificate. Used to sign and encrypt messages sent by the service provider to the identity provider. Required for most of the security options', PLUGIN_NAME),
@@ -169,7 +173,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALUE     => $var,
             ConfigItem::FIELD     => __function__,
             ConfigItem::VALIDATOR => __method__,
-            ConfigItem::ERRORS    => ($e) ? $e : false,
+            ConfigItem::ERRORS    => $e,
             ConfigItem::VALIDATE  => $certificate
         ];
     }
@@ -287,11 +291,24 @@ class ConfigItem    //NOSONAR
     {
         // Is a required field!
         $e = false;
-        if (($certificate = ConfigItem::parseX509Certificate($var)) &&
-            (!array_key_exists('subject', $certificate))
-        ) {
-            if (array_key_exists('validations', $certificate)) {
-                $e = $certificate['validations'];
+        $certificate = '';
+        if (empty($var)) {
+            $e = __('⭕ Valid Idp X509 certificate is required! (base64 encoded)', PLUGIN_NAME);
+        } else {
+            $parsed = ConfigItem::parseX509Certificate($var);
+            if ($parsed) {
+                if (!array_key_exists('subject', $parsed)) {
+                    if (array_key_exists('validations', $parsed)) {
+                        $e = $parsed['validations'];
+                    } else {
+                        $e = __('⭕ Valid Idp X509 certificate is required! (base64 encoded)', PLUGIN_NAME);
+                    }
+                } else {
+                    $certificate = $parsed;
+                    if (!empty($parsed['validations'])) {
+                        $e = implode('<br>', $parsed['validations']);
+                    }
+                }
             } else {
                 $e = __('⭕ Valid Idp X509 certificate is required! (base64 encoded)', PLUGIN_NAME);
             }
@@ -304,7 +321,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALUE     => (string) $var,
             ConfigItem::FIELD     => __function__,
             ConfigItem::VALIDATOR => __method__,
-            ConfigItem::ERRORS    => ($e) ? $e : false,
+            ConfigItem::ERRORS    => $e,
             ConfigItem::VALIDATE  => $certificate
         ];
     }
