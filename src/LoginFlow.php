@@ -628,27 +628,33 @@ class LoginFlow extends CommonDBTM
             $isEnforced = (bool) $configEntity->getField(ConfigEntity::ENFORCE_SSO);
             $idpName = htmlentities((string) $configEntity->getField(ConfigEntity::NAME));
 
+            $returnLabel = $isEnforced ? __('Go back to GLPI', PLUGIN_NAME) : __('Continue with local logout', PLUGIN_NAME);
+            $sloLabel    = __('Log out everywhere', PLUGIN_NAME);
+
             if ($isEnforced) {
                 $infoText = sprintf(
-                    __('You have been authenticated using the SAML2 identity provider: <b>%1$s</b>.<br><br>Because SAML authentication is enforced, logging out of GLPI locally will automatically log you back in immediately.<br><br>To sign out completely, please select <b>\'Log out everywhere\'</b>. Note that this will also terminate your active sessions in all other applications connected to this Identity Provider.<br><br>If you want to leave GLPI, just close this browser tab.', PLUGIN_NAME),
-                    $idpName
+                    __('You have been authenticated using the SAML2 identity provider: <b>%1$s</b>.<br><br>Because SAML authentication is enforced, logging out of GLPI locally will automatically log you back in immediately.<br><br>To sign out completely, please select <b>\'%2$s\'</b>. Note that this will also terminate your active sessions in all other applications connected to this Identity Provider.<br><br>If you want to leave GLPI, just close this browser tab.', PLUGIN_NAME),
+                    $idpName,
+                    $sloLabel
                 );
             } else {
                 $infoText = sprintf(
-                    __('You have been authenticated using the SAML2 identity provider: <b>%1$s</b>.<br><br>You can log out permanently by also logging out with the IDP by pressing <b>\'Log out everywhere\'</b> (which terminates active sessions in all other applications depending on it), or perform a local logout from GLPI only by pressing <b>\'Continue GLPI logout\'</b>.', PLUGIN_NAME),
-                    $idpName
+                    __('You have been authenticated using the SAML2 identity provider: <b>%1$s</b>.<br><br>You can log out permanently by also logging out with the IDP by pressing <b>\'%2$s\'</b> (which terminates active sessions in all other applications depending on it), or perform a local logout from GLPI only by pressing <b>\'%3$s\'</b>.', PLUGIN_NAME),
+                    $idpName,
+                    $sloLabel,
+                    $returnLabel
                 );
             }
 
             // Define static translatable elements
             $tplVars = [
-                'header'        => __('🤔 How do you like to proceed?', PLUGIN_NAME),
+                'header'        => __('🤔 How would you like to proceed?', PLUGIN_NAME),
                 'idpName'       => $configEntity->getField(ConfigEntity::NAME),
                 'infoText'      => $infoText,
-                'returnLabel'   => $isEnforced ? __('Go back to GLPI', PLUGIN_NAME) : __('Continue with local logout', PLUGIN_NAME),
+                'returnLabel'   => $returnLabel,
                 'returnPath'    => $isEnforced ? $CFG_GLPI["url_base"] . '/' : $CFG_GLPI["url_base"] . '/front/logout.php?' . self::LOCALLOGOUT . '=1&noAUTO=1',
                 'closeLabel'    => __('Close tab', PLUGIN_NAME),
-                'sloLabel'      => __('Log out everywhere', PLUGIN_NAME),
+                'sloLabel'      => $sloLabel,
                 'sloPath'       =>  $CFG_GLPI["url_base"] . '/front/logout.php?' . self::SLOLOGOUT . '=1',
                 'isEnforced'    => $isEnforced,
             ];

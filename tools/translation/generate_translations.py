@@ -204,22 +204,38 @@ def main():
             msgid_joined = "".join(entry['msgid'])
             msgstr_joined = "".join(entry['msgstr'])
             
+            is_fuzzy = any(re.match(r'^#,\s*fuzzy', comment.strip()) for comment in entry['comments'])
             starts_with_icon = any(msgid_joined.startswith(icon) for icon in ['⚠️', '🔒', '⭕', '🆗', '🤔'])
             
-            if msgid_joined and (not msgstr_joined or starts_with_icon):
+            if msgid_joined and (not msgstr_joined or is_fuzzy or starts_with_icon):
                 raw_text = unescape_str(msgid_joined)
                 if target_lang == 'en':
                     translated_raw = raw_text
                 else:
-                    translated_raw = translate_api(raw_text, target_lang)
+                    # If it's already translated (but was fuzzy), keep it or re-translate it if empty
+                    if msgstr_joined and not starts_with_icon:
+                        translated_raw = unescape_str(msgstr_joined)
+                    else:
+                        translated_raw = translate_api(raw_text, target_lang)
                 
                 if translated_raw:
                     escaped = escape_str(translated_raw)
-                    if [escaped] != entry['msgstr']:
+                    if is_fuzzy:
+                        new_comments = []
+                        for comment in entry['comments']:
+                            if re.match(r'^#,\s*fuzzy', comment.strip()):
+                                cleaned = re.sub(r'fuzzy,?\s*', '', comment).strip()
+                                if cleaned and cleaned != '#,' and cleaned != '#':
+                                    new_comments.append(cleaned)
+                            else:
+                                new_comments.append(comment)
+                        entry['comments'] = new_comments
+                    
+                    if [escaped] != entry['msgstr'] or is_fuzzy:
                         entry['msgstr'] = [escaped]
                         count += 1
-                        print(f"[{locale}] [{count}] Translated: \"{raw_text.strip()}\" -> \"{translated_raw.strip()}\"", flush=True)
-                        if target_lang != 'en':
+                        print(f"[{locale}] [{count}] Translated/Unfuzzied: \"{raw_text.strip()}\" -> \"{translated_raw.strip()}\"", flush=True)
+                        if target_lang != 'en' and not msgstr_joined:
                             time.sleep(0.05)
                         
         # Fix trailing newline mismatches for all entries
