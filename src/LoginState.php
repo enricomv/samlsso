@@ -34,7 +34,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    GLPISaml
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
@@ -1004,7 +1004,7 @@ class LoginState extends CommonDBTM
      * can lead anywhere.
      * 
      * @return string
-     * @since 1.3.1
+     * @since 1.3.2
      */
     public function getSafeRedirect(): string
     {
@@ -1028,7 +1028,7 @@ class LoginState extends CommonDBTM
      * 
      * @param bool $debug If true, preserves full context.
      * @return array
-     * @since 1.3.1
+     * @since 1.3.2
      */
     public function getSafeStateForLogging(bool $debug = false): array
     {

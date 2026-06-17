@@ -35,13 +35,13 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
  *  @see        https://github.com/DonutsNL/samlSSO/readme.md
  *  @link       https://github.com/DonutsNL/samlSSO
- *  @since      1.3.1
+ *  @since      1.3.2
  * ------------------------------------------------------------------------
  **/
 
@@ -68,7 +68,7 @@ use Session;
  * Mappings are consumed by the JIT (Just-In-Time) user provisioning logic in
  * LoginFlow\User during the ACS assertion processing phase.
  *
- * @since  1.3.1
+ * @since  1.3.2
  * @see    ObservedClaim   Tracks claim keys seen in live SAML responses, giving
  *                         administrators candidate values to map here.
  * @see    LoginFlow\User  Reads and applies these mappings during JIT provisioning.
