@@ -196,13 +196,15 @@ class LoginFlowEntity extends LoginFlowItem
         $classConstants = LoginFlowEntity::getConstants();
         // Fetch database columns;
         $sql = 'SHOW COLUMNS FROM '.SamlConfig::getTable();
-        if (($result = $DB->doQuery($sql))) {
+        $result = $DB->doQuery($sql);
+        if ($result) {
             while ($data = $result->fetch_assoc()) {
+                $key = array_search($data['Field'], $classConstants);
                 $fields[$data['Field']] = [
                     ConfigItem::FIELD       => $data['Field'],
                     ConfigItem::TYPE        => $data['Type'],
                     ConfigItem::NULL        => $data['Null'],
-                    ConfigItem::CONSTANT    => ($key = array_search($data['Field'], $classConstants)) ? "ConfigEntity::$key" : 'UNDEFINED',
+                    ConfigItem::CONSTANT    => $key ? "ConfigEntity::$key" : 'UNDEFINED',
                     ConfigItem::VALUE       => (isset($this->fields[$data['Field']])) ? $this->fields[$data['Field']] : null,
                 ];
                 // Evaluate and merge results.

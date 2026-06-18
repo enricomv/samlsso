@@ -60,11 +60,12 @@ You MUST follow these rules when performing any changes in this repository.
   php tests/RunAllTests.php
   ```
 - **Creating a Release**: To package a new release zip using `tools/mkzip.sh`:
-  1. Update the version constant `PLUGIN_SAMLSSO_VERSION` in `setup.php`.
-  2. Update the `OLDVERSION` and `NEWVERSION` variables in `tools/mkzip.sh` to match the version bump.
-  3. Run the release packaging script (it will automatically run the automated test suite and abort on any failure):
+  1. **Controlled Releases**: Note that the `main` branch is actively monitored by the GLPI plugins directory website. Updating `samlsso.xml` or pushing tags to `main` will trigger a release immediately. Always perform build, packaging, and testing on dedicated version branches (e.g., `1.3.2`) and **do not** merge to `main` or publish the GitHub release until the version is officially approved and ready to go live.
+  2. Update the version constant `PLUGIN_SAMLSSO_VERSION` in `setup.php`.
+  3. Update the `OLDVERSION` and `NEWVERSION` variables in `tools/mkzip.sh` to match the version bump.
+  4. Run the release packaging script (it will automatically run the automated test suite and abort on any failure):
      ```bash
      ./tools/mkzip.sh
      ```
-  4. Manually update `samlsso.xml` to add a new `<version>` block listing the new version and its download URL.
-  5. Run the test suite (`php tests/RunAllTests.php`) one final time to verify version and copyright alignments check out across all files.
+  5. Manually update `samlsso.xml` to add a new `<version>` block listing the new version and its download URL.
+  6. Run the test suite (`php tests/RunAllTests.php`) one final time to verify version and copyright alignments check out across all files.

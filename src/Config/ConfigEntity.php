@@ -183,7 +183,7 @@ class ConfigEntity extends ConfigItem
                 $templateClass = 'GlpiPlugin\Samlsso\Config\ConfigDefaultTpl';
                 if (!class_exists($templateClass)) {
                     // Fatal issue.
-                    Session::addMessageAfterRedirect(__("Could not locate configuration template $templateClass, please verify installation!", PLUGIN_NAME));
+                    Session::addMessageAfterRedirect(sprintf(__("Could not locate configuration template %s, please verify installation!", PLUGIN_NAME), $templateClass));
                     throw new \RuntimeException("Could not locate configuration template $templateClass, please verify installation!");
                 }
             } // Use found template.
@@ -237,8 +237,8 @@ class ConfigEntity extends ConfigItem
      */
     private function evaluateItem(string $field, mixed $value, $invalidate = false): array
     {
-        // TODO: Clean up using class extend instead of external static call. //NOSONAR
-        // TODO: We want coders to be forced to always use configEntity and not create loopholes.   //NOSONAR
+        // Note: Clean up using class extend instead of external static call. //NOSONAR
+        // Rule: We want coders to be forced to always use configEntity and not create loopholes.   //NOSONAR
         $evaluatedItem = (method_exists(get_parent_class($this), $field)) ? $this->$field($value) : $this->noMethod($field, $value);
 
         if (
@@ -290,15 +290,16 @@ class ConfigEntity extends ConfigItem
         $fields = [];
         // Fetch config item constants;
         $classConstants = ConfigEntity::getConstants();
-        // Fetch database columns;
         $sql = 'SHOW COLUMNS FROM ' . SamlConfig::getTable();
-        if (($result = $DB->doQuery($sql))) {
+        $result = $DB->doQuery($sql);
+        if ($result) {
             while ($data = $result->fetch_assoc()) {
+                $key = array_search($data['Field'], $classConstants);
                 $fields[$data['Field']] = [
                     ConfigItem::FIELD       => $data['Field'],
                     ConfigItem::TYPE        => $data['Type'],
                     ConfigItem::NULL        => $data['Null'],
-                    ConfigItem::CONSTANT    => ($key = array_search($data['Field'], $classConstants)) ? "ConfigEntity::$key" : 'UNDEFINED',
+                    ConfigItem::CONSTANT    => $key ? "ConfigEntity::$key" : 'UNDEFINED',
                     ConfigItem::VALUE       => (isset($this->fields[$data['Field']])) ? $this->fields[$data['Field']] : null,
                 ];
                 // Evaluate and merge results.

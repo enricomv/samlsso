@@ -156,7 +156,8 @@ class LoginState extends CommonDBTM
                     LoginState::PHASE => [LoginState::PHASE_LOGOFF, LoginState::PHASE_ERROR]
                 ]
             ];
-            if (!($sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]))) {
+            $sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]);
+            if (!$sessionIterator) {
                 throw new LoginStateException('Failed to fetch state using current sessionId');
             }
         } else {
@@ -171,7 +172,8 @@ class LoginState extends CommonDBTM
                     LoginState::PHASE => [LoginState::PHASE_LOGOFF, LoginState::PHASE_ERROR]
                 ]
             ];
-            if (!($sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]))) {
+            $sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => $where]);
+            if (!$sessionIterator) {
                 throw new LoginStateException('Failed to fetch state using InResponseTo value');
             }
         }
@@ -354,7 +356,8 @@ class LoginState extends CommonDBTM
     public function writeState(): bool
     {
         if (!isset($this->state[LoginState::STATE_ID])) {
-            if (($id = $this->add($this->state))) {
+            $id = $this->add($this->state);
+            if ($id) {
                 // Make the ID available to the object.
                 // So it can be referenced;
                 $this->state[LoginState::STATE_ID] = $id;
@@ -577,9 +580,10 @@ class LoginState extends CommonDBTM
         if (isset($this->state[LoginState::STATE_ID])) {
             // https://github.com/DonutsNL/glpisaml/issues/22
             // https://github.com/DonutsNL/samlsso/issues/2
-            if (($redirect_url = filter_input(INPUT_GET, loginstate::REDIRECT, FILTER_DEFAULT))) {  //NOSONAR wont merge for readability
+            $redirect_url = filter_input(INPUT_GET, loginstate::REDIRECT, FILTER_DEFAULT);
+            if ($redirect_url) {
                 $this->state[LoginState::REDIRECT] = $redirect_url;
-                return ($this->update($this->state)) ? true : false;
+                return (bool)$this->update($this->state);
             }
         } // If the state doesnt have an ID (initial) we silently ignore it.
         return false;
@@ -740,8 +744,8 @@ class LoginState extends CommonDBTM
         // Do we need validate the input for SQL injections?
         // Verify if $DB->request is already escaping the string.
 
-        // This field should match the samlRequestId registered in LoginFlow::performSamlSSO();
-        if (!($sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => [LoginState::SAML_RESPONSE_ID => $responseId]]))) {
+        $sessionIterator = $DB->request(['FROM' => LoginState::getTable(), 'WHERE' => [LoginState::SAML_RESPONSE_ID => $responseId]]);
+        if (!$sessionIterator) {
             throw new LoginStateException('Could not fetch Login State from database');   //NOSONAR we are happy with this one!
         }
 

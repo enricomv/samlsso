@@ -85,7 +85,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::FIELD     => $field,
             ConfigItem::VALIDATOR => __method__,
             ConfigItem::EVAL      => false,
-            ConfigItem::ERRORS    => __("⭕ Undefined or no type validation found in ConfigValidate for item: $field", PLUGIN_NAME)
+            ConfigItem::ERRORS    => sprintf(__("⭕ Undefined or no type validation found in ConfigValidate for item: %s", PLUGIN_NAME), $field)
         ];
     }
 
@@ -141,7 +141,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALUE     => (string) $var,
             ConfigItem::FIELD     => __function__,
             ConfigItem::VALIDATOR => __method__,
-            ConfigItem::ERRORS    => (!$error) ? false : __('⭕ ' . $error, PLUGIN_NAME)
+            ConfigItem::ERRORS    => (!$error) ? false : sprintf(__('⭕ %s', PLUGIN_NAME), $error)
         ];
     }
 
@@ -779,7 +779,7 @@ class ConfigItem    //NOSONAR
             $var = '0';
         }
         // Default to false if no or an impropriate value is provided.
-        $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? __("⭕ $field can only be 1 or 0", PLUGIN_NAME) : false;
+        $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? sprintf(__("⭕ %s can only be 1 or 0", PLUGIN_NAME), $field) : false;
 
         return [
             ConfigItem::EVAL   => (is_numeric($var)) ? ConfigItem::VALID : ConfigItem::INVALID,
@@ -820,11 +820,11 @@ class ConfigItem    //NOSONAR
                 $cn = $subject['CN'];
                 // Validate if we got a negative sign in the calculated ValidTo days.
                 if (strpos($aged, '-') !== false) {
-                    $validations['validTo'] = __("⚠️ Warning, certificate with Common Name (CN): $cn is expired: $aged days", PLUGIN_NAME);
+                    $validations['validTo'] = sprintf(__("⚠️ Warning, certificate with Common Name (CN): %s is expired: %s days", PLUGIN_NAME), $cn, $aged);
                 }
                 // Validate if we got a negative sign in the calculated validFrom days.
                 if (strpos($born, '-') !== false) {
-                    $validations['validFrom'] = __("⚠️ Warning, certificate with Common Name (CN): $cn issued in the future ($born days)", PLUGIN_NAME);
+                    $validations['validFrom'] = sprintf(__("⚠️ Warning, certificate with Common Name (CN): %s issued in the future (%s days)", PLUGIN_NAME), $cn, $born);
                 }
                 if ($cn == 'withlove.from.donuts.nl') {
                     $validations['validFrom'] = __("⚠️ Warning, do not use the 'withlove.from.donuts.nl' example certificates. They offer no additional protection.", PLUGIN_NAME);

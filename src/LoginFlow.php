@@ -263,7 +263,7 @@ class LoginFlow extends CommonDBTM
                 $this->state->writeState();
             } // We loaded a valid state from the database, do nothing more.
         } catch (Throwable $e) {
-            $this->printError(__("Loading login state failed with: $e", PLUGIN_NAME));
+            $this->printError(sprintf(__("Loading login state failed with: %s", PLUGIN_NAME), (string)$e));
         }
 
         if ($this->state->getPhase() === LoginState::PHASE_FORCE_LOG) {
@@ -443,14 +443,13 @@ class LoginFlow extends CommonDBTM
     private function resolveIdpFromLoginForm(): ?int
     {
         foreach ($_POST as $key => $value) {
-            if (
-                strstr($key, 'login_name') &&
-                !empty($_POST[$key]) &&
-                $id = Config::getConfigIdByEmailDomain($_POST[$key])
-            ) {
-                $this->state->addLoginFlowTrace(['loginViaUserfield' => 'user:' . $_POST[$key] . ',idpId:' . $id]);
-                $this->subject = $_POST[$key];
-                return (int)$id;
+            if (strstr($key, 'login_name') && !empty($_POST[$key])) {
+                $id = Config::getConfigIdByEmailDomain($_POST[$key]);
+                if ($id) {
+                    $this->state->addLoginFlowTrace(['loginViaUserfield' => 'user:' . $_POST[$key] . ',idpId:' . $id]);
+                    $this->subject = $_POST[$key];
+                    return (int)$id;
+                }
             }
         }
         return null;
@@ -715,11 +714,8 @@ class LoginFlow extends CommonDBTM
             // https://codeberg.org/QuinQuies/glpisaml/issues/12
             TemplateRenderer::getInstance()->display('@samlsso/loginScreen.html.twig',  $tplVars);
         } else {
-            // We might still need to hide password, remember and database login fields
-            if ($tplVars['enforced'] = Config::getIsEnforced() &&    // Validate there is 'an' enforced saml Config
-                !isset($_GET['bypass'])
-            ) {    // Validate we don't want to bypass our enforcement
-
+            $tplVars['enforced'] = Config::getIsEnforced() && !isset($_GET['bypass']); // Validate there is 'an' enforced saml Config and we don't want to bypass
+            if ($tplVars['enforced']) { // Validate we don't want to bypass our enforcement
                 // Call the renderer to render our CSS injection.
                 TemplateRenderer::getInstance()->display('@samlsso/loginScreen.html.twig',  $tplVars);
             }
@@ -871,7 +867,7 @@ class LoginFlow extends CommonDBTM
         try {
             $state = new Loginstate();
         } catch (Throwable $e) {
-            LoginFlow::printError(__("Loading login state failed with: $e", PLUGIN_NAME));
+            LoginFlow::printError(sprintf(__("Loading login state failed with: %s", PLUGIN_NAME), (string)$e));
         }
 
         // Restore stored redirect requests.
