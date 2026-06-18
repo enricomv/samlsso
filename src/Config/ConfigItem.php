@@ -77,7 +77,7 @@ class ConfigItem    //NOSONAR
 
 
 
-    protected function noMethod(string $field, string $value): array
+    protected function noMethod(string $field, mixed $value): array
     {
         return [
             ConfigItem::FORMEXPLAIN => ConfigItem::INVALID,
