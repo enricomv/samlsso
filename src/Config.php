@@ -34,7 +34,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
@@ -338,8 +338,8 @@ class Config extends CommonDBTM
     {
         // Get global DB object to query the configTable.
         global $DB;
-        // VALIDATE EMAIL AND EXTRACT DOMAIN
-        if (!($upn = filter_var($fielda, FILTER_VALIDATE_EMAIL))) {
+        $upn = filter_var($fielda, FILTER_VALIDATE_EMAIL);
+        if (!$upn) {
             // Username is not formatted as an email address, return 0
             return 0;
         }

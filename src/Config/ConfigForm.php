@@ -33,7 +33,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
@@ -699,18 +699,15 @@ HTML;
         // Make sure all tabs are present for twig.
         $warnings = [];
         foreach($tabFields as $tab => $entityFields){
+            $warnings[$tab] = '';
             foreach($entityFields as $field) {
                 if(!empty($fields[$field]['errors'])){
                     $warnings[$tab] = '⚠️';
-                }else{
-                    $warnings[$tab] = '';
                 }
                 // Add cert validation warnings
                 if(!empty($fields[$field]['validate']['validations']['validTo'])   ||
                    !empty($fields[$field]['validate']['validations']['validFrom']) ){
                     $warnings[$tab] = '⚠️';
-                }else{
-                    $warnings[$tab] = '';
                 }
             }
         }

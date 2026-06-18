@@ -1,4 +1,11 @@
 
+**V1.3.2**
+- Fix: Refactored database query and loop assignments inside conditional checks to resolve CodeFactor's "Assignment in condition" warnings.
+- Fix: Refactored translation logging messages in User defaults synchronization to use static literal strings and `sprintf` to resolve CodeFactor's "Unnecessary string concatenation" warnings.
+- Fix: Replaced raw `TODO` in base64 mock private key template to resolve CodeFactor's "Unresolved TODO comment" warnings.
+- Fix: Fixed a loop-overwriting bug in `getTabWarnings` where warning status (⚠️) on configuration tab panels was cleared and overwritten by subsequent clean fields.
+- Fix: Resolved a parsing condition in `sp_certificate` and `idp_certificate` where validly parsed certificates skipped passing expiration and default/example certificate warnings to the form fields' errors property.
+
 **V1.3.1**
 - Fix: Implemented case-insensitive email comparison during JIT user synchronization on login to prevent duplicate `glpi_useremails` insert errors. (Related issues: https://github.com/DonutsNL/samlsso/issues/126, https://github.com/DonutsNL/samlsso/issues/127)
 - Feature: Added dynamic FontAwesome CSS parser to populate the LOGIN ICON selector with all available installed icons, sorted alphabetically.

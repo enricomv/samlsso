@@ -32,13 +32,13 @@
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
  *  @see        https://github.com/DonutsNL/samlSSO/readme.md
  *  @link       https://github.com/DonutsNL/samlSSO
- *  @since      1.3.1
+ *  @since      1.3.2
  * ------------------------------------------------------------------------
  **/
 
@@ -203,7 +203,7 @@ namespace GlpiPlugin\Samlsso\Tests {
             global $DB;
             $DB = new SimpleMockDB();
 
-            $migration = new InterceptingMigration('1.3.1');
+            $migration = new InterceptingMigration('1.3.2');
 
             // 1. Test Config update/install
             Config::install($migration);

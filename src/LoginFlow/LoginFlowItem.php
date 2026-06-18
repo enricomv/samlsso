@@ -34,7 +34,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
@@ -79,7 +79,7 @@ class LoginFlowItem    //NOSONAR
             LoginFlowItem::FIELD     => $field,
             LoginFlowItem::VALIDATOR => __method__,
             LoginFlowItem::EVAL      => false,
-            LoginFlowItem::ERRORS    => __("⭕ Undefined or no type validation found in ConfigValidate for item: $field", PLUGIN_NAME)
+            LoginFlowItem::ERRORS    => sprintf(__("⭕ Undefined or no type validation found in ConfigValidate for item: %s", PLUGIN_NAME), $field)
         ];
     }
 
@@ -273,7 +273,7 @@ class LoginFlowItem    //NOSONAR
     protected function handleAsBool(mixed $var, $field = null): array
     {
         // Default to false if no or an impropriate value is provided.
-        $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? __("⭕ $field can only be 1 or 0", PLUGIN_NAME) : null;
+        $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? sprintf(__("⭕ %s can only be 1 or 0", PLUGIN_NAME), $field) : null;
 
         // Value is intentionally typed as string is it might be shown as a value in the form fields,
         // The return value should be casted to the correct type in receiving methods if so required.

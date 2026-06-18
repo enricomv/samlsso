@@ -34,7 +34,7 @@ declare(strict_types=1);
  * ------------------------------------------------------------------------
  *
  *  @package    samlSSO
- *  @version    1.3.1
+ *  @version    1.3.2
  *  @author     Chris Gralike
  *  @copyright  Copyright (c) 2024 by Chris Gralike
  *  @license    GPLv3+
@@ -85,7 +85,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::FIELD     => $field,
             ConfigItem::VALIDATOR => __method__,
             ConfigItem::EVAL      => false,
-            ConfigItem::ERRORS    => __("⭕ Undefined or no type validation found in ConfigValidate for item: $field", PLUGIN_NAME)
+            ConfigItem::ERRORS    => sprintf(__("⭕ Undefined or no type validation found in ConfigValidate for item: %s", PLUGIN_NAME), $field)
         ];
     }
 
@@ -141,7 +141,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALUE     => (string) $var,
             ConfigItem::FIELD     => __function__,
             ConfigItem::VALIDATOR => __method__,
-            ConfigItem::ERRORS    => (!$error) ? false : __('⭕ ' . $error, PLUGIN_NAME)
+            ConfigItem::ERRORS    => (!$error) ? false : sprintf(__('⭕ %s', PLUGIN_NAME), $error)
         ];
     }
 
@@ -149,18 +149,22 @@ class ConfigItem    //NOSONAR
 
     protected function sp_certificate(mixed $var): array //NOSONAR
     {
-        // Certificate is not required, if missing the ConfigEntity will toggle
-        // depending security options false if there is an error. Provided certificate
-        // string (if any) should be valid.
         $e = false;
-        if ((!empty($var))                                     &&
-            ($certificate = ConfigItem::parseX509Certificate($var)) &&
-            (!array_key_exists('subject', $certificate))
-        ) {
-
-            $e = __('⭕ Provided certificate does not look like a valid (base64 encoded) certificate', PLUGIN_NAME);
-        } else {
-            $certificate = '';
+        $certificate = '';
+        if (!empty($var)) {
+            $parsed = ConfigItem::parseX509Certificate($var);
+            if ($parsed) {
+                if (!array_key_exists('subject', $parsed)) {
+                    $e = __('⭕ Provided certificate does not look like a valid (base64 encoded) certificate', PLUGIN_NAME);
+                } else {
+                    $certificate = $parsed;
+                    if (!empty($parsed['validations'])) {
+                        $e = implode('<br>', $parsed['validations']);
+                    }
+                }
+            } else {
+                $e = __('⭕ Provided certificate does not look like a valid (base64 encoded) certificate', PLUGIN_NAME);
+            }
         }
         return [
             ConfigItem::FORMEXPLAIN => __('The base64 encoded x509 service provider certificate. Used to sign and encrypt messages sent by the service provider to the identity provider. Required for most of the security options', PLUGIN_NAME),
@@ -169,7 +173,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALUE     => $var,
             ConfigItem::FIELD     => __function__,
             ConfigItem::VALIDATOR => __method__,
-            ConfigItem::ERRORS    => ($e) ? $e : false,
+            ConfigItem::ERRORS    => $e,
             ConfigItem::VALIDATE  => $certificate
         ];
     }
@@ -287,11 +291,24 @@ class ConfigItem    //NOSONAR
     {
         // Is a required field!
         $e = false;
-        if (($certificate = ConfigItem::parseX509Certificate($var)) &&
-            (!array_key_exists('subject', $certificate))
-        ) {
-            if (array_key_exists('validations', $certificate)) {
-                $e = $certificate['validations'];
+        $certificate = '';
+        if (empty($var)) {
+            $e = __('⭕ Valid Idp X509 certificate is required! (base64 encoded)', PLUGIN_NAME);
+        } else {
+            $parsed = ConfigItem::parseX509Certificate($var);
+            if ($parsed) {
+                if (!array_key_exists('subject', $parsed)) {
+                    if (array_key_exists('validations', $parsed)) {
+                        $e = $parsed['validations'];
+                    } else {
+                        $e = __('⭕ Valid Idp X509 certificate is required! (base64 encoded)', PLUGIN_NAME);
+                    }
+                } else {
+                    $certificate = $parsed;
+                    if (!empty($parsed['validations'])) {
+                        $e = implode('<br>', $parsed['validations']);
+                    }
+                }
             } else {
                 $e = __('⭕ Valid Idp X509 certificate is required! (base64 encoded)', PLUGIN_NAME);
             }
@@ -304,7 +321,7 @@ class ConfigItem    //NOSONAR
             ConfigItem::VALUE     => (string) $var,
             ConfigItem::FIELD     => __function__,
             ConfigItem::VALIDATOR => __method__,
-            ConfigItem::ERRORS    => ($e) ? $e : false,
+            ConfigItem::ERRORS    => $e,
             ConfigItem::VALIDATE  => $certificate
         ];
     }
@@ -762,7 +779,7 @@ class ConfigItem    //NOSONAR
             $var = '0';
         }
         // Default to false if no or an impropriate value is provided.
-        $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? __("⭕ $field can only be 1 or 0", PLUGIN_NAME) : false;
+        $error = (!empty($var) && !preg_match('/[0-1]/', (string) $var)) ? sprintf(__("⭕ %s can only be 1 or 0", PLUGIN_NAME), $field) : false;
 
         return [
             ConfigItem::EVAL   => (is_numeric($var)) ? ConfigItem::VALID : ConfigItem::INVALID,
@@ -803,11 +820,11 @@ class ConfigItem    //NOSONAR
                 $cn = $subject['CN'];
                 // Validate if we got a negative sign in the calculated ValidTo days.
                 if (strpos($aged, '-') !== false) {
-                    $validations['validTo'] = __("⚠️ Warning, certificate with Common Name (CN): $cn is expired: $aged days", PLUGIN_NAME);
+                    $validations['validTo'] = sprintf(__("⚠️ Warning, certificate with Common Name (CN): %s is expired: %s days", PLUGIN_NAME), $cn, $aged);
                 }
                 // Validate if we got a negative sign in the calculated validFrom days.
                 if (strpos($born, '-') !== false) {
-                    $validations['validFrom'] = __("⚠️ Warning, certificate with Common Name (CN): $cn issued in the future ($born days)", PLUGIN_NAME);
+                    $validations['validFrom'] = sprintf(__("⚠️ Warning, certificate with Common Name (CN): %s issued in the future (%s days)", PLUGIN_NAME), $cn, $born);
                 }
                 if ($cn == 'withlove.from.donuts.nl') {
                     $validations['validFrom'] = __("⚠️ Warning, do not use the 'withlove.from.donuts.nl' example certificates. They offer no additional protection.", PLUGIN_NAME);
