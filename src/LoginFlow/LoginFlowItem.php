@@ -71,7 +71,7 @@ class LoginFlowItem    //NOSONAR
 
 
 
-    protected function noMethod(string $field, string $value): array
+    protected function noMethod(string $field, mixed $value): array
     {
         return [
             LoginFlowItem::FORMEXPLAIN => LoginFlowItem::INVALID,
