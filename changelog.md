@@ -7,6 +7,7 @@
 - Fix: Resolved a parsing condition in `sp_certificate` and `idp_certificate` where validly parsed certificates skipped passing expiration and default/example certificate warnings to the form fields' errors property.
 
 **V1.3.1**
+- Fix: Resolved TypeError: noMethod() expects string, int given on undefined or custom database configuration fields in ConfigItem and LoginFlowItem.
 - Fix: Implemented case-insensitive email comparison during JIT user synchronization on login to prevent duplicate `glpi_useremails` insert errors. (Related issues: https://github.com/DonutsNL/samlsso/issues/126, https://github.com/DonutsNL/samlsso/issues/127)
 - Feature: Added dynamic FontAwesome CSS parser to populate the LOGIN ICON selector with all available installed icons, sorted alphabetically.
 - Fix: Removed '. UTC' from datetime conversions in LoginState to resolve timezone mismatches and premature timeouts on servers not configured to UTC. (Related issue https://github.com/DonutsNL/samlsso/issues/124)
